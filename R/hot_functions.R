@@ -222,7 +222,7 @@ hot_context_menu <- function(
   }
 
   # If contextMenu is TRUE, convert to configuration object
-  if (is.logical(hot$x$contextMenu) && hot$x$contextMenu) {
+  if (isTRUE(hot$x$contextMenu)) {
     hot$x$contextMenu <- menu_config
   } else if (is.list(hot$x$contextMenu)) {
     hot$x$contextMenu <- utils::modifyList(hot$x$contextMenu, menu_config)
@@ -243,11 +243,10 @@ hot_context_menu <- function(
 #' @return A data.frame
 #' @export
 hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
-  if (is.null(data) || length(data) == 0) {
+  if (!length(data)) {
     return(data.frame())
   }
 
-  # Convert to data frame
   df <- as.data.frame(do.call(rbind, data), stringsAsFactors = stringsAsFactors)
 
   # Apply column names if provided
