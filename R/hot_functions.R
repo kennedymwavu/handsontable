@@ -23,10 +23,8 @@ hot_cols <- function(
     manualColumnResize = manualColumnResize,
     manualColumnMove = manualColumnMove,
     ...
-  )
-
-  # Remove NULL values
-  config <- config[!sapply(config, is.null)]
+  ) |>
+    Filter(f = Negate(is.null))
 
   # Merge with existing configuration
   hot$x <- utils::modifyList(hot$x, config)
@@ -59,10 +57,8 @@ hot_rows <- function(
     manualRowResize = manualRowResize,
     manualRowMove = manualRowMove,
     ...
-  )
-
-  # Remove NULL values
-  config <- config[!sapply(config, is.null)]
+  ) |>
+    Filter(f = Negate(is.null))
 
   # Merge with existing configuration
   hot$x <- utils::modifyList(hot$x, config)
@@ -113,10 +109,8 @@ hot_table <- function(
     fillHandle = fillHandle,
     themeName = themeName,
     ...
-  )
-
-  # Remove NULL values
-  config <- config[!sapply(config, is.null)]
+  ) |>
+    Filter(f = Negate(is.null))
 
   # Merge with existing configuration
   hot$x <- utils::modifyList(hot$x, config)

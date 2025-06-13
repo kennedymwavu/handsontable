@@ -7,5 +7,5 @@
 * Data validation support (`hot_validate`)
 * Context menu configuration (`hot_context_menu`)
 * Shiny integration with `handsontableOutput` and `renderHandsontable`
-* Support for Handsontable v15.3.0 features
+* Support for Handsontable v6.2.2 features (MIT license)
 * Pipe-friendly API with magrittr integration

@@ -9,8 +9,6 @@
 #'   or percentage (e.g., "100%"). If NULL, dimensions are automatically determined.
 #' @param adaptiveHeight Logical. If TRUE (default), the table's height will automatically
 #'   adjust based on the number of rows displayed. If FALSE, the specified height will be used.
-#' @param licenseKey Handsontable license key. Defaults to "non-commercial-and-evaluation"
-#'   for non-commercial use. Commercial users must provide a valid license key.
 #' @param colHeaders Logical or character vector. If TRUE, shows default column headers.
 #'   If character vector, uses custom column names.
 #' @param rowHeaders Logical. If TRUE, shows row numbers as headers.
@@ -34,8 +32,8 @@
 #' handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
 #'
 #' # Using pipe operator for configuration
-#' handsontable(mtcars) %>%
-#'   hot_cols(colWidths = 100) %>%
+#' handsontable(mtcars) |>
+#'   hot_cols(colWidths = 100) |>
 #'   hot_table(contextMenu = TRUE)
 #' }
 #'
@@ -45,7 +43,6 @@ handsontable <- function(
   width = NULL,
   height = NULL,
   adaptiveHeight = TRUE,
-  licenseKey = "non-commercial-and-evaluation",
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
@@ -83,7 +80,6 @@ handsontable <- function(
   # Create configuration object
   config <- list(
     data = data_list,
-    licenseKey = licenseKey,
     colHeaders = colHeaders,
     rowHeaders = rowHeaders,
     readOnly = readOnly,

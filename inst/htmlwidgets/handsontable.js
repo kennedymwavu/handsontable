@@ -6,7 +6,7 @@ HTMLWidgets.widget({
   factory: function (el, width, height) {
     let hot = null;
 
-    // Function to calculate adaptive height based on row count
+    // Function to calculate adaptive height based on row count and row heights
     function calculateAdaptiveHeight(config, availableHeight) {
       const doNotAdaptHeight =
         !config.data ||
@@ -19,11 +19,35 @@ HTMLWidgets.widget({
 
       const rowCount = config.data.length;
       const hasHeaders = config.colHeaders ? 1 : 0;
-      const rowHeight = config.rowHeights || 30; // Default row height in pixels
       const headerHeight = 30; // Approximate header height in pixels
+      let totalRowHeight = 0;
 
-      // Calculate required height: header + (row count * row height)
-      const requiredHeight = hasHeaders * headerHeight + rowCount * rowHeight;
+      // Handle different types of rowHeights configuration as per Handsontable docs
+      if (typeof config.rowHeights === 'number') {
+        // If rowHeights is a single number, apply to all rows
+        totalRowHeight = rowCount * config.rowHeights;
+      } else if (Array.isArray(config.rowHeights)) {
+        // If rowHeights is an array, sum up specified heights and use default for the rest
+        const defaultRowHeight = 30; // Default row height in pixels
+        for (let i = 0; i < rowCount; i++) {
+          if (i < config.rowHeights.length) {
+            totalRowHeight += (config.rowHeights[i] || defaultRowHeight);
+          } else {
+            totalRowHeight += defaultRowHeight;
+          }
+        }
+      } else if (typeof config.rowHeights === 'function') {
+        // If rowHeights is a function, we can't calculate exactly without rendering
+        // So we use an approximation based on default height
+        totalRowHeight = rowCount * 30;
+      } else {
+        // Default case: use standard row height for all rows
+        const defaultRowHeight = 30;
+        totalRowHeight = rowCount * defaultRowHeight;
+      }
+
+      // Calculate required height: header + total row height
+      const requiredHeight = hasHeaders * headerHeight + totalRowHeight;
 
       // If adaptiveHeight is set to true or not specified, adapt the height
       return Math.max(Math.min(requiredHeight, 1000), 100); // Min 100px, max 1000px
@@ -47,7 +71,6 @@ HTMLWidgets.widget({
         // Set default configuration
         const config = Object.assign(
           {
-            licenseKey: "non-commercial-and-evaluation",
             data: [],
             colHeaders: true,
             rowHeaders: true,

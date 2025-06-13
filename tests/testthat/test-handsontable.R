@@ -7,13 +7,13 @@ test_that("handsontable creates widget with basic data", {
 })
 
 test_that("hot_cols modifies column configuration", {
-  ht <- handsontable(iris) %>% hot_cols(colWidths = 100)
+  ht <- handsontable(iris) |> hot_cols(colWidths = 100)
 
   expect_equal(ht$x$colWidths, 100)
 })
 
 test_that("hot_validate adds validation to columns", {
-  ht <- handsontable(mtcars) %>%
+  ht <- handsontable(mtcars) |>
     hot_validate(cols = 1:3, type = "numeric", min = 0)
 
   expect_true(!is.null(ht$x$columns))

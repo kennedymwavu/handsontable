@@ -1,10 +1,9 @@
 dependencies:
   - name: handsontable
-    version: 15.3.0
+    version: 6.2.2
     src: htmlwidgets/lib/handsontable
     script:
       - handsontable.full.min.js
     stylesheet:
       - handsontable.min.css
-      - ht-theme-main.min.css
     all_files: false

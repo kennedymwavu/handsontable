@@ -8,7 +8,7 @@ handsontable(
   data,
   width = NULL,
   height = NULL,
-  licenseKey = "non-commercial-and-evaluation",
+  adaptiveHeight = TRUE,
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
@@ -23,8 +23,8 @@ handsontable(
 \item{width, height}{Widget dimensions. Can be specified as pixels (e.g., "400px")
 or percentage (e.g., "100%"). If NULL, dimensions are automatically determined.}
 
-\item{licenseKey}{Handsontable license key. Defaults to "non-commercial-and-evaluation"
-for non-commercial use. Commercial users must provide a valid license key.}
+\item{adaptiveHeight}{Logical. If TRUE (default), the table's height will automatically
+adjust based on the number of rows displayed. If FALSE, the specified height will be used.}
 
 \item{colHeaders}{Logical or character vector. If TRUE, shows default column headers.
 If character vector, uses custom column names.}
@@ -60,8 +60,8 @@ handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length", "P.Width", 
 handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
 
 # Using pipe operator for configuration
-handsontable(mtcars) \%>\%
-  hot_cols(colWidths = 100) \%>\%
+handsontable(mtcars) |>
+  hot_cols(colWidths = 100) |>
   hot_table(contextMenu = TRUE)
 }
 
