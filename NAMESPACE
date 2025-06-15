@@ -2,10 +2,13 @@
 
 export(handsontable)
 export(handsontableOutput)
+export(hot_col)
 export(hot_cols)
 export(hot_context_menu)
+export(hot_row)
 export(hot_rows)
 export(hot_table)
 export(hot_to_r)
 export(hot_validate)
 export(renderHandsontable)
+export(set_data)
