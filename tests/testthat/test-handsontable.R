@@ -260,7 +260,8 @@ test_that("hot_row configures individual row properties", {
     hot_row(row = 1, readOnly = TRUE)
 
   expect_true(!is.null(ht$x$rowConfig))
-  expect_true(ht$x$rowConfig[["1"]]$readOnly)
+  expect_true(ht$x$rowConfig[["0"]]$readOnly)  # 0-based indexing for JS
+  expect_true(!is.null(ht$x$cells))
 })
 
 test_that("hot_row handles multiple row configurations", {
@@ -268,8 +269,9 @@ test_that("hot_row handles multiple row configurations", {
     hot_row(row = 1, readOnly = TRUE) |>
     hot_row(row = 3, readOnly = FALSE)
 
-  expect_true(ht$x$rowConfig[["1"]]$readOnly)
-  expect_false(ht$x$rowConfig[["3"]]$readOnly)
+  expect_true(ht$x$rowConfig[["0"]]$readOnly)   # Row 1 -> JS index 0
+  expect_false(ht$x$rowConfig[["2"]]$readOnly)  # Row 3 -> JS index 2
+  expect_true(!is.null(ht$x$cells))
 })
 
 # Tests for handsontable core function edge cases
