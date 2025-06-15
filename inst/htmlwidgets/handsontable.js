@@ -314,7 +314,28 @@ if (HTMLWidgets.shinyMode) {
   Shiny.addCustomMessageHandler("handsontable-set-data", function (message) {
     const $el = $("#" + message.id);
     if ($el.length && $el[0].hot) {
-      $el[0].hot.setDataAtCell(message.row, message.col, message.value);
+      const hot = $el[0].hot;
+      
+      // Handle vectorized data from R
+      if (Array.isArray(message.row) && Array.isArray(message.col) && Array.isArray(message.value)) {
+        // Multiple cell updates - use setDataAtRowProp for efficiency
+        const changes = [];
+        const minLength = Math.min(message.row.length, message.col.length, message.value.length);
+        
+        for (let i = 0; i < minLength; i++) {
+          changes.push([message.row[i], message.col[i], message.value[i]]);
+        }
+        
+        // Use setDataAtRowProp for batch updates
+        hot.setDataAtRowProp(changes);
+      } else {
+        // Single cell update - convert arrays to single values if needed
+        const row = Array.isArray(message.row) ? message.row[0] : message.row;
+        const col = Array.isArray(message.col) ? message.col[0] : message.col;
+        const value = Array.isArray(message.value) ? message.value[0] : message.value;
+        
+        hot.setDataAtCell(row, col, value);
+      }
     }
   });
 }

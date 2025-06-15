@@ -634,10 +634,10 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
 
 #' Update Cell Data Programmatically
 #'
-#' @param id Character. The output ID of the handsontable widget
-#' @param row Numeric. Row index (1-based)
-#' @param col Numeric. Column index (1-based)
-#' @param val Any. Value to set in the cell
+#' @param id String. Output ID of the handsontable widget.
+#' @param row Integer vector. Row index.
+#' @param col Integer vector. Column index.
+#' @param val Any. Value to set in the cell(s).
 #' @param session Shiny session object
 #'
 #' @return NULL (called for side effects)
@@ -650,7 +650,7 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
 #'   titlePanel("Programmatic Cell Updates"),
 #'   handsontableOutput("my_table"),
 #'   br(),
-#'   actionButton("update_btn", "Update Cell (1,1)")
+#'   actionButton("update_btn", "Update Cell (1,1) & (2,1)")
 #' )
 #'
 #' server <- function(input, output, session) {
@@ -662,7 +662,7 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
 #'   })
 #'
 #'   observeEvent(input$update_btn, {
-#'     set_data("my_table", row = 1, col = 1, val = runif(1, 100, 999))
+#'     set_data("my_table", row = 1:2, col = 1, val = runif(2, 100, 999))
 #'   })
 #' }
 #'
@@ -680,6 +680,11 @@ set_data <- function(
   if (is.null(session)) {
     stop("set_data must be called within a Shiny session")
   }
+
+  max_len <- max(lengths(list(row, col, val)))
+  row <- rep(row, length.out = max_len)
+  col <- rep(col, length.out = max_len)
+  val <- rep(val, length.out = max_len)
 
   # Convert 1-based R indexing to 0-based JavaScript indexing
   js_row <- row - 1
