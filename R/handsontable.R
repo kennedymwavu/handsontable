@@ -117,6 +117,25 @@ handsontable <- function(
 #'
 #' @param outputId Output variable name
 #' @param width,height Widget dimensions
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Handsontable Example"),
+#'   handsontableOutput("my_table")
+#' )
+#'
+#' server <- function(input, output) {
+#'   output$my_table <- renderHandsontable({
+#'     handsontable(mtcars[1:5, 1:4])
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 handsontableOutput <- function(outputId, width = "100%", height = "400px") {
   htmlwidgets::shinyWidgetOutput(
@@ -133,6 +152,27 @@ handsontableOutput <- function(outputId, width = "100%", height = "400px") {
 #' @param expr Expression that generates a handsontable
 #' @param env Environment in which to evaluate expression
 #' @param quoted Logical indicating whether expression is quoted
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Interactive Handsontable"),
+#'   handsontableOutput("editable_table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$editable_table <- renderHandsontable({
+#'     handsontable(iris[1:10, ], readOnly = FALSE) |>
+#'       hot_cols(colWidths = 120) |>
+#'       hot_table(contextMenu = TRUE)
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 renderHandsontable <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) {

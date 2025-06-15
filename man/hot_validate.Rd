@@ -42,3 +42,31 @@ Modified handsontable widget
 \description{
 Configure Data Validation
 }
+\examples{
+if (interactive()) {
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Data Validation"),
+  handsontableOutput("table")
+)
+
+server <- function(input, output, session) {
+  df <- data.frame(
+    score = c(85, 92, 78, 95, 88),
+    grade = c("A", "A", "B", "A", "B"),
+    email = c("john@test.com", "jane@test.com", "bob@test.com", "alice@test.com", "charlie@test.com")
+  )
+
+  output$table <- renderHandsontable({
+    handsontable(df) |>
+      hot_validate(cols = 1, type = "numeric", min = 0, max = 100) |>
+      hot_validate(cols = 2, type = "list", source = c("A", "B", "C", "D", "F")) |>
+      hot_validate(cols = 3, type = "regexp", pattern = "^[\\\\w\\\\._\%+-]+@[\\\\w\\\\.-]+\\\\.[A-Za-z]{2,}$")
+  })
+}
+
+shinyApp(ui, server)
+}
+
+}

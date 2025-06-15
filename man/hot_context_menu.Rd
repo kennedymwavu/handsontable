@@ -29,3 +29,23 @@ Modified handsontable widget
 \description{
 Configure Context Menu
 }
+\examples{
+if (interactive()) {
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Context Menu Configuration"),
+  handsontableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderHandsontable({
+    handsontable(mtcars[1:8, 1:5]) |>
+      hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+  })
+}
+
+shinyApp(ui, server)
+}
+
+}

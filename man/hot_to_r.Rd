@@ -20,3 +20,39 @@ data.frame
 Helper function to convert JavaScript Handsontable data back to R format.
 Primarily used in Shiny applications.
 }
+\examples{
+if (interactive()) {
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Data Conversion Demo"),
+  handsontableOutput("input_table"),
+  br(),
+  h4("Converted R Data:"),
+  verbatimTextOutput("converted_data")
+)
+
+server <- function(input, output, session) {
+  initial_data <- data.frame(
+    Name = c("John", "Jane", "Bob"),
+    Age = c(25, 30, 35),
+    Role = c("Engineer", "Manager", "Developer")
+  )
+
+  output$input_table <- renderHandsontable({
+    handsontable(initial_data)
+  })
+
+  output$converted_data <- renderPrint({
+    if (!is.null(input$input_table)) {
+      converted <- hot_to_r(input$input_table$data, colnames = names(initial_data))
+      str(converted)
+      converted
+    }
+  })
+}
+
+shinyApp(ui, server)
+}
+
+}

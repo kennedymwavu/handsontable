@@ -50,3 +50,29 @@ Modified handsontable widget
 \description{
 Configure General Table Options
 }
+\examples{
+if (interactive()) {
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Table Features"),
+  handsontableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderHandsontable({
+    handsontable(iris[1:20, ]) |>
+      hot_table(
+        contextMenu = TRUE,
+        filters = TRUE,
+        manualColumnSorting = TRUE,
+        search = TRUE,
+        undo = TRUE
+      )
+  })
+}
+
+shinyApp(ui, server)
+}
+
+}

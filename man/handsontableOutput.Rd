@@ -14,3 +14,22 @@ handsontableOutput(outputId, width = "100\%", height = "400px")
 \description{
 Widget output function for use in Shiny
 }
+\examples{
+if (interactive()) {
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Handsontable Example"),
+  handsontableOutput("my_table")
+)
+
+server <- function(input, output) {
+  output$my_table <- renderHandsontable({
+    handsontable(mtcars[1:5, 1:4])
+  })
+}
+
+shinyApp(ui, server)
+}
+
+}

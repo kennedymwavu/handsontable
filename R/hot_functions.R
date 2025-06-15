@@ -8,6 +8,26 @@
 #' @param ... Additional column configuration options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Column Configuration"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderHandsontable({
+#'     handsontable(mtcars[1:10, 1:6]) |>
+#'       hot_cols(colWidths = 120, fixedColumnsLeft = 2, manualColumnMove = TRUE)
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_cols <- function(
   hot,
@@ -42,6 +62,26 @@ hot_cols <- function(
 #' @param ... Additional row configuration options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Row Configuration"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderHandsontable({
+#'     handsontable(mtcars[1:15, 1:5]) |>
+#'       hot_rows(fixedRowsTop = 2, manualRowMove = TRUE, manualRowResize = TRUE)
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_rows <- function(
   hot,
@@ -82,6 +122,32 @@ hot_rows <- function(
 #' @param ... Additional table configuration options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Table Features"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderHandsontable({
+#'     handsontable(iris[1:20, ]) |>
+#'       hot_table(
+#'         contextMenu = TRUE,
+#'         filters = TRUE,
+#'         manualColumnSorting = TRUE,
+#'         search = TRUE,
+#'         undo = TRUE
+#'       )
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_table <- function(
   hot,
@@ -131,6 +197,34 @@ hot_table <- function(
 #' @param ... Additional validation options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Data Validation"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   df <- data.frame(
+#'     score = c(85, 92, 78, 95, 88),
+#'     grade = c("A", "A", "B", "A", "B"),
+#'     email = c("john@test.com", "jane@test.com", "bob@test.com", "alice@test.com", "charlie@test.com")
+#'   )
+#'
+#'   output$table <- renderHandsontable({
+#'     handsontable(df) |>
+#'       hot_validate(cols = 1, type = "numeric", min = 0, max = 100) |>
+#'       hot_validate(cols = 2, type = "list", source = c("A", "B", "C", "D", "F")) |>
+#'       hot_validate(cols = 3, type = "regexp", pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$")
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_validate <- function(
   hot,
@@ -208,6 +302,26 @@ hot_validate <- function(
 #' @param ... Additional context menu options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Context Menu Configuration"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderHandsontable({
+#'     handsontable(mtcars[1:8, 1:5]) |>
+#'       hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_context_menu <- function(
   hot,
@@ -251,6 +365,42 @@ hot_context_menu <- function(
 #' @param stringsAsFactors Logical. Convert strings to factors?
 #'
 #' @return data.frame
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Data Conversion Demo"),
+#'   handsontableOutput("input_table"),
+#'   br(),
+#'   h4("Converted R Data:"),
+#'   verbatimTextOutput("converted_data")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   initial_data <- data.frame(
+#'     Name = c("John", "Jane", "Bob"),
+#'     Age = c(25, 30, 35),
+#'     Role = c("Engineer", "Manager", "Developer")
+#'   )
+#'
+#'   output$input_table <- renderHandsontable({
+#'     handsontable(initial_data)
+#'   })
+#'
+#'   output$converted_data <- renderPrint({
+#'     if (!is.null(input$input_table)) {
+#'       converted <- hot_to_r(input$input_table$data, colnames = names(initial_data))
+#'       str(converted)
+#'       converted
+#'     }
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
   if (!length(data)) {
@@ -284,6 +434,37 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 #' @param ... Additional column configuration options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Individual Column Configuration"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   df <- data.frame(
+#'     ID = 1:5,
+#'     Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+#'     Score = c(85.5, 92.3, 78.1, 95.7, 88.9),
+#'     Grade = c("B", "A", "C", "A", "B"),
+#'     Active = c(TRUE, FALSE, TRUE, TRUE, FALSE)
+#'   )
+#'
+#'   output$table <- renderHandsontable({
+#'     handsontable(df) |>
+#'       hot_col(col = 1, readOnly = TRUE, width = 60) |>
+#'       hot_col(col = 3, type = "numeric", format = "0.0") |>
+#'       hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
+#'       hot_col(col = 5, type = "checkbox")
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_col <- function(
   hot,
@@ -380,6 +561,30 @@ hot_col <- function(
 #' @param ... Additional row configuration options
 #'
 #' @return Modified handsontable widget
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Row Configuration"),
+#'   p("Rows 1, 3, and 5 are read-only"),
+#'   handsontableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderHandsontable({
+#'     hot_table <- handsontable(iris[1:8, ])
+#'     for (i in c(1, 3, 5)) {
+#'       hot_table <- hot_table |> hot_row(row = i, readOnly = TRUE)
+#'     }
+#'     hot_table
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 hot_row <- function(hot, row, readOnly = NULL, ...) {
   # Create cells configuration if it doesn't exist
@@ -417,6 +622,34 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
 #' @param session Shiny session object
 #'
 #' @return NULL (called for side effects)
+#'
+#' @examples
+#' if (interactive()) {
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("Programmatic Cell Updates"),
+#'   handsontableOutput("my_table"),
+#'   br(),
+#'   actionButton("update_btn", "Update Cell (1,1)")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$my_table <- renderHandsontable({
+#'     handsontable(data.frame(
+#'       A = c(1, 2, 3),
+#'       B = c("a", "b", "c")
+#'     ))
+#'   })
+#'
+#'   observeEvent(input$update_btn, {
+#'     set_data("my_table", row = 1, col = 1, val = runif(1, 100, 999))
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
+#'
 #' @export
 set_data <- function(
   id,
