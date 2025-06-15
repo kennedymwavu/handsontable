@@ -595,15 +595,12 @@ hot_col <- function(
 #'
 #' @export
 hot_row <- function(hot, row, readOnly = NULL, ...) {
-  # Create cells configuration if it doesn't exist
-  if (is.null(hot$x$cells)) {
-    hot$x$cells <- function(row_js, col, prop) {
-      # JavaScript function will be created in the widget
-    }
+  # Store row configuration for cells function
+  if (is.null(hot$x$rowConfig)) {
+    hot$x$rowConfig <- list()
   }
 
-  # For now, we'll use a simple approach to set row properties
-  # This could be enhanced to support more complex row configurations
+  # Build row configuration
   row_config <- list(
     readOnly = readOnly,
     ...
@@ -611,11 +608,25 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
     Filter(f = Negate(is.null))
 
   if (length(row_config) > 0) {
-    # Store row configuration for JavaScript processing
-    if (is.null(hot$x$rowConfig)) {
-      hot$x$rowConfig <- list()
-    }
-    hot$x$rowConfig[[as.character(row)]] <- row_config
+    # Convert 1-based R index to 0-based JavaScript index
+    js_row <- row - 1
+    hot$x$rowConfig[[as.character(js_row)]] <- row_config
+
+    # Create cells function that applies row configurations
+    hot$x$cells <- htmlwidgets::JS(
+      paste0(
+        "function(row, col, prop) {",
+        "  var cellProperties = {};",
+        "  var rowConfig = ",
+        jsonlite::toJSON(hot$x$rowConfig, auto_unbox = TRUE),
+        ";",
+        "  if (rowConfig[row]) {",
+        "    Object.assign(cellProperties, rowConfig[row]);",
+        "  }",
+        "  return cellProperties;",
+        "}"
+      )
+    )
   }
 
   hot
