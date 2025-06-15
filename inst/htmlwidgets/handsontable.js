@@ -116,7 +116,20 @@ HTMLWidgets.widget({
             // Set up change handlers for Shiny
             hot.addHook("afterChange", function (changes, source) {
               if (source !== "loadData" && changes) {
-                Shiny.setInputValue(el.id + "_data", hot.getData(), {
+                const data = hot.getData();
+                // Send to input$table_id (main input)
+                Shiny.setInputValue(
+                  el.id,
+                  {
+                    data: data,
+                    changes: changes,
+                  },
+                  {
+                    priority: "event",
+                  },
+                );
+                // Also send to separate inputs for compatibility
+                Shiny.setInputValue(el.id + "_data", data, {
                   priority: "event",
                 });
                 Shiny.setInputValue(el.id + "_changes", changes, {
@@ -150,7 +163,20 @@ HTMLWidgets.widget({
 
             hot.addHook("afterCreateRow", function (index, amount, source) {
               if (source !== "loadData") {
-                Shiny.setInputValue(el.id + "_data", hot.getData(), {
+                const data = hot.getData();
+                Shiny.setInputValue(
+                  el.id,
+                  {
+                    data: data,
+                    event: "afterCreateRow",
+                    index: index,
+                    amount: amount,
+                  },
+                  {
+                    priority: "event",
+                  },
+                );
+                Shiny.setInputValue(el.id + "_data", data, {
                   priority: "event",
                 });
               }
@@ -160,7 +186,20 @@ HTMLWidgets.widget({
               "afterRemoveRow",
               function (index, amount, physicalRows, source) {
                 if (source !== "loadData") {
-                  Shiny.setInputValue(el.id + "_data", hot.getData(), {
+                  const data = hot.getData();
+                  Shiny.setInputValue(
+                    el.id,
+                    {
+                      data: data,
+                      event: "afterRemoveRow",
+                      index: index,
+                      amount: amount,
+                    },
+                    {
+                      priority: "event",
+                    },
+                  );
+                  Shiny.setInputValue(el.id + "_data", data, {
                     priority: "event",
                   });
                 }
@@ -169,7 +208,20 @@ HTMLWidgets.widget({
 
             hot.addHook("afterCreateCol", function (index, amount, source) {
               if (source !== "loadData") {
-                Shiny.setInputValue(el.id + "_data", hot.getData(), {
+                const data = hot.getData();
+                Shiny.setInputValue(
+                  el.id,
+                  {
+                    data: data,
+                    event: "afterCreateCol",
+                    index: index,
+                    amount: amount,
+                  },
+                  {
+                    priority: "event",
+                  },
+                );
+                Shiny.setInputValue(el.id + "_data", data, {
                   priority: "event",
                 });
               }
@@ -179,7 +231,20 @@ HTMLWidgets.widget({
               "afterRemoveCol",
               function (index, amount, physicalColumns, source) {
                 if (source !== "loadData") {
-                  Shiny.setInputValue(el.id + "_data", hot.getData(), {
+                  const data = hot.getData();
+                  Shiny.setInputValue(
+                    el.id,
+                    {
+                      data: data,
+                      event: "afterRemoveCol",
+                      index: index,
+                      amount: amount,
+                    },
+                    {
+                      priority: "event",
+                    },
+                  );
+                  Shiny.setInputValue(el.id + "_data", data, {
                     priority: "event",
                   });
                 }

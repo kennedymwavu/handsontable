@@ -337,3 +337,17 @@ test_that("set_data requires Shiny session", {
     "set_data must be called within a Shiny session"
   )
 })
+
+# Tests for JavaScript change detection
+test_that("JavaScript includes change detection hooks", {
+  js_file <- system.file("htmlwidgets", "handsontable.js", package = "handsontable")
+  js_content <- readLines(js_file, warn = FALSE)
+  js_text <- paste(js_content, collapse = "\n")
+  
+  # Check for key event hooks
+  expect_true(grepl("afterChange", js_text))
+  expect_true(grepl("afterCreateRow", js_text))
+  expect_true(grepl("afterRemoveRow", js_text))
+  expect_true(grepl("afterSelection", js_text))
+  expect_true(grepl("Shiny.setInputValue", js_text))
+})
