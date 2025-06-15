@@ -265,3 +265,182 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 
   df
 }
+
+#' Configure Individual Column
+#'
+#' @param hot A handsontable widget object
+#' @param col Column name or index to configure
+#' @param type Column type: "text", "numeric", "date", "dropdown", "checkbox", etc.
+#' @param source For dropdown type, vector of allowed values
+#' @param strict Logical, strict validation for dropdowns
+#' @param readOnly Logical, make column read-only
+#' @param width Column width in pixels
+#' @param format For numeric columns, number format
+#' @param dateFormat For date columns, date format
+#' @param checkedTemplate For checkbox columns, value when checked
+#' @param uncheckedTemplate For checkbox columns, value when unchecked
+#' @param visibleRows For dropdown type, number of visible rows in dropdown
+#' @param allowInvalid Logical, allow invalid values
+#' @param ... Additional column configuration options
+#'
+#' @return Modified handsontable widget
+#' @export
+hot_col <- function(
+  hot,
+  col,
+  type = NULL,
+  source = NULL,
+  strict = NULL,
+  readOnly = NULL,
+  width = NULL,
+  format = NULL,
+  dateFormat = NULL,
+  checkedTemplate = NULL,
+  uncheckedTemplate = NULL,
+  visibleRows = NULL,
+  allowInvalid = NULL,
+  ...
+) {
+  # Convert column name to index if needed
+  if (is.character(col) && !is.null(hot$x$colHeaders)) {
+    col_idx <- match(col, hot$x$colHeaders)
+    if (is.na(col_idx)) {
+      stop("Column '", col, "' not found in colHeaders")
+    }
+  } else if (is.character(col)) {
+    stop("Column names can only be used when colHeaders are defined")
+  } else {
+    col_idx <- col
+  }
+
+  # Create columns configuration if it doesn't exist
+  if (is.null(hot$x$columns)) {
+    # Determine number of columns from data or colHeaders
+    ncols <- if (!is.null(hot$x$colHeaders)) {
+      length(hot$x$colHeaders)
+    } else if (!is.null(hot$x$data) && length(hot$x$data) > 0) {
+      length(hot$x$data[[1]])
+    } else {
+      max(col_idx)
+    }
+    hot$x$columns <- vector("list", ncols)
+  }
+
+  # Ensure we have enough columns
+  if (col_idx > length(hot$x$columns)) {
+    length(hot$x$columns) <- col_idx
+  }
+
+  # Initialize column config if NULL
+  if (is.null(hot$x$columns[[col_idx]])) {
+    hot$x$columns[[col_idx]] <- list()
+  }
+
+  # Set column properties
+  col_config <- list(
+    type = type,
+    source = source,
+    strict = strict,
+    readOnly = readOnly,
+    width = width,
+    format = format,
+    dateFormat = dateFormat,
+    checkedTemplate = checkedTemplate,
+    uncheckedTemplate = uncheckedTemplate,
+    allowInvalid = allowInvalid,
+    ...
+  ) |>
+    Filter(f = Negate(is.null))
+
+  # Handle dropdown-specific configuration
+  if (!is.null(type) && type == "dropdown") {
+    if (!is.null(visibleRows)) {
+      col_config$visibleRows <- visibleRows
+    }
+    # Set default strict mode for dropdowns if not specified
+    if (is.null(strict)) {
+      col_config$strict <- TRUE
+    }
+  }
+
+  # Merge with existing column configuration
+  hot$x$columns[[col_idx]] <- utils::modifyList(
+    hot$x$columns[[col_idx]],
+    col_config
+  )
+
+  hot
+}
+
+#' Configure Row Properties
+#'
+#' @param hot A handsontable widget object
+#' @param row Row index to configure
+#' @param readOnly Logical, make row read-only
+#' @param ... Additional row configuration options
+#'
+#' @return Modified handsontable widget
+#' @export
+hot_row <- function(hot, row, readOnly = NULL, ...) {
+  # Create cells configuration if it doesn't exist
+  if (is.null(hot$x$cells)) {
+    hot$x$cells <- function(row_js, col, prop) {
+      # JavaScript function will be created in the widget
+    }
+  }
+
+  # For now, we'll use a simple approach to set row properties
+  # This could be enhanced to support more complex row configurations
+  row_config <- list(
+    readOnly = readOnly,
+    ...
+  ) |>
+    Filter(f = Negate(is.null))
+
+  if (length(row_config) > 0) {
+    # Store row configuration for JavaScript processing
+    if (is.null(hot$x$rowConfig)) {
+      hot$x$rowConfig <- list()
+    }
+    hot$x$rowConfig[[as.character(row)]] <- row_config
+  }
+
+  hot
+}
+
+#' Update Cell Data Programmatically
+#'
+#' @param id Character. The output ID of the handsontable widget
+#' @param row Numeric. Row index (1-based)
+#' @param col Numeric. Column index (1-based)
+#' @param val Any. Value to set in the cell
+#' @param session Shiny session object
+#'
+#' @return NULL (called for side effects)
+#' @export
+set_data <- function(
+  id,
+  row,
+  col,
+  val,
+  session = shiny::getDefaultReactiveDomain()
+) {
+  if (is.null(session)) {
+    stop("set_data must be called within a Shiny session")
+  }
+
+  # Convert 1-based R indexing to 0-based JavaScript indexing
+  js_row <- row - 1
+  js_col <- col - 1
+
+  # Send update message to client
+  session$sendCustomMessage(
+    type = "handsontable-set-data",
+    message = list(
+      id = session$ns(id),
+      row = js_row,
+      col = js_col,
+      value = val
+    )
+  )
+}
