@@ -21,7 +21,8 @@
 #' server <- function(input, output, session) {
 #'   output$table <- renderHandsontable({
 #'     handsontable(mtcars[1:10, 1:6]) |>
-#'       hot_cols(colWidths = 120, fixedColumnsLeft = 2, manualColumnMove = TRUE)
+#'       hot_cols(colWidths = 120, fixedColumnsLeft = 2,
+#'                manualColumnMove = TRUE)
 #'   })
 #' }
 #'
@@ -75,7 +76,8 @@ hot_cols <- function(
 #' server <- function(input, output, session) {
 #'   output$table <- renderHandsontable({
 #'     handsontable(mtcars[1:15, 1:5]) |>
-#'       hot_rows(fixedRowsTop = 2, manualRowMove = TRUE, manualRowResize = TRUE)
+#'       hot_rows(fixedRowsTop = 2, manualRowMove = TRUE,
+#'                manualRowResize = TRUE)
 #'   })
 #' }
 #'
@@ -211,14 +213,17 @@ hot_table <- function(
 #'   df <- data.frame(
 #'     score = c(85, 92, 78, 95, 88),
 #'     grade = c("A", "A", "B", "A", "B"),
-#'     email = c("john@test.com", "jane@test.com", "bob@test.com", "alice@test.com", "charlie@test.com")
+#'     email = c("john@test.com", "jane@test.com", "bob@test.com",
+#'               "alice@test.com", "charlie@test.com")
 #'   )
 #'
 #'   output$table <- renderHandsontable({
 #'     handsontable(df) |>
 #'       hot_validate(cols = 1, type = "numeric", min = 0, max = 100) |>
-#'       hot_validate(cols = 2, type = "list", source = c("A", "B", "C", "D", "F")) |>
-#'       hot_validate(cols = 3, type = "regexp", pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$")
+#'       hot_validate(cols = 2, type = "list",
+#'                    source = c("A", "B", "C", "D", "F")) |>
+#'       hot_validate(cols = 3, type = "regexp",
+#'                    pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$")
 #'   })
 #' }
 #'
@@ -391,7 +396,8 @@ hot_context_menu <- function(
 #'
 #'   output$converted_data <- renderPrint({
 #'     if (!is.null(input$input_table)) {
-#'       converted <- hot_to_r(input$input_table$data, colnames = names(initial_data))
+#'       converted <- hot_to_r(input$input_table$data,
+#'                              colnames = names(initial_data))
 #'       str(converted)
 #'       converted
 #'     }
@@ -420,7 +426,8 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 #'
 #' @param hot A handsontable widget object
 #' @param col Column name or index to configure
-#' @param type Column type: "text", "numeric", "date", "dropdown", "checkbox", etc.
+#' @param type Column type: "text", "numeric", "date", "dropdown",
+#'   "checkbox", etc.
 #' @param source For dropdown type, vector of allowed values
 #' @param strict Logical, strict validation for dropdowns
 #' @param readOnly Logical, make column read-only
@@ -457,7 +464,8 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 #'     handsontable(df) |>
 #'       hot_col(col = 1, readOnly = TRUE, width = 60) |>
 #'       hot_col(col = 3, type = "numeric", format = "0.0") |>
-#'       hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
+#'       hot_col(col = 4, type = "dropdown",
+#'               source = c("A", "B", "C", "D", "F")) |>
 #'       hot_col(col = 5, type = "checkbox")
 #'   })
 #' }

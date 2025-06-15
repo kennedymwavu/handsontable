@@ -45,7 +45,8 @@ server <- function(input, output, session) {
 
   output$converted_data <- renderPrint({
     if (!is.null(input$input_table)) {
-      converted <- hot_to_r(input$input_table$data, colnames = names(initial_data))
+      converted <- hot_to_r(input$input_table$data,
+                             colnames = names(initial_data))
       str(converted)
       converted
     }

@@ -20,13 +20,16 @@ handsontable(
 \arguments{
 \item{data}{A data.frame, matrix, or other rectangular data structure}
 
-\item{width, height}{Widget dimensions. Can be specified as pixels (e.g., "400px")
-or percentage (e.g., "100%"). If NULL, dimensions are automatically determined.}
+\item{width, height}{Widget dimensions. Can be specified as pixels
+(e.g., "400px") or percentage (e.g., "100%"). If NULL, dimensions are
+automatically determined.}
 
-\item{adaptiveHeight}{Logical. If TRUE (default), the table's height will automatically
-adjust based on the number of rows displayed. If FALSE, the specified height will be used.}
+\item{adaptiveHeight}{Logical. If TRUE (default), the table's height
+will automatically adjust based on the number of rows displayed. If FALSE,
+the specified height will be used.}
 
-\item{colHeaders}{Logical or character vector. If TRUE, shows default column headers.
+\item{colHeaders}{Logical or character vector. If TRUE, shows default
+column headers.
 If character vector, uses custom column names.}
 
 \item{rowHeaders}{Logical. If TRUE, shows row numbers as headers.}
@@ -54,7 +57,8 @@ if (interactive()) {
 handsontable(mtcars)
 
 # With custom headers
-handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length", "P.Width", "Species"))
+handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length",
+                                  "P.Width", "Species"))
 
 # Read-only table with context menu
 handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)

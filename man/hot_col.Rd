@@ -26,7 +26,8 @@ hot_col(
 
 \item{col}{Column name or index to configure}
 
-\item{type}{Column type: "text", "numeric", "date", "dropdown", "checkbox", etc.}
+\item{type}{Column type: "text", "numeric", "date", "dropdown",
+"checkbox", etc.}
 
 \item{source}{For dropdown type, vector of allowed values}
 
@@ -78,7 +79,8 @@ server <- function(input, output, session) {
     handsontable(df) |>
       hot_col(col = 1, readOnly = TRUE, width = 60) |>
       hot_col(col = 3, type = "numeric", format = "0.0") |>
-      hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
+      hot_col(col = 4, type = "dropdown",
+              source = c("A", "B", "C", "D", "F")) |>
       hot_col(col = 5, type = "checkbox")
   })
 }

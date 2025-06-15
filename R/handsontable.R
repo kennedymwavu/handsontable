@@ -5,11 +5,14 @@
 #' conditional formatting, formulas, and extensive customization options.
 #'
 #' @param data A data.frame, matrix, or other rectangular data structure
-#' @param width,height Widget dimensions. Can be specified as pixels (e.g., "400px")
-#'   or percentage (e.g., "100%"). If NULL, dimensions are automatically determined.
-#' @param adaptiveHeight Logical. If TRUE (default), the table's height will automatically
-#'   adjust based on the number of rows displayed. If FALSE, the specified height will be used.
-#' @param colHeaders Logical or character vector. If TRUE, shows default column headers.
+#' @param width,height Widget dimensions. Can be specified as pixels
+#'   (e.g., "400px") or percentage (e.g., "100%"). If NULL, dimensions are
+#'   automatically determined.
+#' @param adaptiveHeight Logical. If TRUE (default), the table's height
+#'   will automatically adjust based on the number of rows displayed. If FALSE,
+#'   the specified height will be used.
+#' @param colHeaders Logical or character vector. If TRUE, shows default
+#'   column headers.
 #'   If character vector, uses custom column names.
 #' @param rowHeaders Logical. If TRUE, shows row numbers as headers.
 #' @param readOnly Logical. If TRUE, makes the entire table read-only.
@@ -26,7 +29,8 @@
 #' handsontable(mtcars)
 #'
 #' # With custom headers
-#' handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length", "P.Width", "Species"))
+#' handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length",
+#'                                   "P.Width", "Species"))
 #'
 #' # Read-only table with context menu
 #' handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)

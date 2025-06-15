@@ -44,7 +44,8 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   output$table <- renderHandsontable({
     handsontable(mtcars[1:10, 1:6]) |>
-      hot_cols(colWidths = 120, fixedColumnsLeft = 2, manualColumnMove = TRUE)
+      hot_cols(colWidths = 120, fixedColumnsLeft = 2,
+               manualColumnMove = TRUE)
   })
 }
 
