@@ -7,13 +7,13 @@
 set_data(id, row, col, val, session = shiny::getDefaultReactiveDomain())
 }
 \arguments{
-\item{id}{Character. The output ID of the handsontable widget}
+\item{id}{String. Output ID of the handsontable widget.}
 
-\item{row}{Numeric. Row index (1-based)}
+\item{row}{Integer vector. Row index.}
 
-\item{col}{Numeric. Column index (1-based)}
+\item{col}{Integer vector. Column index.}
 
-\item{val}{Any. Value to set in the cell}
+\item{val}{Any. Value to set in the cell(s).}
 
 \item{session}{Shiny session object}
 }
@@ -31,7 +31,7 @@ ui <- fluidPage(
   titlePanel("Programmatic Cell Updates"),
   handsontableOutput("my_table"),
   br(),
-  actionButton("update_btn", "Update Cell (1,1)")
+  actionButton("update_btn", "Update Cell (1,1) & (2,1)")
 )
 
 server <- function(input, output, session) {
@@ -43,7 +43,7 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$update_btn, {
-    set_data("my_table", row = 1, col = 1, val = runif(1, 100, 999))
+    set_data("my_table", row = 1:2, col = 1, val = runif(2, 100, 999))
   })
 }
 
