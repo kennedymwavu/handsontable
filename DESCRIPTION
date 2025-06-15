@@ -2,9 +2,11 @@ Package: handsontable
 Type: Package
 Title: Interface to the 'Handsontable' JavaScript Data Grid v6.2.2
 Version: 0.1.0
-Authors@R: 
+Authors@R: c(
     person("Kennedy", "Mwavu", , "mwavukennedy@gmail.com", role = c("aut", "cre", "cph"),
-           comment = c("Maintainer/developer of handsontable since 2025", ORCID = "0009-0006-3157-7234"))
+           comment = c("Maintainer/developer of handsontable since 2025", ORCID = "0009-0006-3157-7234")),
+    person("Handsoncode sp. z o.o.", , , role = c("ctb", "cph"), comment = "Handsontable library")
+    )
 Description: Provides an R interface to the 'Handsontable' JavaScript library v6.2.2,
     a powerful data grid component that combines spreadsheet-like functionality with
     professional data grid features. Supports data validation, conditional formatting,
@@ -16,9 +18,9 @@ Depends:
     R (>= 4.0.0)
 Imports:
     htmlwidgets (>= 1.6.0),
-    htmltools,
-    jsonlite
 Suggests:
+    htmltools (>= 0.5.8.1),
+    jsonlite (>= 2.0.0),
     knitr (>= 1.50),
     rmarkdown (>= 2.29),
     shiny (>= 1.10.0),
