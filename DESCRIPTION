@@ -18,9 +18,9 @@ Depends:
     R (>= 4.0.0)
 Imports:
     htmlwidgets (>= 1.6.0),
+    jsonlite (>= 2.0.0)
 Suggests:
     htmltools (>= 0.5.8.1),
-    jsonlite (>= 2.0.0),
     knitr (>= 1.50),
     rmarkdown (>= 2.29),
     shiny (>= 1.10.0),
