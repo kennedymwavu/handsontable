@@ -23,7 +23,7 @@ HTMLWidgets.widget({
       let totalRowHeight = 0;
 
       // Handle different types of rowHeights configuration as per Handsontable docs
-      if (typeof config.rowHeights === 'number') {
+      if (typeof config.rowHeights === "number") {
         // If rowHeights is a single number, apply to all rows
         totalRowHeight = rowCount * config.rowHeights;
       } else if (Array.isArray(config.rowHeights)) {
@@ -31,12 +31,12 @@ HTMLWidgets.widget({
         const defaultRowHeight = 30; // Default row height in pixels
         for (let i = 0; i < rowCount; i++) {
           if (i < config.rowHeights.length) {
-            totalRowHeight += (config.rowHeights[i] || defaultRowHeight);
+            totalRowHeight += config.rowHeights[i] || defaultRowHeight;
           } else {
             totalRowHeight += defaultRowHeight;
           }
         }
-      } else if (typeof config.rowHeights === 'function') {
+      } else if (typeof config.rowHeights === "function") {
         // If rowHeights is a function, we can't calculate exactly without rendering
         // So we use an approximation based on default height
         totalRowHeight = rowCount * 30;
@@ -222,27 +222,34 @@ HTMLWidgets.widget({
 // Utility function to convert Handsontable data to R format
 if (HTMLWidgets.shinyMode) {
   Shiny.addCustomMessageHandler("handsontable-get-data", function (message) {
-    const el = document.getElementById(message.id);
-    if (el && el.hot) {
-      const data = el.hot.getData();
+    const $el = $("#" + message.id);
+    if ($el.length && $el[0].hot) {
+      const data = $el[0].hot.getData();
       Shiny.setInputValue(message.id + "_data", data);
     }
   });
 
   Shiny.addCustomMessageHandler("handsontable-update-data", function (message) {
-    const el = document.getElementById(message.id);
-    if (el && el.hot) {
-      el.hot.loadData(message.data);
+    const $el = $("#" + message.id);
+    if ($el.length && $el[0].hot) {
+      $el[0].hot.loadData(message.data);
     }
   });
 
   Shiny.addCustomMessageHandler(
     "handsontable-update-settings",
     function (message) {
-      const el = document.getElementById(message.id);
-      if (el && el.hot) {
-        el.hot.updateSettings(message.settings);
+      const $el = $("#" + message.id);
+      if ($el.length && $el[0].hot) {
+        $el[0].hot.updateSettings(message.settings);
       }
     },
   );
+
+  Shiny.addCustomMessageHandler("handsontable-set-data", function (message) {
+    const $el = $("#" + message.id);
+    if ($el.length && $el[0].hot) {
+      $el[0].hot.setDataAtCell(message.row, message.col, message.value);
+    }
+  });
 }
