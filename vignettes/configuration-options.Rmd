@@ -1,0 +1,339 @@
+---
+title: "Configuration Options"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Configuration Options}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = interactive()
+)
+```
+
+```{r setup}
+library(handsontable)
+```
+
+# Configuration Options
+
+This vignette covers the various configuration functions available in the 
+handsontable package, allowing you to customize every aspect of your tables.
+
+## Column Configuration with `hot_cols()`
+
+The `hot_cols()` function controls column-level settings that apply to all 
+columns or specific ranges.
+
+### Column Widths
+
+```{r column-widths}
+# Set uniform column width
+handsontable(mtcars[1:5, 1:4]) |>
+  hot_cols(colWidths = 120)
+
+# Set individual column widths
+handsontable(iris[1:5, ]) |>
+  hot_cols(colWidths = c(80, 80, 80, 80, 120))
+```
+
+### Column Freezing and Resizing
+
+```{r column-freezing}
+# Freeze first 2 columns and enable column operations
+handsontable(mtcars[1:8, ]) |>
+  hot_cols(
+    fixedColumnsLeft = 2,
+    manualColumnResize = TRUE,
+    manualColumnMove = TRUE
+  )
+```
+
+## Row Configuration with `hot_rows()`
+
+The `hot_rows()` function provides row-level configuration options.
+
+### Row Freezing
+
+```{r row-freezing}
+# Freeze top 2 rows and bottom 1 row
+handsontable(mtcars[1:10, 1:4]) |>
+  hot_rows(
+    fixedRowsTop = 2,
+    fixedRowsBottom = 1,
+    manualRowResize = TRUE,
+    manualRowMove = TRUE
+  )
+```
+
+## General Table Configuration with `hot_table()`
+
+The `hot_table()` function controls overall table behavior and features.
+
+### Context Menu and Interaction
+
+```{r context-menu}
+# Enable context menu and other interactive features
+handsontable(iris[1:8, ]) |>
+  hot_table(
+    contextMenu = TRUE,
+    filters = TRUE,
+    manualColumnSorting = TRUE,
+    search = TRUE,
+    undo = TRUE
+  )
+```
+
+### Multiple Column Sorting
+
+```{r multi-sort}
+# Enable multi-column sorting
+handsontable(mtcars[1:10, 1:6]) |>
+  hot_table(
+    multiColumnSorting = TRUE,
+    outsideClickDeselects = TRUE
+  )
+```
+
+### Themes
+
+```{r themes}
+# Apply a dark theme
+handsontable(iris[1:6, ]) |>
+  hot_table(themeName = "ht-theme-main-dark-auto")
+```
+
+### Fill Handle Configuration
+
+```{r fill-handle}
+# Configure fill handle behavior
+handsontable(data.frame(
+  Numbers = 1:5,
+  Letters = letters[1:5]
+)) |>
+  hot_table(
+    fillHandle = list(
+      direction = "vertical",
+      autoInsertRow = TRUE
+    )
+  )
+```
+
+## Individual Column Configuration with `hot_col()`
+
+Use `hot_col()` to configure specific columns with different types and 
+behaviors.
+
+### Text Columns
+
+```{r text-columns}
+# Configure a text column
+data <- data.frame(
+  ID = 1:5,
+  Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+  Notes = rep("", 5)
+)
+
+handsontable(data) |>
+  hot_col(col = 1, readOnly = TRUE, width = 50) |>
+  hot_col(col = 2, type = "text", width = 100) |>
+  hot_col(col = 3, type = "text", width = 200)
+```
+
+### Numeric Columns
+
+```{r numeric-columns}
+# Configure numeric columns with formatting
+financial_data <- data.frame(
+  Product = c("Widget A", "Widget B", "Widget C"),
+  Price = c(19.99, 24.50, 15.75),
+  Quantity = c(100, 250, 75)
+)
+
+handsontable(financial_data) |>
+  hot_col(col = 2, type = "numeric", format = "$0.00") |>
+  hot_col(col = 3, type = "numeric", format = "0,0")
+```
+
+### Dropdown Columns
+
+```{r dropdown-columns}
+# Create dropdown columns
+employee_data <- data.frame(
+  Name = c("John", "Jane", "Bob"),
+  Department = c("IT", "HR", "Finance"),
+  Level = c("Senior", "Junior", "Manager"),
+  stringsAsFactors = FALSE
+)
+
+handsontable(employee_data) |>
+  hot_col(
+    col = 2, 
+    type = "dropdown", 
+    source = c("IT", "HR", "Finance", "Marketing", "Sales"),
+    strict = TRUE
+  ) |>
+  hot_col(
+    col = 3,
+    type = "dropdown",
+    source = c("Junior", "Senior", "Manager", "Director"),
+    strict = TRUE
+  )
+```
+
+### Checkbox Columns
+
+```{r checkbox-columns}
+# Configure checkbox columns
+task_data <- data.frame(
+  Task = c("Review code", "Write tests", "Update docs"),
+  Completed = c(TRUE, FALSE, FALSE),
+  Priority = c("High", "Medium", "Low")
+)
+
+handsontable(task_data) |>
+  hot_col(
+    col = 2, 
+    type = "checkbox",
+    checkedTemplate = "Yes",
+    uncheckedTemplate = "No"
+  )
+```
+
+### Date Columns
+
+```{r date-columns}
+# Configure date columns
+schedule_data <- data.frame(
+  Event = c("Meeting", "Deadline", "Review"),
+  Date = as.Date(c("2024-01-15", "2024-01-20", "2024-01-25")),
+  stringsAsFactors = FALSE
+)
+
+handsontable(schedule_data) |>
+  hot_col(col = 2, type = "date", dateFormat = "YYYY-MM-DD")
+```
+
+## Individual Row Configuration with `hot_row()`
+
+Configure specific rows with different properties.
+
+### Read-Only Rows
+
+```{r readonly-rows}
+# Make specific rows read-only
+data <- iris[1:8, ]
+
+ht <- handsontable(data)
+for (i in c(1, 3, 5)) {
+  ht <- ht |> hot_row(row = i, readOnly = TRUE)
+}
+ht
+```
+
+## Context Menu Configuration with `hot_context_menu()`
+
+Customize the right-click context menu.
+
+### Basic Context Menu
+
+```{r basic-context}
+handsontable(mtcars[1:6, 1:4]) |>
+  hot_table(contextMenu = TRUE) |>
+  hot_context_menu(
+    allowRowEdit = TRUE,
+    allowColEdit = TRUE
+  )
+```
+
+### Custom Context Menu Options
+
+```{r custom-context}
+custom_options <- list(
+  "copy" = list(name = "Copy data"),
+  "paste" = list(name = "Paste data"),
+  "sep1" = "---------",
+  "clear" = list(name = "Clear content")
+)
+
+handsontable(iris[1:5, 1:3]) |>
+  hot_context_menu(customOpts = custom_options)
+```
+
+## Combining Multiple Configurations
+
+Most real-world applications require combining multiple configuration options:
+
+```{r complex-example}
+# A comprehensive example with multiple configurations
+sales_data <- data.frame(
+  Date = seq(as.Date("2024-01-01"), by = "day", length.out = 10),
+  Product = rep(c("Widget A", "Widget B"), 5),
+  Quantity = sample(10:100, 10),
+  Price = round(runif(10, 10, 50), 2),
+  Total = 0,  # Will be calculated
+  Approved = rep(FALSE, 10)
+)
+
+handsontable(sales_data) |>
+  # Configure individual columns
+  hot_col(col = 1, type = "date", dateFormat = "YYYY-MM-DD", width = 100) |>
+  hot_col(col = 2, type = "dropdown", 
+          source = c("Widget A", "Widget B", "Widget C"), width = 100) |>
+  hot_col(col = 3, type = "numeric", format = "0,0", width = 80) |>
+  hot_col(col = 4, type = "numeric", format = "$0.00", width = 80) |>
+  hot_col(col = 5, type = "numeric", format = "$0.00", readOnly = TRUE, width = 80) |>
+  hot_col(col = 6, type = "checkbox", width = 80) |>
+  # Configure table features
+  hot_table(
+    contextMenu = TRUE,
+    filters = TRUE,
+    manualColumnSorting = TRUE,
+    search = TRUE,
+    undo = TRUE
+  ) |>
+  # Configure columns and rows
+  hot_cols(
+    fixedColumnsLeft = 1,
+    manualColumnResize = TRUE
+  ) |>
+  hot_rows(
+    manualRowResize = TRUE,
+    manualRowMove = TRUE
+  )
+```
+
+## Tips for Configuration
+
+### 1. Order Matters
+Apply configurations in this typical order:
+1. Individual column configurations (`hot_col()`)
+2. Individual row configurations (`hot_row()`)
+3. Column-wide settings (`hot_cols()`)
+4. Row-wide settings (`hot_rows()`)
+5. Table-wide features (`hot_table()`)
+6. Context menu customizations (`hot_context_menu()`)
+
+### 2. Column Indexing
+- Columns are 1-indexed in R (first column is 1)
+- You can use column names if `colHeaders = TRUE`
+
+### 3. Performance Considerations
+- For large datasets, consider limiting features like sorting and filtering
+- Use `readOnly = TRUE` for display-only tables
+- Set specific column widths to avoid auto-calculation overhead
+
+### 4. Responsive Design
+```{r responsive}
+# Create responsive tables
+handsontable(mtcars[1:5, 1:4]) |>
+  hot_cols(colWidths = "auto") |>  # Auto-size columns
+  hot_table(stretchH = "all")      # Stretch to container
+```
+
+This covers the main configuration options available in the handsontable 
+package. The next vignettes will cover data validation and Shiny integration.

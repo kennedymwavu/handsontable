@@ -1,0 +1,444 @@
+---
+title: "Data Validation and Customization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Validation and Customization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = interactive()
+)
+```
+
+```{r setup}
+library(handsontable)
+```
+
+# Introduction
+
+This vignette demonstrates how to implement data validation and customize your Handsontables beyond the basic configuration. You'll learn how to ensure data quality, customize column behavior, and create interactive validation rules that help users enter correct data.
+
+## Why Data Validation Matters
+
+Data validation helps:
+- **Maintain data quality** by preventing invalid entries
+- **Guide users** with clear feedback about expected formats
+- **Reduce errors** in data collection and analysis
+- **Enforce business rules** directly in the interface
+
+# Basic Data Validation
+
+The `hot_validate()` function provides three main validation types: numeric, list (dropdown), and regular expression pattern matching.
+
+## Numeric Validation
+
+Ensure numbers fall within specific ranges:
+
+```{r numeric-validation}
+# Sample data with scores and ratings
+validation_data <- data.frame(
+  Student = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+  Test_Score = c(85, 92, 78, 95, 88),
+  Final_Grade = c(87.5, 89.2, 81.3, 94.1, 86.7),
+  Rating = c(4, 5, 3, 5, 4)
+)
+
+handsontable(validation_data) |>
+  hot_validate(cols = 2, type = "numeric", min = 0, max = 100) |>
+  hot_validate(cols = 3, type = "numeric", min = 0, max = 100) |>
+  hot_validate(cols = 4, type = "numeric", min = 1, max = 5)
+```
+
+## List Validation (Dropdowns)
+
+Restrict values to predefined choices:
+
+```{r list-validation}
+# Employee data with department restrictions
+employee_data <- data.frame(
+  Name = c("John Smith", "Jane Doe", "Bob Johnson"),
+  Department = c("Engineering", "Marketing", "Sales"),
+  Status = c("Active", "Inactive", "Active"),
+  Priority = c("High", "Medium", "Low")
+)
+
+handsontable(employee_data) |>
+  hot_validate(
+    cols = 2, 
+    type = "list", 
+    source = c("Engineering", "Marketing", "Sales", "HR", "Finance")
+  ) |>
+  hot_validate(
+    cols = 3, 
+    type = "list", 
+    source = c("Active", "Inactive", "On Leave")
+  ) |>
+  hot_validate(
+    cols = 4, 
+    type = "list", 
+    source = c("Low", "Medium", "High", "Critical")
+  )
+```
+
+## Regular Expression Validation
+
+Validate text patterns like emails, phone numbers, or custom formats:
+
+```{r regexp-validation}
+# Contact information with pattern validation
+contact_data <- data.frame(
+  Name = c("Alice Johnson", "Bob Wilson", "Carol Brown"),
+  Email = c("alice@company.com", "bob@company.com", "carol@company.com"),
+  Phone = c("555-123-4567", "555-987-6543", "555-555-0123"),
+  ZIP_Code = c("12345", "67890", "54321")
+)
+
+handsontable(contact_data) |>
+  hot_validate(
+    cols = 2, 
+    type = "regexp", 
+    pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
+  ) |>
+  hot_validate(
+    cols = 3, 
+    type = "regexp", 
+    pattern = "^\\d{3}-\\d{3}-\\d{4}$"
+  ) |>
+  hot_validate(
+    cols = 4, 
+    type = "regexp", 
+    pattern = "^\\d{5}$"
+  )
+```
+
+# Advanced Validation Options
+
+## Strict vs Lenient Validation
+
+Control how validation errors are handled:
+
+```{r strict-validation}
+# Strict validation prevents invalid entries
+handsontable(data.frame(
+  Grade = c("A", "B", "A", "C"),
+  Score = c(95, 87, 92, 78)
+)) |>
+  hot_validate(
+    cols = 1, 
+    type = "list", 
+    source = c("A", "B", "C", "D", "F"),
+    strict = TRUE,        # Prevents invalid entries
+    allowInvalid = FALSE  # Rejects invalid values
+  ) |>
+  hot_validate(
+    cols = 2, 
+    type = "numeric", 
+    min = 0, 
+    max = 100,
+    strict = FALSE,       # Allows temporary invalid states
+    allowInvalid = TRUE   # Accepts invalid values with warning
+  )
+```
+
+## Combining Validation with Column Types
+
+Use column types alongside validation for enhanced functionality:
+
+```{r column-types-validation}
+# Mixed data types with appropriate validation
+mixed_data <- data.frame(
+  ID = 1:4,
+  Name = c("Product A", "Product B", "Product C", "Product D"),
+  Price = c(29.99, 45.50, 15.75, 89.00),
+  Category = c("Electronics", "Clothing", "Books", "Electronics"),
+  In_Stock = c(TRUE, FALSE, TRUE, TRUE),
+  Launch_Date = as.Date(c("2023-01-15", "2023-03-10", "2023-05-20", "2023-07-01"))
+)
+
+handsontable(mixed_data) |>
+  hot_col(col = 1, readOnly = TRUE) |>
+  hot_col(col = 3, type = "numeric", format = "$0,0.00") |>
+  hot_col(col = 4, type = "dropdown", 
+          source = c("Electronics", "Clothing", "Books", "Home", "Sports")) |>
+  hot_col(col = 5, type = "checkbox") |>
+  hot_col(col = 6, type = "date", dateFormat = "YYYY-MM-DD") |>
+  hot_validate(cols = 3, type = "numeric", min = 0.01, max = 999.99) |>
+  hot_validate(cols = 4, type = "list", 
+               source = c("Electronics", "Clothing", "Books", "Home", "Sports"))
+```
+
+# Column Customization
+
+## Individual Column Configuration
+
+Customize specific columns with `hot_col()`:
+
+```{r individual-columns}
+# Detailed column customization
+sales_data <- data.frame(
+  ID = 1:5,
+  Product = c("Laptop", "Mouse", "Keyboard", "Monitor", "Headphones"),
+  Quantity = c(50, 200, 75, 30, 120),
+  Unit_Price = c(999.99, 25.99, 79.99, 299.99, 159.99),
+  Category = c("Computers", "Accessories", "Accessories", "Monitors", "Accessories"),
+  Active = c(TRUE, TRUE, FALSE, TRUE, TRUE)
+)
+
+handsontable(sales_data) |>
+  hot_col(col = 1, readOnly = TRUE, width = 60) |>
+  hot_col(col = 2, width = 120) |>
+  hot_col(col = 3, type = "numeric", format = "0,0") |>
+  hot_col(col = 4, type = "numeric", format = "$0,0.00") |>
+  hot_col(col = 5, type = "dropdown", 
+          source = c("Computers", "Accessories", "Monitors", "Storage"),
+          strict = TRUE) |>
+  hot_col(col = 6, type = "checkbox",
+          checkedTemplate = "Yes",
+          uncheckedTemplate = "No")
+```
+
+## Row-Level Customization
+
+Configure individual rows with `hot_row()`:
+
+```{r row-customization}
+# Make certain rows read-only (e.g., headers or totals)
+budget_data <- data.frame(
+  Category = c("Revenue", "Salaries", "Marketing", "Operations", "TOTAL"),
+  Q1 = c(100000, -30000, -5000, -15000, 50000),
+  Q2 = c(110000, -32000, -6000, -16000, 56000),
+  Q3 = c(120000, -35000, -7000, -18000, 60000),
+  Q4 = c(130000, -38000, -8000, -20000, 64000)
+)
+
+hot_table <- handsontable(budget_data) |>
+  hot_col(col = 1, readOnly = TRUE, width = 100)
+
+# Make the total row (row 5) read-only
+hot_table |> hot_row(row = 5, readOnly = TRUE)
+```
+
+# Column and Row Management
+
+## Freezing Columns and Rows
+
+Keep important data visible during scrolling:
+
+```{r freezing}
+# Large dataset with frozen columns and rows
+large_data <- data.frame(
+  Name = paste("Employee", 1:20),
+  Department = sample(c("HR", "Engineering", "Sales", "Marketing"), 20, replace = TRUE),
+  Jan = round(runif(20, 3000, 8000), 2),
+  Feb = round(runif(20, 3000, 8000), 2),
+  Mar = round(runif(20, 3000, 8000), 2),
+  Apr = round(runif(20, 3000, 8000), 2),
+  May = round(runif(20, 3000, 8000), 2),
+  Jun = round(runif(20, 3000, 8000), 2)
+)
+
+handsontable(large_data, height = "300px") |>
+  hot_cols(fixedColumnsLeft = 2, colWidths = 100) |>
+  hot_rows(fixedRowsTop = 1) |>
+  hot_table(manualColumnResize = TRUE, manualRowResize = TRUE)
+```
+
+## Manual Resizing and Reordering
+
+Enable user control over table layout:
+
+```{r manual-controls}
+handsontable(mtcars[1:10, 1:6]) |>
+  hot_cols(
+    manualColumnResize = TRUE,
+    manualColumnMove = TRUE,
+    colWidths = 100
+  ) |>
+  hot_rows(
+    manualRowResize = TRUE,
+    manualRowMove = TRUE
+  )
+```
+
+# Complex Validation Scenarios
+
+## Multi-Column Dependencies
+
+Create validation rules that depend on other column values:
+
+```{r multi-column}
+# Order data where quantity affects unit price validation
+order_data <- data.frame(
+  Product = c("Widget A", "Widget B", "Widget C"),
+  Quantity = c(10, 50, 25),
+  Unit_Price = c(15.99, 12.99, 18.99),
+  Discount_Percent = c(0, 5, 2.5),
+  Customer_Type = c("Regular", "Premium", "Regular")
+)
+
+handsontable(order_data) |>
+  hot_col(col = 1, type = "dropdown",
+          source = c("Widget A", "Widget B", "Widget C", "Widget D")) |>
+  hot_validate(cols = 2, type = "numeric", min = 1, max = 1000) |>
+  hot_validate(cols = 3, type = "numeric", min = 0.01, max = 99.99) |>
+  hot_validate(cols = 4, type = "numeric", min = 0, max = 25) |>
+  hot_col(col = 5, type = "dropdown",
+          source = c("Regular", "Premium", "VIP"))
+```
+
+## Custom Validation Messages
+
+While the basic validators provide standard feedback, you can enhance user experience with clear validation rules:
+
+```{r validation-messages}
+# Data entry form with comprehensive validation
+form_data <- data.frame(
+  Employee_ID = c("EMP001", "EMP002", "EMP003"),
+  Salary = c(45000, 67000, 52000),
+  Department = c("IT", "Finance", "HR"),
+  Email = c("john@company.com", "jane@company.com", "bob@company.com"),
+  Phone = c("555-0123", "555-0124", "555-0125"),
+  Start_Date = as.Date(c("2020-01-15", "2019-06-10", "2021-03-01"))
+)
+
+handsontable(form_data) |>
+  hot_validate(
+    cols = 1, 
+    type = "regexp", 
+    pattern = "^EMP\\d{3}$"  # Must be EMP followed by 3 digits
+  ) |>
+  hot_validate(
+    cols = 2, 
+    type = "numeric", 
+    min = 30000, 
+    max = 150000
+  ) |>
+  hot_validate(
+    cols = 3, 
+    type = "list", 
+    source = c("IT", "Finance", "HR", "Marketing", "Operations")
+  ) |>
+  hot_validate(
+    cols = 4, 
+    type = "regexp", 
+    pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
+  ) |>
+  hot_validate(
+    cols = 5, 
+    type = "regexp", 
+    pattern = "^\\d{3}-\\d{4}$"
+  )
+```
+
+# Context Menus and User Experience
+
+## Custom Context Menu
+
+Enhance user interaction with customized right-click menus:
+
+```{r context-menu}
+handsontable(iris[1:8, ]) |>
+  hot_context_menu(
+    allowRowEdit = TRUE,
+    allowColEdit = TRUE
+  ) |>
+  hot_table(
+    contextMenu = TRUE,
+    undo = TRUE,
+    search = TRUE
+  )
+```
+
+## Combining Features
+
+Create a fully-featured, validated data entry table:
+
+```{r comprehensive-example}
+# Comprehensive example combining all features
+inventory_data <- data.frame(
+  SKU = c("A001", "B002", "C003", "D004"),
+  Product_Name = c("Laptop Pro", "Wireless Mouse", "Mechanical Keyboard", "4K Monitor"),
+  Category = c("Computers", "Accessories", "Accessories", "Monitors"),
+  Quantity = c(25, 150, 75, 12),
+  Unit_Cost = c(899.99, 29.99, 129.99, 399.99),
+  Reorder_Level = c(10, 50, 25, 5),
+  Supplier = c("TechCorp", "AccessoriesInc", "KeyboardCo", "DisplayTech"),
+  Active = c(TRUE, TRUE, FALSE, TRUE)
+)
+
+handsontable(inventory_data, height = "350px") |>
+  # Column configurations
+  hot_col(col = 1, readOnly = TRUE, width = 80) |>
+  hot_col(col = 2, width = 150) |>
+  hot_col(col = 3, type = "dropdown", 
+          source = c("Computers", "Accessories", "Monitors", "Storage", "Networking")) |>
+  hot_col(col = 4, type = "numeric", format = "0,0") |>
+  hot_col(col = 5, type = "numeric", format = "$0,0.00") |>
+  hot_col(col = 6, type = "numeric", format = "0,0") |>
+  hot_col(col = 7, type = "dropdown",
+          source = c("TechCorp", "AccessoriesInc", "KeyboardCo", "DisplayTech", "NetworkSys")) |>
+  hot_col(col = 8, type = "checkbox") |>
+  
+  # Validations
+  hot_validate(cols = 3, type = "list", 
+               source = c("Computers", "Accessories", "Monitors", "Storage", "Networking")) |>
+  hot_validate(cols = 4, type = "numeric", min = 0, max = 9999) |>
+  hot_validate(cols = 5, type = "numeric", min = 0.01, max = 99999.99) |>
+  hot_validate(cols = 6, type = "numeric", min = 1, max = 999) |>
+  hot_validate(cols = 7, type = "list",
+               source = c("TechCorp", "AccessoriesInc", "KeyboardCo", "DisplayTech", "NetworkSys")) |>
+  
+  # Table features
+  hot_table(
+    contextMenu = TRUE,
+    filters = TRUE,
+    manualColumnSorting = TRUE,
+    search = TRUE,
+    undo = TRUE
+  ) |>
+  
+  # Column management
+  hot_cols(
+    manualColumnResize = TRUE,
+    fixedColumnsLeft = 1
+  )
+```
+
+# Best Practices
+
+## Validation Strategy
+
+1. **Start Simple**: Begin with basic validation and add complexity as needed
+2. **User-Friendly**: Provide clear feedback about validation requirements
+3. **Performance**: For large datasets, consider client-side vs server-side validation
+4. **Flexibility**: Allow invalid temporary states during editing when appropriate
+
+## Column Configuration
+
+1. **Consistent Formatting**: Use consistent number and date formats across similar columns
+2. **Appropriate Widths**: Set column widths based on expected content length
+3. **Read-Only Fields**: Protect calculated or system-generated fields
+4. **Logical Grouping**: Use column freezing to keep related data visible
+
+## User Experience
+
+1. **Progressive Enhancement**: Start with basic functionality and add features gradually
+2. **Contextual Menus**: Enable context menus for power users while keeping the interface clean
+3. **Keyboard Navigation**: Ensure validation doesn't interfere with natural keyboard navigation
+4. **Mobile Considerations**: Test validation behavior on mobile devices
+
+# Next Steps
+
+This vignette covered comprehensive data validation and customization techniques. For more advanced usage:
+
+- **Shiny Integration**: Learn how to handle validation in reactive Shiny applications
+- **Custom Renderers**: Create custom cell renderers for specialized data types
+- **Advanced Formulas**: Implement complex calculation and dependency rules
+- **Performance Optimization**: Techniques for handling large datasets with validation
+
+Experiment with these examples and adapt them to your specific data validation needs!

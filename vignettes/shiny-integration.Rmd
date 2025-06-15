@@ -1,0 +1,594 @@
+---
+title: "Shiny Integration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Shiny Integration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE  # Set to FALSE since these are Shiny examples
+)
+```
+
+```{r setup}
+library(handsontable)
+library(shiny)
+```
+
+# Shiny Integration
+
+The handsontable package is designed for seamless integration with Shiny 
+applications. This vignette covers everything you need to know about using 
+handsontables in reactive applications.
+
+## Basic Shiny Integration
+
+### Essential Components
+
+Every Shiny app with handsontables needs three main components:
+
+1. **Output function**: `handsontableOutput()` in the UI
+2. **Render function**: `renderHandsontable()` in the server
+3. **Input detection**: Reactive access to table changes
+
+### Minimal Example
+
+```{r minimal-shiny}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("Basic Handsontable"),
+  handsontableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderHandsontable({
+    handsontable(mtcars[1:6, 1:4])
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Detecting Changes
+
+The most powerful feature of Shiny integration is the ability to react to 
+table changes in real-time.
+
+### Basic Change Detection
+
+```{r change-detection}
+ui <- fluidPage(
+  titlePanel("Change Detection"),
+  handsontableOutput("table"),
+  br(),
+  h4("Change Information:"),
+  verbatimTextOutput("change_info")
+)
+
+server <- function(input, output, session) {
+  # Create initial data
+  initial_data <- data.frame(
+    Name = c("Alice", "Bob", "Charlie"),
+    Age = c(25, 30, 35),
+    Department = c("IT", "HR", "Finance")
+  )
+
+  output$table <- renderHandsontable({
+    handsontable(initial_data)
+  })
+
+  # React to any change in the table
+  observeEvent(input$table, {
+    cat("Table changed at:", as.character(Sys.time()), "\n")
+
+    if (!is.null(input$table)) {
+      # Get the current data
+      current_data <- hot_to_r(input$table$data)
+      print(current_data)
+
+      # Check what type of change occurred
+      if (!is.null(input$table$changes)) {
+        cat("Number of cell changes:", length(input$table$changes), "\n")
+      }
+    }
+  })
+
+  output$change_info <- renderText({
+    if (is.null(input$table)) {
+      "No changes yet"
+    } else {
+      paste(
+        "Last change at:",
+        Sys.time(),
+        "\n",
+        "Event type:",
+        input$table$event %||% "afterChange",
+        "\n",
+        "Data rows:",
+        length(input$table$data %||% list())
+      )
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Available Input Values
+
+When a handsontable changes, several input values become available:
+
+- **`input$table`** - Main input with complete information
+- **`input$table_data`** - Just the current data
+- **`input$table_changes`** - Specific change details
+- **`input$table_select`** - Current selection information
+
+### Detailed Change Information
+
+```{r detailed-changes}
+ui <- fluidPage(
+  titlePanel("Detailed Change Tracking"),
+  handsontableOutput("table"),
+  br(),
+  fluidRow(
+    column(6, h4("Current Data:"), tableOutput("current_data")),
+    column(6, h4("Recent Changes:"), verbatimTextOutput("changes"))
+  )
+)
+
+server <- function(input, output, session) {
+  # Reactive value to store data
+  table_data <- reactiveVal(data.frame(
+    Product = c("Widget A", "Widget B", "Widget C"),
+    Price = c(19.99, 24.50, 15.75),
+    Stock = c(100, 250, 75)
+  ))
+
+  output$table <- renderHandsontable({
+    handsontable(table_data()) |>
+      hot_col(col = 2, type = "numeric", format = "$0.00") |>
+      hot_col(col = 3, type = "numeric", format = "0,0") |>
+      hot_table(contextMenu = TRUE)
+  })
+
+  # Update reactive value when table changes
+  observeEvent(input$table, {
+    if (!is.null(input$table$data)) {
+      new_data <- hot_to_r(input$table$data)
+      table_data(new_data)
+    }
+  })
+
+  # Display current data
+  output$current_data <- renderTable({
+    table_data()
+  })
+
+  # Display change information
+  output$changes <- renderText({
+    if (is.null(input$table$changes)) {
+      "No changes yet"
+    } else {
+      changes <- input$table$changes
+      paste(
+        "Changes made:",
+        paste(
+          sapply(changes, function(change) {
+            sprintf(
+              "Row %d, Col %d: %s -> %s",
+              change[[1]] + 1,
+              change[[2]] + 1,
+              change[[3]],
+              change[[4]]
+            )
+          }),
+          collapse = "\n"
+        ),
+        sep = "\n"
+      )
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Interactive Data Editing
+
+### Editable Table with Validation
+
+```{r editable-validation}
+ui <- fluidPage(
+  titlePanel("Editable Table with Validation"),
+  handsontableOutput("table"),
+  br(),
+  actionButton("save", "Save Changes", class = "btn-primary"),
+  actionButton("reset", "Reset Data", class = "btn-warning"),
+  br(),
+  br(),
+  verbatimTextOutput("status")
+)
+
+server <- function(input, output, session) {
+  # Original data
+  original_data <- data.frame(
+    ID = 1:5,
+    Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+    Email = c(
+      "alice@company.com",
+      "bob@company.com",
+      "charlie@company.com",
+      "diana@company.com",
+      "eve@company.com"
+    ),
+    Salary = c(50000, 60000, 55000, 65000, 58000),
+    Department = c("IT", "HR", "IT", "Finance", "HR")
+  )
+
+  # Current working data
+  current_data <- reactiveVal(original_data)
+
+  output$table <- renderHandsontable({
+    handsontable(current_data()) |>
+      hot_col(col = 1, readOnly = TRUE) |> # ID is read-only
+      hot_col(col = 2, type = "text") |>
+      hot_col(col = 3, type = "text") |>
+      hot_validate(
+        col = 3,
+        type = "regexp",
+        pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
+      ) |>
+      hot_col(col = 4, type = "numeric", format = "$0,0") |>
+      hot_validate(col = 4, type = "numeric", min = 30000, max = 100000) |>
+      hot_col(
+        col = 5,
+        type = "dropdown",
+        source = c("IT", "HR", "Finance", "Marketing"),
+        strict = TRUE
+      ) |>
+      hot_table(contextMenu = TRUE)
+  })
+
+  # Update current data when table changes
+  observeEvent(input$table, {
+    if (!is.null(input$table$data)) {
+      current_data(hot_to_r(input$table$data))
+    }
+  })
+
+  # Save changes
+  observeEvent(input$save, {
+    # In a real app, you would save to database here
+    showNotification("Data saved successfully!", type = "success")
+  })
+
+  # Reset to original data
+  observeEvent(input$reset, {
+    current_data(original_data)
+    showNotification("Data reset to original values", type = "info")
+  })
+
+  output$status <- renderText({
+    data_changed <- !identical(current_data(), original_data)
+    if (data_changed) {
+      "⚠️ Data has been modified"
+    } else {
+      "✅ Data matches original"
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Programmatic Updates
+
+### Updating Cell Values
+
+```{r programmatic-updates}
+ui <- fluidPage(
+  titlePanel("Programmatic Updates"),
+  fluidRow(
+    column(6, handsontableOutput("table")),
+    column(
+      6,
+      h4("Update Controls"),
+      numericInput("row", "Row:", value = 1, min = 1, max = 5),
+      numericInput("col", "Column:", value = 1, min = 1, max = 3),
+      textInput("value", "New Value:", value = ""),
+      actionButton("update", "Update Cell"),
+      br(),
+      br(),
+      actionButton("random", "Fill Random Data"),
+      actionButton("clear", "Clear All")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  table_data <- reactiveVal(data.frame(
+    A = rep("", 5),
+    B = rep("", 5),
+    C = rep("", 5)
+  ))
+
+  output$table <- renderHandsontable({
+    handsontable(table_data())
+  })
+
+  # Update specific cell
+  observeEvent(input$update, {
+    req(input$row, input$col, input$value)
+    set_data("table", input$row, input$col, input$value)
+  })
+
+  # Fill with random data
+  observeEvent(input$random, {
+    new_data <- data.frame(
+      A = sample(letters[1:10], 5, replace = TRUE),
+      B = sample(1:100, 5),
+      C = sample(c("X", "Y", "Z"), 5, replace = TRUE)
+    )
+    table_data(new_data)
+  })
+
+  # Clear all data
+  observeEvent(input$clear, {
+    table_data(data.frame(
+      A = rep("", 5),
+      B = rep("", 5),
+      C = rep("", 5)
+    ))
+  })
+
+  # Track changes
+  observeEvent(input$table, {
+    if (!is.null(input$table$data)) {
+      table_data(hot_to_r(input$table$data))
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Advanced Shiny Patterns
+
+### Master-Detail Views
+
+```{r master-detail}
+ui <- fluidPage(
+  titlePanel("Master-Detail Pattern"),
+  fluidRow(
+    column(8, h4("Employees"), handsontableOutput("employees")),
+    column(4, h4("Selected Employee Details"), uiOutput("employee_details"))
+  )
+)
+
+server <- function(input, output, session) {
+  employees <- data.frame(
+    ID = 1:10,
+    Name = paste("Employee", 1:10),
+    Department = sample(c("IT", "HR", "Finance"), 10, replace = TRUE),
+    Salary = sample(40000:80000, 10)
+  )
+
+  output$employees <- renderHandsontable({
+    handsontable(employees) |>
+      hot_col(col = 1, readOnly = TRUE) |>
+      hot_col(col = 4, type = "numeric", format = "$0,0") |>
+      hot_table(contextMenu = TRUE)
+  })
+
+  # Get selected employee
+  selected_employee <- reactive({
+    if (!is.null(input$employees_select)) {
+      row_index <- input$employees_select$row + 1 # Convert to 1-based
+      if (row_index <= nrow(employees)) {
+        employees[row_index, ]
+      } else {
+        NULL
+      }
+    } else {
+      NULL
+    }
+  })
+
+  output$employee_details <- renderUI({
+    emp <- selected_employee()
+    if (is.null(emp)) {
+      p("Select an employee from the table")
+    } else {
+      div(
+        h5(paste("Employee ID:", emp$ID)),
+        p(strong("Name:"), emp$Name),
+        p(strong("Department:"), emp$Department),
+        p(strong("Salary:"), scales::dollar(emp$Salary)),
+        br(),
+        actionButton("edit_emp", "Edit Employee", class = "btn-primary")
+      )
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Dynamic Column Generation
+
+```{r dynamic-columns}
+ui <- fluidPage(
+  titlePanel("Dynamic Columns"),
+  fluidRow(
+    column(
+      3,
+      h4("Controls"),
+      numericInput(
+        "num_cols",
+        "Number of Columns:",
+        value = 3,
+        min = 1,
+        max = 10
+      ),
+      textInput("col_prefix", "Column Prefix:", value = "Col"),
+      actionButton("generate", "Generate Table")
+    ),
+    column(9, handsontableOutput("dynamic_table"))
+  )
+)
+
+server <- function(input, output, session) {
+  table_data <- reactiveVal(NULL)
+
+  observeEvent(input$generate, {
+    num_cols <- input$num_cols
+    col_names <- paste0(input$col_prefix, 1:num_cols)
+
+    # Generate random data
+    new_data <- data.frame(
+      matrix(
+        sample(1:100, 50 * num_cols, replace = TRUE),
+        nrow = 50,
+        ncol = num_cols
+      )
+    )
+    names(new_data) <- col_names
+
+    table_data(new_data)
+  })
+
+  output$dynamic_table <- renderHandsontable({
+    req(table_data())
+
+    ht <- handsontable(table_data()) |>
+      hot_table(
+        contextMenu = TRUE,
+        filters = TRUE,
+        manualColumnSorting = TRUE
+      )
+
+    # Configure each column as numeric
+    for (i in seq_len(ncol(table_data()))) {
+      ht <- ht |> hot_col(col = i, type = "numeric", format = "0,0")
+    }
+
+    ht
+  })
+
+  # Initialize with default table
+  observeEvent(
+    TRUE,
+    {
+      table_data(data.frame(
+        Col1 = 1:10,
+        Col2 = 11:20,
+        Col3 = 21:30
+      ))
+    },
+    once = TRUE
+  )
+}
+
+shinyApp(ui, server)
+```
+
+## Performance Tips for Shiny
+
+### 1. Debouncing Changes
+For large tables, consider debouncing change events:
+
+```{r debouncing, eval=FALSE}
+# Use a reactive timer to batch updates
+values <- reactiveValues(data = NULL, last_update = Sys.time())
+
+observe({
+  invalidateLater(500) # Check every 500ms
+
+  if (
+    !is.null(input$table) &&
+      difftime(Sys.time(), values$last_update, units = "secs") > 0.5
+  ) {
+    values$data <- hot_to_r(input$table$data)
+    values$last_update <- Sys.time()
+  }
+})
+
+```
+
+### 2. Selective Updates
+Only update what's necessary:
+
+```{r selective-updates, eval=FALSE}
+observeEvent(input$table, {
+  # Only process if data actually changed
+  new_data <- hot_to_r(input$table$data)
+  if (!identical(new_data, previous_data())) {
+    # Process changes
+    previous_data(new_data)
+  }
+})
+```
+
+### 3. Large Dataset Handling
+For very large datasets:
+
+```{r large-datasets, eval=FALSE}
+# Use server-side filtering and pagination
+# Limit initial display to reasonable size
+display_data <- reactive({
+  full_data()[1:min(1000, nrow(full_data())), ]
+})
+
+output$table <- renderHandsontable({
+  handsontable(display_data()) |>
+    hot_table(
+      filters = FALSE,  # Disable client-side filtering
+      manualColumnSorting = FALSE  # Handle sorting server-side
+    )
+})
+```
+
+## Integration with Other Packages
+
+### With DT Package
+
+```{r dt-integration, eval=FALSE}
+# Use handsontable for editing, DT for display
+library(DT)
+
+# In UI
+fluidPage(
+  tabsetPanel(
+    tabPanel("Edit", handsontableOutput("edit_table")),
+    tabPanel("View", DT::dataTableOutput("view_table"))
+  )
+)
+
+# In server
+shared_data <- reactiveVal(mtcars)
+
+output$edit_table <- renderHandsontable({
+  handsontable(shared_data())
+})
+
+output$view_table <- DT::renderDataTable({
+  DT::datatable(shared_data(), options = list(pageLength = 25))
+})
+
+observeEvent(input$edit_table, {
+  if (!is.null(input$edit_table$data)) {
+    shared_data(hot_to_r(input$edit_table$data))
+  }
+})
+```
+
+This covers the essential patterns for using handsontables in Shiny 
+applications. The next vignette will cover data validation and advanced 
+customization options.

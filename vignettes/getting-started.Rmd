@@ -1,0 +1,164 @@
+---
+title: "Getting Started with handsontable"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with handsontable}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = interactive()
+)
+```
+
+```{r setup}
+library(handsontable)
+```
+
+# Introduction
+
+The `handsontable` package provides an R interface to the powerful Handsontable 
+JavaScript library, bringing spreadsheet-like functionality to R and Shiny 
+applications. This vignette will get you started with the basics.
+
+## What is Handsontable?
+
+Handsontable is an interactive data grid that combines the familiarity of 
+spreadsheets with the power of professional data grids. It provides:
+
+- **Interactive editing** - Click to edit cells directly
+- **Data validation** - Ensure data quality with built-in validators
+- **Flexible formatting** - Control appearance and behavior
+- **Shiny integration** - Seamless reactive programming support
+
+## Your First Handsontable
+
+The simplest way to create a handsontable is to pass a data.frame to the 
+`handsontable()` function:
+
+```{r basic-example}
+# Create a basic handsontable
+handsontable(mtcars[1:5, 1:4])
+```
+
+This creates an interactive table with:
+- Column headers from the data.frame column names
+- Row numbers on the left
+- Editable cells
+- Automatic column width adjustment
+
+## Working with Different Data Types
+
+Handsontable automatically handles different R data types:
+
+```{r data-types}
+# Create a dataset with mixed types
+mixed_data <- data.frame(
+  Name = c("Alice", "Bob", "Charlie", "Diana"),
+  Age = c(25, 30, 35, 28),
+  Salary = c(50000, 65000, 75000, 60000),
+  Active = c(TRUE, FALSE, TRUE, TRUE),
+  Department = factor(c("IT", "HR", "Finance", "IT")),
+  Start_Date = as.Date(c("2020-01-15", "2019-03-10", "2018-07-22", "2021-02-01"))
+)
+
+handsontable(mixed_data)
+```
+
+Notice how:
+- Text is displayed as-is
+- Numbers are right-aligned
+- Logical values show as TRUE/FALSE
+- Factors are converted to character strings
+- Dates are displayed in a readable format
+
+## Basic Customization
+
+### Custom Headers
+
+You can provide custom column headers:
+
+```{r custom-headers}
+handsontable(
+  iris[1:8, ],
+  colHeaders = c("Sepal L", "Sepal W", "Petal L", "Petal W", "Species")
+)
+```
+
+### Controlling Headers and Sizing
+
+```{r headers-sizing}
+handsontable(
+  mtcars[1:6, 1:4],
+  colHeaders = TRUE,    # Show column headers (default)
+  rowHeaders = FALSE,   # Hide row numbers
+  width = "100%",       # Full width
+  height = "300px"      # Fixed height
+)
+```
+
+### Read-Only Tables
+
+Make the entire table read-only:
+
+```{r readonly}
+handsontable(
+  iris[1:5, ],
+  readOnly = TRUE
+)
+```
+
+## Matrix Input
+
+Handsontable also works with matrices:
+
+```{r matrix-input}
+# Create a matrix
+mat <- matrix(1:12, nrow = 3, ncol = 4)
+colnames(mat) <- paste("Col", 1:4)
+rownames(mat) <- paste("Row", 1:3)
+
+handsontable(mat)
+```
+
+## Understanding the Widget Output
+
+When you create a handsontable, you get an htmlwidget object that contains:
+
+```{r widget-structure, eval=FALSE}
+ht <- handsontable(iris[1:3, 1:3])
+
+# The widget has these main components:
+# - x$data: The data in JavaScript format
+# - x$colHeaders: Column header names
+# - x$rowHeaders: Whether to show row headers
+# - x$readOnly: Whether the table is read-only
+```
+
+## Basic Pipe Operations
+
+The package is designed to work well with the pipe operator:
+
+```{r pipe-example}
+iris[1:5, ] |>
+  handsontable() |>
+  hot_cols(colWidths = 100) |>
+  hot_table(contextMenu = TRUE)
+```
+
+## Next Steps
+
+This introduction covered the basics of creating handsontables. In the next 
+vignettes, you'll learn about:
+
+- **Configuration Options**: Detailed customization of appearance and behavior
+- **Data Validation**: Ensuring data quality with validators
+- **Shiny Integration**: Building interactive applications
+- **Advanced Features**: Context menus, sorting, filtering, and more
+
+Try experimenting with the examples above and see how the tables respond to 
+your interactions!
