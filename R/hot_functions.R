@@ -122,7 +122,7 @@ hot_table <- function(
 #'
 #' @param hot A handsontable widget object
 #' @param cols Column indices to apply validation (numeric vector)
-#' @param type Validation type: "numeric", "date", "list", "regexp"
+#' @param type Validation type: "numeric", "list", "regexp"
 #' @param source For "list" type, vector of allowed values
 #' @param pattern For "regexp" type, regular expression pattern
 #' @param min,max For "numeric" type, minimum and maximum values
@@ -134,8 +134,8 @@ hot_table <- function(
 #' @export
 hot_validate <- function(
   hot,
-  cols = NULL,
-  type = "numeric",
+  cols,
+  type = c("numeric", "list", "regexp"),
   source = NULL,
   pattern = NULL,
   min = NULL,
@@ -144,9 +144,7 @@ hot_validate <- function(
   strict = FALSE,
   ...
 ) {
-  if (is.null(cols)) {
-    stop("cols parameter is required for validation")
-  }
+  type <- match.arg(arg = type)
 
   validator <- list(
     type = type,
@@ -156,16 +154,28 @@ hot_validate <- function(
   )
 
   # Add type-specific options
-  if (type == "numeric") {
-    if (!is.null(min)) {
-      validator$min <- min
+  switch(
+    EXPR = type,
+    numeric = {
+      if (!is.null(min)) {
+        validator$min <- min
+      }
+
+      if (!is.null(max)) {
+        validator$max <- max
+      }
+    },
+    list = {
+      if (!is.null(source)) {
+        validator$source <- source
+      }
+    },
+    regexp = {
+      if (!is.null(pattern)) {
+        validator$pattern <- pattern
+      }
     }
-    if (!is.null(max)) validator$max <- max
-  } else if (type == "list") {
-    if (!is.null(source)) validator$source <- source
-  } else if (type == "regexp") {
-    if (!is.null(pattern)) validator$pattern <- pattern
-  }
+  )
 
   # Create columns configuration if it doesn't exist
   if (is.null(hot$x$columns)) {
@@ -236,11 +246,11 @@ hot_context_menu <- function(
 #' Helper function to convert JavaScript Handsontable data back to R format.
 #' Primarily used in Shiny applications.
 #'
-#' @param data Handsontable data (typically from Shiny input)
-#' @param colnames Optional column names
-#' @param stringsAsFactors Logical, convert strings to factors
+#' @param data List. Handsontable data (typically from Shiny input)
+#' @param colnames Character vector. Optional column names
+#' @param stringsAsFactors Logical. Convert strings to factors?
 #'
-#' @return A data.frame
+#' @return data.frame
 #' @export
 hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
   if (!length(data)) {
@@ -249,8 +259,7 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 
   df <- as.data.frame(do.call(rbind, data), stringsAsFactors = stringsAsFactors)
 
-  # Apply column names if provided
-  if (!is.null(colnames) && length(colnames) == ncol(df)) {
+  if (length(colnames) == ncol(df)) {
     names(df) <- colnames
   }
 

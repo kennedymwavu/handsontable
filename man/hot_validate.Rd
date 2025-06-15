@@ -6,8 +6,8 @@
 \usage{
 hot_validate(
   hot,
-  cols = NULL,
-  type = "numeric",
+  cols,
+  type = c("numeric", "list", "regexp"),
   source = NULL,
   pattern = NULL,
   min = NULL,
@@ -22,7 +22,7 @@ hot_validate(
 
 \item{cols}{Column indices to apply validation (numeric vector)}
 
-\item{type}{Validation type: "numeric", "date", "list", "regexp"}
+\item{type}{Validation type: "numeric", "list", "regexp"}
 
 \item{source}{For "list" type, vector of allowed values}
 

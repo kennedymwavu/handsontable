@@ -7,14 +7,14 @@
 hot_to_r(data, colnames = NULL, stringsAsFactors = FALSE)
 }
 \arguments{
-\item{data}{Handsontable data (typically from Shiny input)}
+\item{data}{List. Handsontable data (typically from Shiny input)}
 
-\item{colnames}{Optional column names}
+\item{colnames}{Character vector. Optional column names}
 
-\item{stringsAsFactors}{Logical, convert strings to factors}
+\item{stringsAsFactors}{Logical. Convert strings to factors?}
 }
 \value{
-A data.frame
+data.frame
 }
 \description{
 Helper function to convert JavaScript Handsontable data back to R format.
