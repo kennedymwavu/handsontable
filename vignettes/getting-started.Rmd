@@ -70,6 +70,7 @@ handsontable(mixed_data)
 ```
 
 Notice how:
+
 - Text is displayed as-is
 - Numbers are right-aligned
 - Logical values show as TRUE/FALSE
@@ -93,11 +94,12 @@ handsontable(
 
 ```{r headers-sizing}
 handsontable(
-  mtcars[1:6, 1:4],
+  mtcars[, 1:4],
   colHeaders = TRUE,    # Show column headers (default)
   rowHeaders = FALSE,   # Hide row numbers
   width = "100%",       # Full width
-  height = "300px"      # Fixed height
+  height = "300px",      # Fixed height
+  adaptiveHeight = FALSE
 )
 ```
 
