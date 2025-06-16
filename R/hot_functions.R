@@ -240,7 +240,6 @@ hot_validate <- function(
   min = NULL,
   max = NULL,
   allowInvalid = FALSE,
-  strict = TRUE,
   ...
 ) {
   type <- match.arg(arg = type)
@@ -248,7 +247,6 @@ hot_validate <- function(
   validator <- list(
     type = type,
     allowInvalid = allowInvalid,
-    strict = strict,
     ...
   )
 

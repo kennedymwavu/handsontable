@@ -36,8 +36,10 @@ test_that("hot_validate adds validation to columns", {
   expect_true(!is.null(ht$x$columns))
   expect_equal(ht$x$columns[[1]]$validator$type, "numeric")
   expect_equal(ht$x$columns[[1]]$validator$min, 0)
+  expect_equal(ht$x$columns[[1]]$validator$allowInvalid, FALSE)
   expect_equal(ht$x$columns[[2]]$validator$type, "numeric")
   expect_equal(ht$x$columns[[3]]$validator$type, "numeric")
+  expect_null(ht$x$columns[[1]]$validator$strict)  # strict parameter removed
 })
 
 test_that("hot_validate handles list validation", {
@@ -53,6 +55,7 @@ test_that("hot_validate handles list validation", {
     ht$x$columns[[5]]$validator$source,
     c("setosa", "versicolor", "virginica")
   )
+  expect_equal(ht$x$columns[[5]]$validator$allowInvalid, FALSE)
 })
 
 test_that("hot_validate handles regexp validation", {
@@ -69,6 +72,7 @@ test_that("hot_validate handles regexp validation", {
     ht$x$columns[[1]]$validator$pattern,
     "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
   )
+  expect_equal(ht$x$columns[[1]]$validator$allowInvalid, FALSE)
 })
 
 test_that("hot_to_r converts data correctly", {

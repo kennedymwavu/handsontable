@@ -105,6 +105,61 @@ HTMLWidgets.widget({
           });
         }
 
+        // Transform R validator objects to Handsontable v6.2.2 format
+        if (config.columns && Array.isArray(config.columns)) {
+          config.columns = config.columns.map((col) => {
+            if (col && col.validator && typeof col.validator === 'object') {
+              const transformedCol = {...col};
+              const validator = col.validator;
+              
+              // Set validator to string alias or function
+              if (validator.type === 'numeric') {
+                transformedCol.validator = 'numeric';
+                // Add numeric-specific options
+                if (validator.min !== undefined || validator.max !== undefined) {
+                  transformedCol.validatorOptions = {};
+                  if (validator.min !== undefined) transformedCol.validatorOptions.min = validator.min;
+                  if (validator.max !== undefined) transformedCol.validatorOptions.max = validator.max;
+                }
+              } else if (validator.type === 'list') {
+                transformedCol.validator = 'dropdown';
+                if (validator.source !== undefined) {
+                  transformedCol.source = validator.source;
+                }
+              } else if (validator.type === 'regexp') {
+                // Create custom regexp validator function
+                if (validator.pattern) {
+                  const pattern = new RegExp(validator.pattern);
+                  transformedCol.validator = function(value, callback) {
+                    if (value === null || value === undefined || value === '') {
+                      callback(true); // Allow empty values
+                    } else {
+                      callback(pattern.test(String(value)));
+                    }
+                  };
+                }
+              }
+              
+              // Handle allowInvalid at column level
+              if (validator.allowInvalid !== undefined) {
+                transformedCol.allowInvalid = validator.allowInvalid;
+              }
+              
+              // Remove the original validator object
+              delete transformedCol.validator.type;
+              delete transformedCol.validator.min;
+              delete transformedCol.validator.max;
+              delete transformedCol.validator.source;
+              delete transformedCol.validator.pattern;
+              delete transformedCol.validator.allowInvalid;
+              delete transformedCol.validator.strict;
+              
+              return transformedCol;
+            }
+            return col;
+          });
+        }
+
         // Create Handsontable instance
         try {
           hot = new Handsontable(el, config);
