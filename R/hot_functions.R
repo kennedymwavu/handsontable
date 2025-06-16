@@ -420,8 +420,15 @@ hot_to_r <- function(data) {
     return(data.frame())
   }
 
-  df <- lapply(X = data$data, FUN = \(x) {
-    x <- data.frame(x)
+  df <- lapply(X = data$data, FUN = \(row) {
+    x <- lapply(row, \(value) {
+      if (identical(value, "ht-missing")) {
+        value <- NA
+      }
+      value
+    }) |>
+      data.frame()
+
     if (ncol(x)) {
       names(x) <- paste0("x", seq_along(x))
     }

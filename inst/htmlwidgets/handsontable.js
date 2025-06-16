@@ -412,6 +412,38 @@ HTMLWidgets.widget({
         // Create Handsontable instance
         try {
           hot = new Handsontable(el, config);
+          
+          // Initialize dynamic column names tracking
+          let currentColnames = config.originalColnames ? [...config.originalColnames] : [];
+
+          // Add hook to convert null/undefined to "ht-missing" for R compatibility
+          hot.addHook("afterCreateRow", function(index, amount, source) {
+            if (source !== "loadData") {
+              // Set default values for new rows to "ht-missing"
+              const colCount = hot.countCols();
+              for (let row = index; row < index + amount; row++) {
+                for (let col = 0; col < colCount; col++) {
+                  if (hot.getDataAtCell(row, col) === null || hot.getDataAtCell(row, col) === undefined) {
+                    hot.setDataAtCell(row, col, "ht-missing", "loadData"); // Use loadData to avoid triggering hooks
+                  }
+                }
+              }
+            }
+          });
+          
+          hot.addHook("afterCreateCol", function(index, amount, source) {
+            if (source !== "loadData") {
+              // Set default values for new columns to "ht-missing"
+              const rowCount = hot.countRows();
+              for (let col = index; col < index + amount; col++) {
+                for (let row = 0; row < rowCount; row++) {
+                  if (hot.getDataAtCell(row, col) === null || hot.getDataAtCell(row, col) === undefined) {
+                    hot.setDataAtCell(row, col, "ht-missing", "loadData"); // Use loadData to avoid triggering hooks
+                  }
+                }
+              }
+            }
+          });
 
           // Store reference for Shiny
           if (HTMLWidgets.shinyMode) {
@@ -421,13 +453,13 @@ HTMLWidgets.widget({
             hot.addHook("afterChange", function (changes, source) {
               if (source !== "loadData" && changes) {
                 const data = hot.getData();
-                // Send to input$table_id (main input) with original column names
+                // Send to input$table_id (main input) with current column names
                 Shiny.setInputValue(
                   el.id,
                   {
                     data: data,
                     changes: changes,
-                    colnames: config.originalColnames, // Include original column names
+                    colnames: currentColnames, // Use dynamic column names
                   },
                   {
                     priority: "event",
@@ -476,7 +508,7 @@ HTMLWidgets.widget({
                     event: "afterCreateRow",
                     index: index,
                     amount: amount,
-                    colnames: config.originalColnames, // Include original column names
+                    colnames: currentColnames, // Use dynamic column names
                   },
                   {
                     priority: "event",
@@ -500,7 +532,7 @@ HTMLWidgets.widget({
                       event: "afterRemoveRow",
                       index: index,
                       amount: amount,
-                      colnames: config.originalColnames, // Include original column names
+                      colnames: currentColnames, // Use dynamic column names
                     },
                     {
                       priority: "event",
@@ -515,6 +547,12 @@ HTMLWidgets.widget({
 
             hot.addHook("afterCreateCol", function (index, amount, source) {
               if (source !== "loadData") {
+                // Update column names array for added columns
+                for (let i = 0; i < amount; i++) {
+                  const newColName = "col_" + (currentColnames.length + i + 1);
+                  currentColnames.splice(index + i, 0, newColName);
+                }
+                
                 const data = hot.getData();
                 Shiny.setInputValue(
                   el.id,
@@ -523,7 +561,7 @@ HTMLWidgets.widget({
                     event: "afterCreateCol",
                     index: index,
                     amount: amount,
-                    colnames: config.originalColnames, // Include original column names
+                    colnames: currentColnames, // Updated column names
                   },
                   {
                     priority: "event",
@@ -539,6 +577,9 @@ HTMLWidgets.widget({
               "afterRemoveCol",
               function (index, amount, physicalColumns, source) {
                 if (source !== "loadData") {
+                  // Update column names array for removed columns
+                  currentColnames.splice(index, amount);
+                  
                   const data = hot.getData();
                   Shiny.setInputValue(
                     el.id,
@@ -547,7 +588,7 @@ HTMLWidgets.widget({
                       event: "afterRemoveCol",
                       index: index,
                       amount: amount,
-                      colnames: config.originalColnames, // Include original column names
+                      colnames: currentColnames, // Updated column names
                     },
                     {
                       priority: "event",
