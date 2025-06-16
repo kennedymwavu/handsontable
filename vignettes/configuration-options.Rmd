@@ -99,14 +99,6 @@ handsontable(mtcars[1:10, 1:6]) |>
   )
 ```
 
-### Themes
-
-```{r themes}
-# Apply a dark theme
-handsontable(iris[1:6, ]) |>
-  hot_table(themeName = "ht-theme-main-dark-auto")
-```
-
 ### Fill Handle Configuration
 
 ```{r fill-handle}
@@ -197,10 +189,8 @@ task_data <- data.frame(
 
 handsontable(task_data) |>
   hot_col(
-    col = 2, 
-    type = "checkbox",
-    checkedTemplate = "Yes",
-    uncheckedTemplate = "No"
+    col = 2,
+    type = "checkbox"
   )
 ```
 
@@ -252,16 +242,33 @@ handsontable(mtcars[1:6, 1:4]) |>
 
 ### Custom Context Menu Options
 
-```{r custom-context}
-custom_options <- list(
-  "copy" = list(name = "Copy data"),
-  "paste" = list(name = "Paste data"),
-  "sep1" = "---------",
-  "clear" = list(name = "Clear content")
+#### Built-in Actions (Recommended)
+```{r custom-context-builtin}
+# Use built-in Handsontable actions for full functionality
+builtin_options <- list(
+  "copy" = TRUE,           # Built-in copy
+  "paste" = TRUE,          # Built-in paste
+  "sep1" = "---------",    # Separator
+  "clear_column" = TRUE,   # Built-in clear column
+  "remove_row" = TRUE      # Built-in remove row
 )
 
 handsontable(iris[1:5, 1:3]) |>
-  hot_context_menu(customOpts = custom_options)
+  hot_context_menu(customOpts = builtin_options)
+```
+
+#### Custom Labels with Built-in Actions
+```{r custom-context-labels}
+# Customize labels while keeping built-in functionality
+custom_labels <- list(
+  "copy" = list(name = "Copy cells"),
+  "paste" = list(name = "Paste cells"),
+  "sep1" = "---------",
+  "clear_column" = list(name = "Clear column")
+)
+
+handsontable(iris[1:5, 1:3]) |>
+  hot_context_menu(customOpts = custom_labels)
 ```
 
 ## Combining Multiple Configurations
