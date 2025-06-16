@@ -36,12 +36,12 @@ hot_col(
 
 \item{col}{Column name or index to configure}
 
-\item{type}{Column type: "text", "numeric", "date", "dropdown",
-"checkbox", etc.}
+\item{type}{Column type: "text", "numeric", "checkbox", "date", "time", 
+"dropdown", "autocomplete", "password", "select", "handsontable"}
 
-\item{source}{For dropdown type, vector of allowed values}
+\item{source}{For dropdown/autocomplete type, vector of allowed values}
 
-\item{strict}{Logical, strict validation for dropdowns}
+\item{strict}{Logical, strict validation for dropdowns/autocomplete}
 
 \item{readOnly}{Logical, make column read-only}
 
@@ -58,6 +58,24 @@ hot_col(
 \item{visibleRows}{For dropdown type, number of visible rows in dropdown}
 
 \item{allowInvalid}{Logical, allow invalid values}
+
+\item{trimDropdown}{For autocomplete, trim dropdown width to fit content}
+
+\item{filter}{For autocomplete, enable filtering of dropdown options}
+
+\item{allowEmpty}{For autocomplete, allow empty values}
+
+\item{copyable}{For password type, allow copying values (default FALSE)}
+
+\item{numericFormat}{For numeric type, advanced formatting options (list)}
+
+\item{correctFormat}{For numeric type, auto-correct number format}
+
+\item{defaultDate}{For date type, default date value}
+
+\item{datePickerConfig}{For date type, date picker configuration (list)}
+
+\item{className}{CSS class name for cells}
 
 \item{...}{Additional column configuration options}
 }
