@@ -118,51 +118,43 @@ HTMLWidgets.widget({
 
               // Set validator to string alias or function
               if (validator.type === "numeric") {
-                // Create custom numeric validator with min/max constraints
-                if (
-                  validator.min !== undefined ||
-                  validator.max !== undefined
-                ) {
-                  transformedCol.validator = function (value, callback) {
-                    // Allow empty values
-                    if (value === null || value === undefined || value === "") {
-                      callback(true);
-                      return;
-                    }
-
-                    // Convert to number
-                    const numValue = parseFloat(value);
-
-                    // Check if it's a valid number
-                    if (isNaN(numValue)) {
-                      callback(false);
-                      return;
-                    }
-
-                    // Check min constraint
-                    if (
-                      validator.min !== undefined &&
-                      numValue < validator.min
-                    ) {
-                      callback(false);
-                      return;
-                    }
-
-                    // Check max constraint
-                    if (
-                      validator.max !== undefined &&
-                      numValue > validator.max
-                    ) {
-                      callback(false);
-                      return;
-                    }
-
-                    callback(true);
-                  };
-                } else {
-                  // Use built-in numeric validator for basic numeric validation
-                  transformedCol.validator = "numeric";
+                function isNumeric(str) {
+                  return (
+                    !Number.isNaN(Number(str)) && !Number.isNaN(parseFloat(str))
+                  );
                 }
+
+                // Create custom numeric validator with min/max constraints
+                transformedCol.validator = function (value, callback) {
+                  // Allow empty values
+                  if (value === null || value === undefined || value === "") {
+                    callback(true);
+                    return;
+                  }
+
+                  // Check if it's a valid number
+                  if (!isNumeric(value)) {
+                    callback(false);
+                    return;
+                  }
+
+                  // Convert to number
+                  const numValue = Number(value);
+
+                  // Check min constraint
+                  if (validator.min !== undefined && numValue < validator.min) {
+                    callback(false);
+                    return;
+                  }
+
+                  // Check max constraint
+                  if (validator.max !== undefined && numValue > validator.max) {
+                    callback(false);
+                    return;
+                  }
+
+                  callback(true);
+                };
               } else if (validator.type === "list") {
                 transformedCol.validator = "dropdown";
                 if (validator.source !== undefined) {
