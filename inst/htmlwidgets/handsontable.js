@@ -105,6 +105,33 @@ HTMLWidgets.widget({
           });
         }
 
+        // Transform context menu customOpts to Handsontable v6.2.2 format
+        if (
+          config.contextMenu &&
+          typeof config.contextMenu === "object" &&
+          config.contextMenu.customOpts
+        ) {
+          const transformedItems = {};
+
+          for (const [key, value] of Object.entries(
+            config.contextMenu.customOpts,
+          )) {
+            if (value === true) {
+              // For boolean true, use the key as a built-in action
+              transformedItems[key] = key;
+            } else if (value === false) {
+              // Skip false values (disabled items)
+              continue;
+            } else {
+              // Use the value as-is for objects, strings, etc.
+              transformedItems[key] = value;
+            }
+          }
+
+          config.contextMenu.items = transformedItems;
+          delete config.contextMenu.customOpts;
+        }
+
         // Transform R configuration to Handsontable v6.2.2 format
         if (config.columns && Array.isArray(config.columns)) {
           config.columns = config.columns.map((col) => {
