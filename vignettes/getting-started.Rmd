@@ -46,6 +46,7 @@ handsontable(mtcars[1:5, 1:4])
 ```
 
 This creates an interactive table with:
+
 - Column headers from the data.frame column names
 - Row numbers on the left
 - Editable cells

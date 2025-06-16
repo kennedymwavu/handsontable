@@ -381,15 +381,4 @@ shinyApp(ui, server)
 - Apply `readOnly = TRUE` to calculated or system fields
 - Use `fixedColumnsLeft` for wide tables with key identifier columns
 
-# What's New
-
-This version provides **complete Handsontable v6.2.2 compatibility** with:
-
-✅ **All 10 cell types supported**  
-✅ **Enhanced numeric formatting** with culture-specific patterns  
-✅ **Advanced autocomplete** with filtering and trimming  
-✅ **Secure password fields** with copy protection  
-✅ **Comprehensive validation** system  
-✅ **1:1 R-JavaScript mapping** for all options  
-
 Start with basic types and validation, then enhance with advanced formatting and features as needed!
