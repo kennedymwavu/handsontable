@@ -71,6 +71,14 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+## Similar Packages
+
+### rhandsontable
+
+The [rhandsontable](https://github.com/jrowen/rhandsontable) package provides an R interface to Handsontable and has been a valuable tool for the R community. However, it hasn't been actively maintained in recent years.
+
+This `handsontable` package was developed to **ensure active maintenance** with regular updates, bug fixes, and feature enhancements that the community needs.
+
 ## Documentation
 
 - [**Getting Started**](https://kennedymwavu.github.io/handsontable/articles/getting-started.html)
