@@ -4,21 +4,18 @@
 \alias{hot_to_r}
 \title{Convert Handsontable Data to R}
 \usage{
-hot_to_r(data, colnames = NULL)
+hot_to_r(data)
 }
 \arguments{
-\item{data}{List. Handsontable data (typically from Shiny input)}
-
-\item{colnames}{Character vector. Optional column names}
-
-\item{stringsAsFactors}{Logical. Convert strings to factors?}
+\item{data}{Object. Handsontable input object from Shiny (contains data and colnames)}
 }
 \value{
 data.frame
 }
 \description{
 Helper function to convert JavaScript Handsontable data back to R format.
-Primarily used in Shiny applications.
+Primarily used in Shiny applications. Automatically uses original column names
+sent from the Handsontable widget.
 }
 \examples{
 if (interactive()) {
@@ -45,9 +42,8 @@ if (interactive()) {
 
     output$converted_data <- renderPrint({
       if (!is.null(input$input_table)) {
-        converted <- hot_to_r(input$input_table$data,
-          colnames = names(initial_data)
-        )
+        # Column names are automatically preserved!
+        converted <- hot_to_r(input$input_table)
         str(converted)
         converted
       }
