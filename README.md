@@ -57,10 +57,7 @@ server <- function(input, output) {
   observeEvent(input$table, {
     # Detect changes
     if (!is.null(input$table)) {
-      updated_data <- hot_to_r(
-        data = input$table$data,
-        colnames = names(iris)
-      )
+      updated_data <- hot_to_r(data = input$table)
       cat("Updated data:\n")
       print(updated_data)
       # Use updated_data...

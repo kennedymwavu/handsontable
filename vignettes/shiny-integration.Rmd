@@ -90,7 +90,7 @@ server <- function(input, output, session) {
 
     if (!is.null(input$table)) {
       # Get the current data
-      current_data <- hot_to_r(input$table$data)
+      current_data <- hot_to_r(input$table)
       print(current_data)
 
       # Check what type of change occurred
@@ -160,8 +160,8 @@ server <- function(input, output, session) {
 
   # Update reactive value when table changes
   observeEvent(input$table, {
-    if (!is.null(input$table$data)) {
-      new_data <- hot_to_r(input$table$data)
+    if (!is.null(input$table)) {
+      new_data <- hot_to_r(input$table)
       table_data(new_data)
     }
   })
@@ -258,8 +258,8 @@ server <- function(input, output, session) {
 
   # Update current data when table changes
   observeEvent(input$table, {
-    if (!is.null(input$table$data)) {
-      current_data(hot_to_r(input$table$data))
+    if (!is.null(input$table)) {
+      current_data(hot_to_r(input$table))
     }
   })
 
@@ -350,8 +350,8 @@ server <- function(input, output, session) {
 
   # Track changes
   observeEvent(input$table, {
-    if (!is.null(input$table$data)) {
-      table_data(hot_to_r(input$table$data))
+    if (!is.null(input$table)) {
+      table_data(hot_to_r(input$table))
     }
   })
 }
@@ -515,7 +515,7 @@ observe({
     !is.null(input$table) &&
       difftime(Sys.time(), values$last_update, units = "secs") > 0.5
   ) {
-    values$data <- hot_to_r(input$table$data)
+    values$data <- hot_to_r(input$table)
     values$last_update <- Sys.time()
   }
 })
@@ -527,7 +527,7 @@ Only update what's necessary:
 ```{r selective-updates, eval=FALSE}
 observeEvent(input$table, {
   # Only process if data actually changed
-  new_data <- hot_to_r(input$table$data)
+  new_data <- hot_to_r(input$table)
   if (!identical(new_data, previous_data())) {
     # Process changes
     previous_data(new_data)
@@ -582,8 +582,8 @@ output$view_table <- DT::renderDataTable({
 })
 
 observeEvent(input$edit_table, {
-  if (!is.null(input$edit_table$data)) {
-    shared_data(hot_to_r(input$edit_table$data))
+  if (!is.null(input$edit_table)) {
+    shared_data(hot_to_r(input$edit_table))
   }
 })
 ```

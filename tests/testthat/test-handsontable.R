@@ -77,23 +77,30 @@ test_that("hot_validate handles regexp validation", {
 
 test_that("hot_to_r converts data correctly", {
   test_data <- list(
-    c(1, 2, 3),
-    c(4, 5, 6)
+    data = list(
+      c(1, 2, 3),
+      c(4, 5, 6)
+    ),
+    colnames = c("x1", "x2", "x3")
   )
 
   result <- hot_to_r(test_data)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 2)
   expect_equal(ncol(result), 3)
+  expect_equal(names(result), c("x1", "x2", "x3"))
 })
 
 test_that("hot_to_r handles column names", {
   test_data <- list(
-    c("Alice", 25, "Engineer"),
-    c("Bob", 30, "Manager")
+    data = list(
+      c("Alice", 25, "Engineer"),
+      c("Bob", 30, "Manager")
+    ),
+    colnames = c("Name", "Age", "Role")
   )
 
-  result <- hot_to_r(test_data, colnames = c("Name", "Age", "Role"))
+  result <- hot_to_r(test_data)
   expect_equal(names(result), c("Name", "Age", "Role"))
   expect_equal(result$Name, c("Alice", "Bob"))
 })
