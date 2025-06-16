@@ -1,3 +1,4 @@
+
 HTMLWidgets.widget({
   name: "handsontable",
 
@@ -105,30 +106,172 @@ HTMLWidgets.widget({
           });
         }
 
+        // Add CSV export functionality to context menu
+        if (config.contextMenu === true) {
+          config.contextMenu = {
+            items: {
+              "row_above": {},
+              "row_below": {},
+              "col_left": {},
+              "col_right": {},
+              "remove_row": {},
+              "remove_col": {},
+              "separator1": "---------",
+              "copy": {},
+              "cut": {},
+              "separator2": "---------",
+              "export_csv": {
+                name: "Download to CSV",
+                callback: function() {
+                  // CSV export that handles empty values (fixes #434)
+                  const hot = this;
+                  const data = hot.getData();
+                  const settings = hot.getSettings();
+                  const colHeaders = settings.colHeaders;
+                  
+                  let csvContent = '';
+                  
+                  // Add headers if they exist and are not just true/false
+                  if (colHeaders && Array.isArray(colHeaders) && colHeaders.length > 0) {
+                    csvContent += colHeaders.map(header => {
+                      // Handle null/undefined headers
+                      const value = header == null ? '' : String(header);
+                      // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                      return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
+                        ? '"' + value.replace(/"/g, '""') + '"' 
+                        : value;
+                    }).join(',') + '\n';
+                  }
+                  
+                  // Add data rows
+                  data.forEach(row => {
+                    if (row) {
+                      const csvRow = row.map(cell => {
+                        // Handle null/undefined/empty values (key fix for issue #434)
+                        const value = cell == null ? '' : String(cell);
+                        // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                        return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
+                          ? '"' + value.replace(/"/g, '""') + '"' 
+                          : value;
+                      }).join(',');
+                      csvContent += csvRow + '\n';
+                    }
+                  });
+                  
+                  // Create and download file
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const link = document.createElement('a');
+                  
+                  if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'handsontable_export.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }
+                }
+              }
+            }
+          };
+        }
+
         // Transform context menu customOpts to Handsontable v6.2.2 format
         if (
           config.contextMenu &&
           typeof config.contextMenu === "object" &&
           config.contextMenu.customOpts
         ) {
-          const transformedItems = {};
+          // Start with default items including CSV export
+          let defaultItems = {};
+          
+          if (config.contextMenu.items) {
+            // If items already exist, use them as base
+            defaultItems = { ...config.contextMenu.items };
+          } else {
+            // Create default items with CSV export
+            defaultItems = {
+              "row_above": {},
+              "row_below": {},
+              "col_left": {},
+              "col_right": {},
+              "remove_row": {},
+              "remove_col": {},
+              "separator1": "---------",
+              "copy": {},
+              "cut": {},
+              "separator2": "---------",
+              "export_csv": {
+                name: "Download to CSV",
+                callback: function() {
+                  // Same CSV export function as above
+                  const hot = this;
+                  const data = hot.getData();
+                  const settings = hot.getSettings();
+                  const colHeaders = settings.colHeaders;
+                  
+                  let csvContent = '';
+                  
+                  if (colHeaders && Array.isArray(colHeaders) && colHeaders.length > 0) {
+                    csvContent += colHeaders.map(header => {
+                      const value = header == null ? '' : String(header);
+                      return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
+                        ? '"' + value.replace(/"/g, '""') + '"' 
+                        : value;
+                    }).join(',') + '\n';
+                  }
+                  
+                  data.forEach(row => {
+                    if (row) {
+                      const csvRow = row.map(cell => {
+                        const value = cell == null ? '' : String(cell);
+                        return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
+                          ? '"' + value.replace(/"/g, '""') + '"' 
+                          : value;
+                      }).join(',');
+                      csvContent += csvRow + '\n';
+                    }
+                  });
+                  
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const link = document.createElement('a');
+                  
+                  if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'handsontable_export.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }
+                }
+              }
+            };
+          }
+
+          const transformedItems = { ...defaultItems };
 
           for (const [key, value] of Object.entries(
             config.contextMenu.customOpts,
           )) {
             if (value === true) {
               // For boolean true, use the key as a built-in action
-              transformedItems[key] = key;
+              transformedItems[key] = {};
             } else if (value === false) {
-              // Skip false values (disabled items)
+              // Skip false values (disabled items) - this allows users to disable CSV export
+              if (key === "export_csv") {
+                delete transformedItems[key];
+              }
               continue;
             } else {
-              // Use the value as-is for objects, strings, etc.
+              // Use the value as-is for objects with name/callback, etc.
               transformedItems[key] = value;
             }
           }
 
-          config.contextMenu.items = transformedItems;
+          config.contextMenu = { items: transformedItems };
           delete config.contextMenu.customOpts;
         }
 
