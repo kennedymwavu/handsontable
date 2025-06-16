@@ -371,11 +371,10 @@ hot_context_menu <- function(
 #' Convert Handsontable Data to R
 #'
 #' Helper function to convert JavaScript Handsontable data back to R format.
-#' Primarily used in Shiny applications.
+#' Primarily used in Shiny applications. Automatically uses original column names
+#' sent from the Handsontable widget.
 #'
-#' @param data List. Handsontable data (typically from Shiny input)
-#' @param colnames Character vector. Optional column names
-#' @param stringsAsFactors Logical. Convert strings to factors?
+#' @param data Object. Handsontable input object from Shiny (contains data and colnames)
 #'
 #' @return data.frame
 #'
@@ -404,9 +403,8 @@ hot_context_menu <- function(
 #'
 #'     output$converted_data <- renderPrint({
 #'       if (!is.null(input$input_table)) {
-#'         converted <- hot_to_r(input$input_table$data,
-#'           colnames = names(initial_data)
-#'         )
+#'         # Column names are automatically preserved!
+#'         converted <- hot_to_r(input$input_table)
 #'         str(converted)
 #'         converted
 #'       }
@@ -417,20 +415,23 @@ hot_context_menu <- function(
 #' }
 #'
 #' @export
-hot_to_r <- function(data, colnames = NULL) {
-  if (!length(data)) {
+hot_to_r <- function(data) {
+  if (!length(data) || !length(data$data)) {
     return(data.frame())
   }
 
-  df <- lapply(X = data, FUN = \(x) {
+  df <- lapply(X = data$data, FUN = \(x) {
     x <- data.frame(x)
-    names(x) <- paste0("x", seq_along(x))
+    if (ncol(x)) {
+      names(x) <- paste0("x", seq_along(x))
+    }
     x
   }) |>
     do.call(what = rbind)
 
-  if (identical(length(colnames), ncol(df))) {
-    names(df) <- colnames
+  # Use the original column names sent from JavaScript
+  if (!is.null(data$colnames) && identical(length(data$colnames), ncol(df))) {
+    names(df) <- data$colnames
   }
 
   df

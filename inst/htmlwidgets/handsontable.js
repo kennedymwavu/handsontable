@@ -421,12 +421,13 @@ HTMLWidgets.widget({
             hot.addHook("afterChange", function (changes, source) {
               if (source !== "loadData" && changes) {
                 const data = hot.getData();
-                // Send to input$table_id (main input)
+                // Send to input$table_id (main input) with original column names
                 Shiny.setInputValue(
                   el.id,
                   {
                     data: data,
                     changes: changes,
+                    colnames: config.originalColnames, // Include original column names
                   },
                   {
                     priority: "event",
@@ -475,6 +476,7 @@ HTMLWidgets.widget({
                     event: "afterCreateRow",
                     index: index,
                     amount: amount,
+                    colnames: config.originalColnames, // Include original column names
                   },
                   {
                     priority: "event",
@@ -498,6 +500,7 @@ HTMLWidgets.widget({
                       event: "afterRemoveRow",
                       index: index,
                       amount: amount,
+                      colnames: config.originalColnames, // Include original column names
                     },
                     {
                       priority: "event",
@@ -520,6 +523,7 @@ HTMLWidgets.widget({
                     event: "afterCreateCol",
                     index: index,
                     amount: amount,
+                    colnames: config.originalColnames, // Include original column names
                   },
                   {
                     priority: "event",
@@ -543,6 +547,7 @@ HTMLWidgets.widget({
                       event: "afterRemoveCol",
                       index: index,
                       amount: amount,
+                      colnames: config.originalColnames, // Include original column names
                     },
                     {
                       priority: "event",

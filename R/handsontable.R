@@ -91,6 +91,8 @@ handsontable <- function(
     readOnly = readOnly,
     contextMenu = contextMenu,
     adaptiveHeight = adaptiveHeight,
+    # Store original column names for hot_to_r()
+    originalColnames = names(data),
     ...
   )
 
