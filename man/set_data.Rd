@@ -25,29 +25,29 @@ Update Cell Data Programmatically
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Programmatic Cell Updates"),
-  handsontableOutput("my_table"),
-  br(),
-  actionButton("update_btn", "Update Cell (1,1) & (2,1)")
-)
+  ui <- fluidPage(
+    titlePanel("Programmatic Cell Updates"),
+    handsontableOutput("my_table"),
+    br(),
+    actionButton("update_btn", "Update Cell (1,1) & (2,1)")
+  )
 
-server <- function(input, output, session) {
-  output$my_table <- renderHandsontable({
-    handsontable(data.frame(
-      A = c(1, 2, 3),
-      B = c("a", "b", "c")
-    ))
-  })
+  server <- function(input, output, session) {
+    output$my_table <- renderHandsontable({
+      handsontable(data.frame(
+        A = c(1, 2, 3),
+        B = c("a", "b", "c")
+      ))
+    })
 
-  observeEvent(input$update_btn, {
-    set_data("my_table", row = 1:2, col = 1, val = runif(2, 100, 999))
-  })
-}
+    observeEvent(input$update_btn, {
+      set_data("my_table", row = 1:2, col = 1, val = runif(2, 100, 999))
+    })
+  }
 
-shinyApp(ui, server)
+  shinyApp(ui, server)
 }
 
 }

@@ -34,22 +34,24 @@ Configure Handsontable Rows
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Row Configuration"),
-  handsontableOutput("table")
-)
+  ui <- fluidPage(
+    titlePanel("Row Configuration"),
+    handsontableOutput("table")
+  )
 
-server <- function(input, output, session) {
-  output$table <- renderHandsontable({
-    handsontable(mtcars[1:15, 1:5]) |>
-      hot_rows(fixedRowsTop = 2, manualRowMove = TRUE,
-               manualRowResize = TRUE)
-  })
-}
+  server <- function(input, output, session) {
+    output$table <- renderHandsontable({
+      handsontable(mtcars[1:15, 1:5]) |>
+        hot_rows(
+          fixedRowsTop = 2, manualRowMove = TRUE,
+          manualRowResize = TRUE
+        )
+    })
+  }
 
-shinyApp(ui, server)
+  shinyApp(ui, server)
 }
 
 }

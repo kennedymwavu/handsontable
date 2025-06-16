@@ -46,9 +46,11 @@ handsontable(demo_data) |>
   hot_col(col = 3, type = "date", dateFormat = "YYYY-MM-DD") |>
   hot_col(col = 4, type = "time") |>
   hot_col(col = 5, type = "dropdown", source = c("Option A", "Option B", "Option C", "Option D")) |>
-  hot_col(col = 6, type = "autocomplete", 
-          source = c("Apple", "Banana", "Cherry", "Date", "Elderberry"),
-          filter = TRUE, trimDropdown = TRUE) |>
+  hot_col(
+    col = 6, type = "autocomplete",
+    source = c("Apple", "Banana", "Cherry", "Date", "Elderberry"),
+    filter = TRUE, trimDropdown = TRUE
+  ) |>
   hot_col(col = 7, type = "checkbox") |>
   hot_col(col = 8, type = "password", copyable = FALSE)
 ```
@@ -85,15 +87,19 @@ inventory_data <- data.frame(
 )
 
 handsontable(inventory_data) |>
-  hot_col(col = 1, type = "autocomplete",
-          source = c("Electronics", "Clothing", "Books", "Home & Garden", "Sports", "Automotive"),
-          filter = TRUE,
-          trimDropdown = TRUE,
-          allowEmpty = FALSE) |>
-  hot_col(col = 3, type = "autocomplete",
-          source = c("TechCorp", "FashionInc", "BookHouse", "GlobalSupply", "LocalVendor", "DirectManufacturer"),
-          filter = TRUE,
-          strict = FALSE)
+  hot_col(
+    col = 1, type = "autocomplete",
+    source = c("Electronics", "Clothing", "Books", "Home & Garden", "Sports", "Automotive"),
+    filter = TRUE,
+    trimDropdown = TRUE,
+    allowEmpty = FALSE
+  ) |>
+  hot_col(
+    col = 3, type = "autocomplete",
+    source = c("TechCorp", "FashionInc", "BookHouse", "GlobalSupply", "LocalVendor", "DirectManufacturer"),
+    filter = TRUE,
+    strict = FALSE
+  )
 ```
 
 # Date and Time Configuration
@@ -109,11 +115,15 @@ schedule_data <- data.frame(
 )
 
 handsontable(schedule_data) |>
-  hot_col(col = 2, type = "date", 
-          dateFormat = "YYYY-MM-DD",
-          defaultDate = "2024-01-01") |>
-  hot_col(col = 3, type = "date", 
-          dateFormat = "YYYY-MM-DD") |>
+  hot_col(
+    col = 2, type = "date",
+    dateFormat = "YYYY-MM-DD",
+    defaultDate = "2024-01-01"
+  ) |>
+  hot_col(
+    col = 3, type = "date",
+    dateFormat = "YYYY-MM-DD"
+  ) |>
   hot_col(col = 4, type = "time")
 ```
 
@@ -139,20 +149,25 @@ handsontable(employee_data) |>
   hot_col(col = 1, type = "text") |>
   hot_col(col = 2, type = "text") |>
   hot_col(col = 3, type = "numeric", numericFormat = list(pattern = "$0,0")) |>
-  hot_col(col = 4, type = "dropdown", 
-          source = c("Engineering", "Marketing", "Sales", "HR", "Finance")) |>
+  hot_col(
+    col = 4, type = "dropdown",
+    source = c("Engineering", "Marketing", "Sales", "HR", "Finance")
+  ) |>
   hot_col(col = 5, type = "text") |>
   hot_col(col = 6, type = "text") |>
   hot_col(col = 7, type = "numeric", numericFormat = list(pattern = "0.0")) |>
   hot_col(col = 8, type = "checkbox") |>
-  
   # Validation rules
   hot_validate(cols = 1, type = "regexp", pattern = "^EMP\\d{3}$") |>
   hot_validate(cols = 3, type = "numeric", min = 30000, max = 200000) |>
-  hot_validate(cols = 4, type = "list", 
-               source = c("Engineering", "Marketing", "Sales", "HR", "Finance")) |>
-  hot_validate(cols = 5, type = "regexp", 
-               pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$") |>
+  hot_validate(
+    cols = 4, type = "list",
+    source = c("Engineering", "Marketing", "Sales", "HR", "Finance")
+  ) |>
+  hot_validate(
+    cols = 5, type = "regexp",
+    pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
+  ) |>
   hot_validate(cols = 6, type = "regexp", pattern = "^\\d{3}-\\d{3}-\\d{4}$") |>
   hot_validate(cols = 7, type = "numeric", min = 1.0, max = 5.0)
 ```
@@ -171,8 +186,10 @@ user_data <- data.frame(
 
 handsontable(user_data) |>
   hot_col(col = 2, type = "password", copyable = FALSE) |>
-  hot_col(col = 3, type = "dropdown", 
-          source = c("Administrator", "User", "Guest", "Moderator")) |>
+  hot_col(
+    col = 3, type = "dropdown",
+    source = c("Administrator", "User", "Guest", "Moderator")
+  ) |>
   hot_col(col = 4, type = "numeric") |>
   hot_validate(cols = 4, type = "numeric", min = 1, max = 5)
 ```
@@ -243,7 +260,6 @@ handsontable(order_data, height = "400px") |>
   ) |>
   hot_col(col = 11, type = "text", width = 150) |>
   hot_col(col = 12, type = "checkbox") |>
-
   # Comprehensive validation
   hot_validate(cols = 1, type = "regexp", pattern = "^ORD-\\d{3}$") |>
   hot_validate(cols = 4, type = "numeric", min = 1, max = 10000) |>
@@ -259,7 +275,6 @@ handsontable(order_data, height = "400px") |>
     type = "list",
     source = c("Low", "Medium", "High", "Critical")
   ) |>
-
   # Table features
   hot_table(
     contextMenu = TRUE,

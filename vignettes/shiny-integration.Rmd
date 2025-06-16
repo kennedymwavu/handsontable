@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = FALSE  # Set to FALSE since these are Shiny examples
+  eval = FALSE # Set to FALSE since these are Shiny examples
 )
 ```
 
@@ -519,7 +519,6 @@ observe({
     values$last_update <- Sys.time()
   }
 })
-
 ```
 
 ### 2. Selective Updates
@@ -549,8 +548,8 @@ display_data <- reactive({
 output$table <- renderHandsontable({
   handsontable(display_data()) |>
     hot_table(
-      filters = FALSE,  # Disable client-side filtering
-      manualColumnSorting = FALSE  # Handle sorting server-side
+      filters = FALSE, # Disable client-side filtering
+      manualColumnSorting = FALSE # Handle sorting server-side
     )
 })
 ```

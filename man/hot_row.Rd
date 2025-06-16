@@ -23,25 +23,25 @@ Configure Row Properties
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Row Configuration"),
-  p("Rows 1, 3, and 5 are read-only"),
-  handsontableOutput("table")
-)
+  ui <- fluidPage(
+    titlePanel("Row Configuration"),
+    p("Rows 1, 3, and 5 are read-only"),
+    handsontableOutput("table")
+  )
 
-server <- function(input, output, session) {
-  output$table <- renderHandsontable({
-    hot_table <- handsontable(iris[1:8, ])
-    for (i in c(1, 3, 5)) {
-      hot_table <- hot_table |> hot_row(row = i, readOnly = TRUE)
-    }
-    hot_table
-  })
-}
+  server <- function(input, output, session) {
+    output$table <- renderHandsontable({
+      hot_table <- handsontable(iris[1:8, ])
+      for (i in c(1, 3, 5)) {
+        hot_table <- hot_table |> hot_row(row = i, readOnly = TRUE)
+      }
+      hot_table
+    })
+  }
 
-shinyApp(ui, server)
+  shinyApp(ui, server)
 }
 
 }

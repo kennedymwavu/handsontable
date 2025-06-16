@@ -34,22 +34,24 @@ Configure Handsontable Columns
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Column Configuration"),
-  handsontableOutput("table")
-)
+  ui <- fluidPage(
+    titlePanel("Column Configuration"),
+    handsontableOutput("table")
+  )
 
-server <- function(input, output, session) {
-  output$table <- renderHandsontable({
-    handsontable(mtcars[1:10, 1:6]) |>
-      hot_cols(colWidths = 120, fixedColumnsLeft = 2,
-               manualColumnMove = TRUE)
-  })
-}
+  server <- function(input, output, session) {
+    output$table <- renderHandsontable({
+      handsontable(mtcars[1:10, 1:6]) |>
+        hot_cols(
+          colWidths = 120, fixedColumnsLeft = 2,
+          manualColumnMove = TRUE
+        )
+    })
+  }
 
-shinyApp(ui, server)
+  shinyApp(ui, server)
 }
 
 }

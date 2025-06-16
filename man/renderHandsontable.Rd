@@ -18,22 +18,22 @@ Widget render function for use in Shiny
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Interactive Handsontable"),
-  handsontableOutput("editable_table")
-)
+  ui <- fluidPage(
+    titlePanel("Interactive Handsontable"),
+    handsontableOutput("editable_table")
+  )
 
-server <- function(input, output, session) {
-  output$editable_table <- renderHandsontable({
-    handsontable(iris[1:10, ], readOnly = FALSE) |>
-      hot_cols(colWidths = 120) |>
-      hot_table(contextMenu = TRUE)
-  })
-}
+  server <- function(input, output, session) {
+    output$editable_table <- renderHandsontable({
+      handsontable(iris[1:10, ], readOnly = FALSE) |>
+        hot_cols(colWidths = 120) |>
+        hot_table(contextMenu = TRUE)
+    })
+  }
 
-shinyApp(ui, server)
+  shinyApp(ui, server)
 }
 
 }

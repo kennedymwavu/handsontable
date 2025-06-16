@@ -53,20 +53,22 @@ conditional formatting, formulas, and extensive customization options.
 }
 \examples{
 if (interactive()) {
-# Basic usage
-handsontable(mtcars)
+  # Basic usage
+  handsontable(mtcars)
 
-# With custom headers
-handsontable(iris, colHeaders = c("S.Length", "S.Width", "P.Length",
-                                  "P.Width", "Species"))
+  # With custom headers
+  handsontable(iris, colHeaders = c(
+    "S.Length", "S.Width", "P.Length",
+    "P.Width", "Species"
+  ))
 
-# Read-only table with context menu
-handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
+  # Read-only table with context menu
+  handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
 
-# Using pipe operator for configuration
-handsontable(mtcars) |>
-  hot_cols(colWidths = 100) |>
-  hot_table(contextMenu = TRUE)
+  # Using pipe operator for configuration
+  handsontable(mtcars) |>
+    hot_cols(colWidths = 100) |>
+    hot_table(contextMenu = TRUE)
 }
 
 }

@@ -36,7 +36,7 @@ hot_col(
 
 \item{col}{Column name or index to configure}
 
-\item{type}{Column type: "text", "numeric", "checkbox", "date", "time", 
+\item{type}{Column type: "text", "numeric", "checkbox", "date", "time",
 "dropdown", "autocomplete", "password", "select", "handsontable"}
 
 \item{source}{For dropdown/autocomplete type, vector of allowed values}
@@ -87,33 +87,35 @@ Configure Individual Column
 }
 \examples{
 if (interactive()) {
-library(shiny)
+  library(shiny)
 
-ui <- fluidPage(
-  titlePanel("Individual Column Configuration"),
-  handsontableOutput("table")
-)
-
-server <- function(input, output, session) {
-  df <- data.frame(
-    ID = 1:5,
-    Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
-    Score = c(85.5, 92.3, 78.1, 95.7, 88.9),
-    Grade = c("B", "A", "C", "A", "B"),
-    Active = c(TRUE, FALSE, TRUE, TRUE, FALSE)
+  ui <- fluidPage(
+    titlePanel("Individual Column Configuration"),
+    handsontableOutput("table")
   )
 
-  output$table <- renderHandsontable({
-    handsontable(df) |>
-      hot_col(col = 1, readOnly = TRUE, width = 60) |>
-      hot_col(col = 3, type = "numeric", format = "0.0") |>
-      hot_col(col = 4, type = "dropdown",
-              source = c("A", "B", "C", "D", "F")) |>
-      hot_col(col = 5, type = "checkbox")
-  })
-}
+  server <- function(input, output, session) {
+    df <- data.frame(
+      ID = 1:5,
+      Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+      Score = c(85.5, 92.3, 78.1, 95.7, 88.9),
+      Grade = c("B", "A", "C", "A", "B"),
+      Active = c(TRUE, FALSE, TRUE, TRUE, FALSE)
+    )
 
-shinyApp(ui, server)
+    output$table <- renderHandsontable({
+      handsontable(df) |>
+        hot_col(col = 1, readOnly = TRUE, width = 60) |>
+        hot_col(col = 3, type = "numeric", format = "0.0") |>
+        hot_col(
+          col = 4, type = "dropdown",
+          source = c("A", "B", "C", "D", "F")
+        ) |>
+        hot_col(col = 5, type = "checkbox")
+    })
+  }
+
+  shinyApp(ui, server)
 }
 
 }

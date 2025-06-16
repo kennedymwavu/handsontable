@@ -95,10 +95,10 @@ handsontable(
 ```{r headers-sizing}
 handsontable(
   mtcars[, 1:4],
-  colHeaders = TRUE,    # Show column headers (default)
-  rowHeaders = FALSE,   # Hide row numbers
-  width = "100%",       # Full width
-  height = "300px",      # Fixed height
+  colHeaders = TRUE, # Show column headers (default)
+  rowHeaders = FALSE, # Hide row numbers
+  width = "100%", # Full width
+  height = "300px", # Fixed height
   adaptiveHeight = FALSE
 )
 ```
