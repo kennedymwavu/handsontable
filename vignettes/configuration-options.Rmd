@@ -414,6 +414,163 @@ handsontable(iris[1:5, 1:3]) |>
   hot_context_menu(customOpts = custom_labels)
 ```
 
+## Custom Borders with `customBorders`
+
+Add custom borders around specific cell ranges to highlight important data.
+
+### Basic Border Configuration
+
+```{r basic-borders}
+# Add red borders around specific cells
+financial_data <- data.frame(
+  Quarter = c("Q1", "Q2", "Q3", "Q4"),
+  Revenue = c(120000, 135000, 148000, 162000),
+  Profit = c(25000, 30000, 35000, 42000)
+)
+
+handsontable(financial_data) |>
+  hot_table(
+    customBorders = list(
+      # Border around revenue header and data (0-based indexing)
+      list(
+        range = list(from = list(row = 0, col = 1), to = list(row = 3, col = 1)),
+        top = list(width = 2, color = "blue"),
+        right = list(width = 2, color = "blue"), 
+        bottom = list(width = 2, color = "blue"),
+        left = list(width = 2, color = "blue")
+      )
+    )
+  )
+```
+
+### Multiple Border Regions
+
+```{r multiple-borders}
+# Add different colored borders for different regions
+performance_data <- data.frame(
+  Team = c("Sales", "Marketing", "Engineering", "Support"),
+  Q1 = c(95, 87, 92, 89),
+  Q2 = c(88, 91, 94, 85),
+  Q3 = c(92, 89, 96, 88),
+  Q4 = c(97, 93, 98, 91)
+)
+
+handsontable(performance_data) |>
+  hot_table(
+    customBorders = list(
+      # Green border for high performers (Engineering row - row 2, cols 1-4)
+      list(
+        range = list(from = list(row = 2, col = 1), to = list(row = 2, col = 4)),
+        top = list(width = 3, color = "green"),
+        right = list(width = 3, color = "green"),
+        bottom = list(width = 3, color = "green"),
+        left = list(width = 3, color = "green")
+      ),
+      # Red border for attention needed (Support Q2 - row 3, col 2)
+      list(
+        range = list(from = list(row = 3, col = 2), to = list(row = 3, col = 2)),
+        top = list(width = 2, color = "red"),
+        right = list(width = 2, color = "red"),
+        bottom = list(width = 2, color = "red"),
+        left = list(width = 2, color = "red")
+      )
+    )
+  )
+```
+
+### Border Styles and Patterns
+
+```{r border-styles}
+# Different border styles for different purposes
+budget_data <- data.frame(
+  Category = c("Revenue", "Expenses", "Net Income", "Forecast"),
+  Actual = c(250000, -180000, 70000, 75000),
+  Budget = c(240000, -185000, 55000, 60000),
+  Variance = c(10000, 5000, 15000, 15000)
+)
+
+handsontable(budget_data) |>
+  hot_table(
+    customBorders = list(
+      # Thick blue border for Net Income row (row 2, all columns)
+      list(
+        range = list(from = list(row = 2, col = 0), to = list(row = 2, col = 3)),
+        top = list(width = 3, color = "#2196F3"),
+        bottom = list(width = 3, color = "#2196F3")
+      ),
+      # Orange border for forecast row (row 3, all columns)
+      list(
+        range = list(from = list(row = 3, col = 0), to = list(row = 3, col = 3)),
+        top = list(width = 1, color = "#FFA726"),
+        right = list(width = 1, color = "#FFA726"),
+        bottom = list(width = 1, color = "#FFA726"),
+        left = list(width = 1, color = "#FFA726")
+      )
+    )
+  )
+```
+
+### Dynamic Border Updates
+
+Borders can be updated dynamically in Shiny applications:
+
+```{r dynamic-borders, eval=FALSE}
+# Example for Shiny (not executed in vignette)
+library(shiny)
+
+ui <- fluidPage(
+  handsontableOutput("dynamic_table"),
+  actionButton("highlight_profit", "Highlight Profit Column"),
+  actionButton("clear_borders", "Clear All Borders")
+)
+
+server <- function(input, output, session) {
+  border_state <- reactiveVal(0)
+  
+  output$dynamic_table <- renderHandsontable({
+    data <- data.frame(
+      Product = c("A", "B", "C"),
+      Sales = c(100, 200, 150),
+      Profit = c(25, 50, 30)
+    )
+    
+    if (border_state() == 1) {
+      # Add borders around profit column (col 2, rows 0-2)
+      handsontable(data) |>
+        hot_table(
+          customBorders = list(
+            list(
+              range = list(from = list(row = 0, col = 2), to = list(row = 2, col = 2)),
+              top = list(width = 2, color = "gold"),
+              right = list(width = 2, color = "gold"),
+              bottom = list(width = 2, color = "gold"),
+              left = list(width = 2, color = "gold")
+            )
+          )
+        )
+    } else {
+      # No borders
+      handsontable(data) |>
+        hot_table(customBorders = list())
+    }
+  })
+  
+  observeEvent(input$highlight_profit, { border_state(1) })
+  observeEvent(input$clear_borders, { border_state(0) })
+}
+```
+
+### Border Configuration Notes
+
+- **IMPORTANT: 0-based indexing**: Use 0-based indexing for borders (row 0 = first row, col 0 = first column)
+- **Range Specification**: `from` and `to` define the cell range for borders
+- **Border Sides**: Specify `top`, `right`, `bottom`, `left` independently
+- **Width**: Border thickness in pixels (1-5 typically work well)
+- **Color**: Use hex codes (#FF0000) or color names (red, blue, etc.)
+- **Clearing Borders**: Set `customBorders = list()` to remove all borders
+- **Performance**: Many borders can affect rendering performance on large tables
+- **Indexing Note**: Unlike R's 1-based indexing, customBorders uses JavaScript's 0-based indexing
+
 ## Combining Multiple Configurations
 
 Most real-world applications require combining multiple configuration options:
