@@ -4,7 +4,7 @@
 \alias{hot_to_r}
 \title{Convert Handsontable Data to R}
 \usage{
-hot_to_r(data, colnames = NULL, stringsAsFactors = FALSE)
+hot_to_r(data, colnames = NULL)
 }
 \arguments{
 \item{data}{List. Handsontable data (typically from Shiny input)}

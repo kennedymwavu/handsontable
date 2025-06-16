@@ -417,14 +417,19 @@ hot_context_menu <- function(
 #' }
 #'
 #' @export
-hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
+hot_to_r <- function(data, colnames = NULL) {
   if (!length(data)) {
     return(data.frame())
   }
 
-  df <- as.data.frame(do.call(rbind, data), stringsAsFactors = stringsAsFactors)
+  df <- lapply(X = data, FUN = \(x) {
+    x <- data.frame(x)
+    names(x) <- paste0("x", seq_along(x))
+    x
+  }) |>
+    do.call(what = rbind)
 
-  if (length(colnames) == ncol(df)) {
+  if (identical(length(colnames), ncol(df))) {
     names(df) <- colnames
   }
 
