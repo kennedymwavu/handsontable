@@ -239,8 +239,8 @@ hot_validate <- function(
   pattern = NULL,
   min = NULL,
   max = NULL,
-  allowInvalid = TRUE,
-  strict = FALSE,
+  allowInvalid = FALSE,
+  strict = TRUE,
   ...
 ) {
   type <- match.arg(arg = type)
