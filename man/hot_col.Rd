@@ -7,7 +7,8 @@
 hot_col(
   hot,
   col,
-  type = NULL,
+  type = c("text", "numeric", "checkbox", "date", "time", "dropdown", "autocomplete",
+    "password", "select", "handsontable"),
   source = NULL,
   strict = NULL,
   readOnly = NULL,
@@ -18,6 +19,15 @@ hot_col(
   uncheckedTemplate = NULL,
   visibleRows = NULL,
   allowInvalid = NULL,
+  trimDropdown = NULL,
+  filter = NULL,
+  allowEmpty = NULL,
+  copyable = NULL,
+  numericFormat = NULL,
+  correctFormat = NULL,
+  defaultDate = NULL,
+  datePickerConfig = NULL,
+  className = NULL,
   ...
 )
 }
