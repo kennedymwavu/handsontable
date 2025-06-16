@@ -422,7 +422,7 @@ hot_to_r <- function(data) {
 
   df <- lapply(X = data$data, FUN = \(row) {
     x <- lapply(row, \(value) {
-      if (identical(value, "ht-missing")) {
+      if (is.null(value)) {
         value <- NA
       }
       value

@@ -416,34 +416,7 @@ HTMLWidgets.widget({
           // Initialize dynamic column names tracking
           let currentColnames = config.originalColnames ? [...config.originalColnames] : [];
 
-          // Add hook to convert null/undefined to "ht-missing" for R compatibility
-          hot.addHook("afterCreateRow", function(index, amount, source) {
-            if (source !== "loadData") {
-              // Set default values for new rows to "ht-missing"
-              const colCount = hot.countCols();
-              for (let row = index; row < index + amount; row++) {
-                for (let col = 0; col < colCount; col++) {
-                  if (hot.getDataAtCell(row, col) === null || hot.getDataAtCell(row, col) === undefined) {
-                    hot.setDataAtCell(row, col, "ht-missing", "loadData"); // Use loadData to avoid triggering hooks
-                  }
-                }
-              }
-            }
-          });
-          
-          hot.addHook("afterCreateCol", function(index, amount, source) {
-            if (source !== "loadData") {
-              // Set default values for new columns to "ht-missing"
-              const rowCount = hot.countRows();
-              for (let col = index; col < index + amount; col++) {
-                for (let row = 0; row < rowCount; row++) {
-                  if (hot.getDataAtCell(row, col) === null || hot.getDataAtCell(row, col) === undefined) {
-                    hot.setDataAtCell(row, col, "ht-missing", "loadData"); // Use loadData to avoid triggering hooks
-                  }
-                }
-              }
-            }
-          });
+          // Column name tracking - no special default value handling needed
 
           // Store reference for Shiny
           if (HTMLWidgets.shinyMode) {
