@@ -1,0 +1,12 @@
+pandoc: 3.1.11
+pkgdown: 2.1.3
+pkgdown_sha: ~
+articles:
+  configuration-options: configuration-options.html
+  getting-started: getting-started.html
+  shiny-integration: shiny-integration.html
+  validation-and-customization: validation-and-customization.html
+last_built: 2025-06-16T22:43Z
+urls:
+  reference: https://kennedymwavu.github.io/handsontable/reference
+  article: https://kennedymwavu.github.io/handsontable/articles
