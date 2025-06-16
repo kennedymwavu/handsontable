@@ -199,7 +199,6 @@ hot_table <- function(
 #' @param pattern For "regexp" type, regular expression pattern
 #' @param min,max For "numeric" type, minimum and maximum values
 #' @param allowInvalid Logical, allow invalid values to be entered
-#' @param strict Logical, strict validation mode
 #' @param ... Additional validation options
 #'
 #' @return Modified handsontable widget
