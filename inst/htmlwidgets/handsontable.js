@@ -109,33 +109,71 @@ HTMLWidgets.widget({
         if (config.columns && Array.isArray(config.columns)) {
           config.columns = config.columns.map((col) => {
             if (!col) return col;
-            
-            const transformedCol = {...col};
-            
+
+            const transformedCol = { ...col };
+
             // Transform validator objects
-            if (col.validator && typeof col.validator === 'object') {
+            if (col.validator && typeof col.validator === "object") {
               const validator = col.validator;
-              
+
               // Set validator to string alias or function
-              if (validator.type === 'numeric') {
-                transformedCol.validator = 'numeric';
-                // Add numeric-specific options
-                if (validator.min !== undefined || validator.max !== undefined) {
-                  transformedCol.validatorOptions = {};
-                  if (validator.min !== undefined) transformedCol.validatorOptions.min = validator.min;
-                  if (validator.max !== undefined) transformedCol.validatorOptions.max = validator.max;
+              if (validator.type === "numeric") {
+                // Create custom numeric validator with min/max constraints
+                if (
+                  validator.min !== undefined ||
+                  validator.max !== undefined
+                ) {
+                  transformedCol.validator = function (value, callback) {
+                    // Allow empty values
+                    if (value === null || value === undefined || value === "") {
+                      callback(true);
+                      return;
+                    }
+
+                    // Convert to number
+                    const numValue = parseFloat(value);
+
+                    // Check if it's a valid number
+                    if (isNaN(numValue)) {
+                      callback(false);
+                      return;
+                    }
+
+                    // Check min constraint
+                    if (
+                      validator.min !== undefined &&
+                      numValue < validator.min
+                    ) {
+                      callback(false);
+                      return;
+                    }
+
+                    // Check max constraint
+                    if (
+                      validator.max !== undefined &&
+                      numValue > validator.max
+                    ) {
+                      callback(false);
+                      return;
+                    }
+
+                    callback(true);
+                  };
+                } else {
+                  // Use built-in numeric validator for basic numeric validation
+                  transformedCol.validator = "numeric";
                 }
-              } else if (validator.type === 'list') {
-                transformedCol.validator = 'dropdown';
+              } else if (validator.type === "list") {
+                transformedCol.validator = "dropdown";
                 if (validator.source !== undefined) {
                   transformedCol.source = validator.source;
                 }
-              } else if (validator.type === 'regexp') {
+              } else if (validator.type === "regexp") {
                 // Create custom regexp validator function
                 if (validator.pattern) {
                   const pattern = new RegExp(validator.pattern);
-                  transformedCol.validator = function(value, callback) {
-                    if (value === null || value === undefined || value === '') {
+                  transformedCol.validator = function (value, callback) {
+                    if (value === null || value === undefined || value === "") {
                       callback(true); // Allow empty values
                     } else {
                       callback(pattern.test(String(value)));
@@ -143,12 +181,12 @@ HTMLWidgets.widget({
                   };
                 }
               }
-              
+
               // Handle allowInvalid at column level
               if (validator.allowInvalid !== undefined) {
                 transformedCol.allowInvalid = validator.allowInvalid;
               }
-              
+
               // Remove the original validator object properties
               delete transformedCol.validator.type;
               delete transformedCol.validator.min;
@@ -158,39 +196,42 @@ HTMLWidgets.widget({
               delete transformedCol.validator.allowInvalid;
               delete transformedCol.validator.strict;
             }
-            
+
             // Transform numeric formatting
-            if (col.numericFormat && typeof col.numericFormat === 'object') {
+            if (col.numericFormat && typeof col.numericFormat === "object") {
               transformedCol.numericFormat = col.numericFormat;
             }
-            
+
             // Transform date picker configuration
-            if (col.datePickerConfig && typeof col.datePickerConfig === 'object') {
+            if (
+              col.datePickerConfig &&
+              typeof col.datePickerConfig === "object"
+            ) {
               transformedCol.datePickerConfig = col.datePickerConfig;
             }
-            
+
             // Handle cell type specific transformations
             if (col.type) {
               switch (col.type) {
-                case 'autocomplete':
+                case "autocomplete":
                   // Ensure autocomplete has proper configuration
                   if (col.source && !transformedCol.source) {
                     transformedCol.source = col.source;
                   }
                   break;
-                case 'password':
+                case "password":
                   // Password type configuration
                   if (col.copyable !== undefined) {
                     transformedCol.copyable = col.copyable;
                   }
                   break;
-                case 'numeric':
+                case "numeric":
                   // Handle numeric format options
                   if (col.numericFormat) {
                     transformedCol.numericFormat = col.numericFormat;
                   }
                   break;
-                case 'date':
+                case "date":
                   // Handle date configuration
                   if (col.dateFormat) {
                     transformedCol.dateFormat = col.dateFormat;
@@ -201,7 +242,7 @@ HTMLWidgets.widget({
                   break;
               }
             }
-            
+
             return transformedCol;
           });
         }
@@ -416,25 +457,35 @@ if (HTMLWidgets.shinyMode) {
     const $el = $("#" + message.id);
     if ($el.length && $el[0].hot) {
       const hot = $el[0].hot;
-      
+
       // Handle vectorized data from R
-      if (Array.isArray(message.row) && Array.isArray(message.col) && Array.isArray(message.value)) {
+      if (
+        Array.isArray(message.row) &&
+        Array.isArray(message.col) &&
+        Array.isArray(message.value)
+      ) {
         // Multiple cell updates - use setDataAtRowProp for efficiency
         const changes = [];
-        const minLength = Math.min(message.row.length, message.col.length, message.value.length);
-        
+        const minLength = Math.min(
+          message.row.length,
+          message.col.length,
+          message.value.length,
+        );
+
         for (let i = 0; i < minLength; i++) {
           changes.push([message.row[i], message.col[i], message.value[i]]);
         }
-        
+
         // Use setDataAtRowProp for batch updates
         hot.setDataAtRowProp(changes);
       } else {
         // Single cell update - convert arrays to single values if needed
         const row = Array.isArray(message.row) ? message.row[0] : message.row;
         const col = Array.isArray(message.col) ? message.col[0] : message.col;
-        const value = Array.isArray(message.value) ? message.value[0] : message.value;
-        
+        const value = Array.isArray(message.value)
+          ? message.value[0]
+          : message.value;
+
         hot.setDataAtCell(row, col, value);
       }
     }
