@@ -199,33 +199,67 @@ order_data <- data.frame(
 handsontable(order_data, height = "400px") |>
   # Column configurations with all features
   hot_col(col = 1, type = "text", readOnly = TRUE, width = 80) |>
-  hot_col(col = 2, type = "autocomplete",
-          source = c("TechCorp Inc", "StartupXYZ", "Enterprise Ltd", "NewClient Co", "BigCorp"),
-          filter = TRUE, trimDropdown = TRUE) |>
-  hot_col(col = 3, type = "dropdown",
-          source = c("Premium License", "Basic Package", "Enterprise Suite", "Starter Pack")) |>
+  hot_col(
+    col = 2,
+    type = "autocomplete",
+    source = c(
+      "TechCorp Inc",
+      "StartupXYZ",
+      "Enterprise Ltd",
+      "NewClient Co",
+      "BigCorp"
+    ),
+    filter = TRUE,
+    trimDropdown = TRUE
+  ) |>
+  hot_col(
+    col = 3,
+    type = "dropdown",
+    source = c(
+      "Premium License",
+      "Basic Package",
+      "Enterprise Suite",
+      "Starter Pack"
+    )
+  ) |>
   hot_col(col = 4, type = "numeric", numericFormat = list(pattern = "0,0")) |>
-  hot_col(col = 5, type = "numeric", numericFormat = list(pattern = "$0,0.00")) |>
+  hot_col(
+    col = 5,
+    type = "numeric",
+    numericFormat = list(pattern = "$0,0.00")
+  ) |>
   hot_col(col = 6, type = "numeric", numericFormat = list(pattern = "0.0%")) |>
   hot_col(col = 7, type = "date", dateFormat = "YYYY-MM-DD") |>
   hot_col(col = 8, type = "date", dateFormat = "YYYY-MM-DD") |>
-  hot_col(col = 9, type = "dropdown",
-          source = c("Processing", "Shipped", "Delivered", "Cancelled", "Pending")) |>
-  hot_col(col = 10, type = "dropdown",
-          source = c("Low", "Medium", "High", "Critical")) |>
+  hot_col(
+    col = 9,
+    type = "dropdown",
+    source = c("Processing", "Shipped", "Delivered", "Cancelled", "Pending")
+  ) |>
+  hot_col(
+    col = 10,
+    type = "dropdown",
+    source = c("Low", "Medium", "High", "Critical")
+  ) |>
   hot_col(col = 11, type = "text", width = 150) |>
   hot_col(col = 12, type = "checkbox") |>
-  
+
   # Comprehensive validation
   hot_validate(cols = 1, type = "regexp", pattern = "^ORD-\\d{3}$") |>
   hot_validate(cols = 4, type = "numeric", min = 1, max = 10000) |>
   hot_validate(cols = 5, type = "numeric", min = 0.01, max = 99999.99) |>
   hot_validate(cols = 6, type = "numeric", min = 0, max = 0.50) |>
-  hot_validate(cols = 9, type = "list",
-               source = c("Processing", "Shipped", "Delivered", "Cancelled", "Pending")) |>
-  hot_validate(cols = 10, type = "list",
-               source = c("Low", "Medium", "High", "Critical")) |>
-  
+  hot_validate(
+    cols = 9,
+    type = "list",
+    source = c("Processing", "Shipped", "Delivered", "Cancelled", "Pending")
+  ) |>
+  hot_validate(
+    cols = 10,
+    type = "list",
+    source = c("Low", "Medium", "High", "Critical")
+  ) |>
+
   # Table features
   hot_table(
     contextMenu = TRUE,
@@ -247,7 +281,8 @@ handsontable(order_data, height = "400px") |>
 ui <- fluidPage(
   titlePanel("Complete Cell Types Demo"),
   fluidRow(
-    column(12,
+    column(
+      12,
       handsontableOutput("demo_table"),
       br(),
       verbatimTextOutput("table_output")
@@ -267,23 +302,29 @@ server <- function(input, output, session) {
     password_col = c("secret1", "secret2", "secret3"),
     stringsAsFactors = FALSE
   )
-  
+
   output$demo_table <- renderHandsontable({
     handsontable(demo_data) |>
       hot_col(col = 1, type = "text") |>
-      hot_col(col = 2, type = "numeric", 
-              numericFormat = list(pattern = "$0,0.00")) |>
+      hot_col(
+        col = 2,
+        type = "numeric",
+        numericFormat = list(pattern = "$0,0.00")
+      ) |>
       hot_col(col = 3, type = "date", dateFormat = "YYYY-MM-DD") |>
-      hot_col(col = 4, type = "dropdown", 
-              source = c("A", "B", "C", "D")) |>
-      hot_col(col = 6, type = "autocomplete",
-              source = c("Apple", "Banana", "Cherry", "Date", "Elderberry"),
-              filter = TRUE, trimDropdown = TRUE) |>
+      hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D")) |>
+      hot_col(
+        col = 6,
+        type = "autocomplete",
+        source = c("Apple", "Banana", "Cherry", "Date", "Elderberry"),
+        filter = TRUE,
+        trimDropdown = TRUE
+      ) |>
       hot_col(col = 6, type = "checkbox") |>
       hot_col(col = 7, type = "password", copyable = FALSE) |>
       hot_validate(cols = 2, type = "numeric", min = 0, max = 10000)
   })
-  
+
   output$table_output <- renderText({
     if (!is.null(input$demo_table)) {
       paste("Table updated at:", Sys.time())
