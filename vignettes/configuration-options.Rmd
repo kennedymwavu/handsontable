@@ -435,7 +435,7 @@ handsontable(financial_data) |>
       list(
         range = list(from = list(row = 0, col = 1), to = list(row = 3, col = 1)),
         top = list(width = 2, color = "blue"),
-        right = list(width = 2, color = "blue"), 
+        right = list(width = 2, color = "blue"),
         bottom = list(width = 2, color = "blue"),
         left = list(width = 2, color = "blue")
       )
@@ -526,14 +526,14 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   border_state <- reactiveVal(0)
-  
+
   output$dynamic_table <- renderHandsontable({
     data <- data.frame(
       Product = c("A", "B", "C"),
       Sales = c(100, 200, 150),
       Profit = c(25, 50, 30)
     )
-    
+
     if (border_state() == 1) {
       # Add borders around profit column (col 2, rows 0-2)
       handsontable(data) |>
@@ -554,9 +554,13 @@ server <- function(input, output, session) {
         hot_table(customBorders = list())
     }
   })
-  
-  observeEvent(input$highlight_profit, { border_state(1) })
-  observeEvent(input$clear_borders, { border_state(0) })
+
+  observeEvent(input$highlight_profit, {
+    border_state(1)
+  })
+  observeEvent(input$clear_borders, {
+    border_state(0)
+  })
 }
 ```
 

@@ -75,13 +75,15 @@ For better user experience and proper type handling, configure each column with 
 
 ```{r enhanced-types}
 handsontable(mixed_data) |>
-  hot_col(col = 1, type = "text") |>                                    # Name as text input
-  hot_col(col = 2, type = "numeric") |>                                 # Age as numeric input
-  hot_col(col = 3, type = "numeric", format = "$0,0") |>                # Salary with currency format
-  hot_col(col = 4, type = "checkbox") |>                                # Active as checkbox
-  hot_col(col = 5, type = "dropdown", 
-          source = c("IT", "HR", "Finance", "Marketing", "Sales")) |>   # Department as dropdown
-  hot_col(col = 6, type = "date", dateFormat = "YYYY-MM-DD")            # Start_Date as date picker
+  hot_col(col = 1, type = "text") |> # Name as text input
+  hot_col(col = 2, type = "numeric") |> # Age as numeric input
+  hot_col(col = 3, type = "numeric", format = "$0,0") |> # Salary with currency format
+  hot_col(col = 4, type = "checkbox") |> # Active as checkbox
+  hot_col(
+    col = 5, type = "dropdown",
+    source = c("IT", "HR", "Finance", "Marketing", "Sales")
+  ) |> # Department as dropdown
+  hot_col(col = 6, type = "date", dateFormat = "YYYY-MM-DD") # Start_Date as date picker
 ```
 
 This enhanced configuration provides:
