@@ -12,8 +12,7 @@ hot_validate(
   pattern = NULL,
   min = NULL,
   max = NULL,
-  allowInvalid = TRUE,
-  strict = FALSE,
+  allowInvalid = FALSE,
   ...
 )
 }
@@ -32,9 +31,9 @@ hot_validate(
 
 \item{allowInvalid}{Logical, allow invalid values to be entered}
 
-\item{strict}{Logical, strict validation mode}
-
 \item{...}{Additional validation options}
+
+\item{strict}{Logical, strict validation mode}
 }
 \value{
 Modified handsontable widget
