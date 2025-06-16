@@ -29,9 +29,16 @@ handsontable(mtcars[1:5, 1:4])
 
 # With validation and formatting
 handsontable(iris[1:8, ]) |>
-  hot_col(col = 5, type = "dropdown",
-          source = c("setosa", "versicolor", "virginica")) |>
-  hot_validate(cols = 1:4, type = "numeric", min = 0) |>
+  hot_col(
+    col = 5,
+    type = "dropdown",
+    source = c("setosa", "versicolor", "virginica")
+  ) |>
+  hot_validate(
+    cols = 1:4,
+    type = "numeric",
+    min = 0
+  ) |>
   hot_table(contextMenu = TRUE, search = TRUE)
 ```
 
