@@ -1,5 +1,5 @@
-url: https://github.com/kennedymwavu/handsontable
+url: https://kennedymwavu.github.io/handsontable/
 template:
   bootstrap: 5
   bootswatch: zephyr
-  light-switch: true
+  light-switch: yes

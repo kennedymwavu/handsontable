@@ -12,7 +12,7 @@ Description: Provides an R interface to the 'Handsontable' JavaScript library v6
     professional data grid features. Supports data validation, conditional formatting,
     formulas, sorting, filtering, and seamless integration with 'Shiny' applications.
 License: MIT + file LICENSE
-URL: https://github.com/kennedymwavu/handsontable
+URL: https://github.com/kennedymwavu/handsontable, https://kennedymwavu.github.io/handsontable/
 BugReports: https://github.com/kennedymwavu/handsontable/issues
 Depends:
     R (>= 4.0.0)
