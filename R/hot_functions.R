@@ -424,10 +424,10 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 #'
 #' @param hot A handsontable widget object
 #' @param col Column name or index to configure
-#' @param type Column type: "text", "numeric", "date", "dropdown",
-#'   "checkbox", etc.
-#' @param source For dropdown type, vector of allowed values
-#' @param strict Logical, strict validation for dropdowns
+#' @param type Column type: "text", "numeric", "checkbox", "date", "time", 
+#'   "dropdown", "autocomplete", "password", "select", "handsontable"
+#' @param source For dropdown/autocomplete type, vector of allowed values
+#' @param strict Logical, strict validation for dropdowns/autocomplete
 #' @param readOnly Logical, make column read-only
 #' @param width Column width in pixels
 #' @param format For numeric columns, number format
@@ -436,6 +436,15 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 #' @param uncheckedTemplate For checkbox columns, value when unchecked
 #' @param visibleRows For dropdown type, number of visible rows in dropdown
 #' @param allowInvalid Logical, allow invalid values
+#' @param trimDropdown For autocomplete, trim dropdown width to fit content
+#' @param filter For autocomplete, enable filtering of dropdown options
+#' @param allowEmpty For autocomplete, allow empty values
+#' @param copyable For password type, allow copying values (default FALSE)
+#' @param numericFormat For numeric type, advanced formatting options (list)
+#' @param correctFormat For numeric type, auto-correct number format
+#' @param defaultDate For date type, default date value
+#' @param datePickerConfig For date type, date picker configuration (list)
+#' @param className CSS class name for cells
 #' @param ... Additional column configuration options
 #'
 #' @return Modified handsontable widget
@@ -475,7 +484,8 @@ hot_to_r <- function(data, colnames = NULL, stringsAsFactors = FALSE) {
 hot_col <- function(
   hot,
   col,
-  type = NULL,
+  type = c("text", "numeric", "checkbox", "date", "time", "dropdown", 
+           "autocomplete", "password", "select", "handsontable"),
   source = NULL,
   strict = NULL,
   readOnly = NULL,
@@ -486,8 +496,23 @@ hot_col <- function(
   uncheckedTemplate = NULL,
   visibleRows = NULL,
   allowInvalid = NULL,
+  # New cell type options
+  trimDropdown = NULL,
+  filter = NULL,
+  allowEmpty = NULL,
+  copyable = NULL,
+  numericFormat = NULL,
+  correctFormat = NULL,
+  defaultDate = NULL,
+  datePickerConfig = NULL,
+  className = NULL,
   ...
 ) {
+  # Validate type parameter
+  if (!is.null(type)) {
+    type <- match.arg(type)
+  }
+  
   # Convert column name to index if needed
   if (is.character(col) && !is.null(hot$x$colHeaders)) {
     col_idx <- match(col, hot$x$colHeaders)
@@ -535,19 +560,56 @@ hot_col <- function(
     checkedTemplate = checkedTemplate,
     uncheckedTemplate = uncheckedTemplate,
     allowInvalid = allowInvalid,
+    trimDropdown = trimDropdown,
+    filter = filter,
+    allowEmpty = allowEmpty,
+    copyable = copyable,
+    numericFormat = numericFormat,
+    correctFormat = correctFormat,
+    defaultDate = defaultDate,
+    datePickerConfig = datePickerConfig,
+    className = className,
     ...
   ) |>
     Filter(f = Negate(is.null))
 
-  # Handle dropdown-specific configuration
-  if (!is.null(type) && type == "dropdown") {
-    if (!is.null(visibleRows)) {
-      col_config$visibleRows <- visibleRows
-    }
-    # Set default strict mode for dropdowns if not specified
-    if (is.null(strict)) {
-      col_config$strict <- TRUE
-    }
+  # Handle cell type-specific configuration
+  if (!is.null(type)) {
+    switch(type,
+      "dropdown" = {
+        if (!is.null(visibleRows)) {
+          col_config$visibleRows <- visibleRows
+        }
+        # Set default strict mode for dropdowns if not specified
+        if (is.null(strict)) {
+          col_config$strict <- TRUE
+        }
+      },
+      "autocomplete" = {
+        # Set autocomplete defaults
+        if (is.null(strict)) {
+          col_config$strict <- FALSE
+        }
+        if (is.null(filter)) {
+          col_config$filter <- TRUE
+        }
+        if (is.null(trimDropdown)) {
+          col_config$trimDropdown <- TRUE
+        }
+      },
+      "password" = {
+        # Set password defaults
+        if (is.null(copyable)) {
+          col_config$copyable <- FALSE
+        }
+      },
+      "numeric" = {
+        # Numeric formatting handled by numericFormat parameter
+      },
+      "date" = {
+        # Date configuration handled by dateFormat and datePickerConfig
+      }
+    )
   }
 
   # Merge with existing column configuration

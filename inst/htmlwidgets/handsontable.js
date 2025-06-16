@@ -105,11 +105,15 @@ HTMLWidgets.widget({
           });
         }
 
-        // Transform R validator objects to Handsontable v6.2.2 format
+        // Transform R configuration to Handsontable v6.2.2 format
         if (config.columns && Array.isArray(config.columns)) {
           config.columns = config.columns.map((col) => {
-            if (col && col.validator && typeof col.validator === 'object') {
-              const transformedCol = {...col};
+            if (!col) return col;
+            
+            const transformedCol = {...col};
+            
+            // Transform validator objects
+            if (col.validator && typeof col.validator === 'object') {
               const validator = col.validator;
               
               // Set validator to string alias or function
@@ -145,7 +149,7 @@ HTMLWidgets.widget({
                 transformedCol.allowInvalid = validator.allowInvalid;
               }
               
-              // Remove the original validator object
+              // Remove the original validator object properties
               delete transformedCol.validator.type;
               delete transformedCol.validator.min;
               delete transformedCol.validator.max;
@@ -153,10 +157,52 @@ HTMLWidgets.widget({
               delete transformedCol.validator.pattern;
               delete transformedCol.validator.allowInvalid;
               delete transformedCol.validator.strict;
-              
-              return transformedCol;
             }
-            return col;
+            
+            // Transform numeric formatting
+            if (col.numericFormat && typeof col.numericFormat === 'object') {
+              transformedCol.numericFormat = col.numericFormat;
+            }
+            
+            // Transform date picker configuration
+            if (col.datePickerConfig && typeof col.datePickerConfig === 'object') {
+              transformedCol.datePickerConfig = col.datePickerConfig;
+            }
+            
+            // Handle cell type specific transformations
+            if (col.type) {
+              switch (col.type) {
+                case 'autocomplete':
+                  // Ensure autocomplete has proper configuration
+                  if (col.source && !transformedCol.source) {
+                    transformedCol.source = col.source;
+                  }
+                  break;
+                case 'password':
+                  // Password type configuration
+                  if (col.copyable !== undefined) {
+                    transformedCol.copyable = col.copyable;
+                  }
+                  break;
+                case 'numeric':
+                  // Handle numeric format options
+                  if (col.numericFormat) {
+                    transformedCol.numericFormat = col.numericFormat;
+                  }
+                  break;
+                case 'date':
+                  // Handle date configuration
+                  if (col.dateFormat) {
+                    transformedCol.dateFormat = col.dateFormat;
+                  }
+                  if (col.datePickerConfig) {
+                    transformedCol.datePickerConfig = col.datePickerConfig;
+                  }
+                  break;
+              }
+            }
+            
+            return transformedCol;
           });
         }
 
