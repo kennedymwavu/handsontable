@@ -431,7 +431,9 @@ HTMLWidgets.widget({
                   el.id,
                   {
                     data: data,
+                    event: "afterChange",
                     changes: changes,
+                    source: source,
                     colnames: currentColnames, // Use dynamic column names
                   },
                   {
