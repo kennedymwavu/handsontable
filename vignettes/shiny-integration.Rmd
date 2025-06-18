@@ -64,6 +64,9 @@ table changes in real-time.
 ### Basic Change Detection
 
 ```{r change-detection}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Change Detection"),
   handsontableOutput("table"),
@@ -133,6 +136,9 @@ When a handsontable changes, several input values become available:
 ### Detailed Change Information
 
 ```{r detailed-changes}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Detailed Change Tracking"),
   handsontableOutput("table"),
@@ -200,11 +206,793 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+## Event Hooks
+
+Handsontable provides several event hooks that allow you to react to specific user interactions. Each hook sends detailed information about the event, including an `event` type identifier and additional context-specific parameters.
+
+### afterChange Hook
+
+The `afterChange` hook fires whenever cell data is modified. It provides information about what changed, including the source of the change (edit, paste, fill, etc.).
+
+<details>
+<summary><strong>Click to expand afterChange example</strong></summary>
+
+```{r afterchange-hook}
+library(shiny)
+library(handsontable)
+
+# Sample data
+sample_data <- data.frame(
+  ID = 1:5,
+  Name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+  Score = c(85, 92, 78, 95, 88),
+  Grade = c("B", "A", "C", "A", "B"),
+  Active = c(TRUE, FALSE, TRUE, TRUE, FALSE)
+)
+
+ui <- fluidPage(
+  titlePanel("afterChange Hook Demo - Event & Source Parameters"),
+  
+  fluidRow(
+    column(8,
+      h4("Interactive Handsontable"),
+      p("Try editing cells, pasting data, or using the context menu to see different source types:"),
+      tags$ul(
+        tags$li("Edit a cell directly (source: 'edit')"),
+        tags$li("Copy/paste data (source: 'paste')"),
+        tags$li("Use fill handle to drag data (source: 'autofill')"),
+        tags$li("Right-click and insert/remove rows (source: 'UndoRedo.redo' or similar)")
+      ),
+      handsontableOutput("demo_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Change Event Log"),
+      p("Real-time log of afterChange events:"),
+      verbatimTextOutput("change_log", placeholder = TRUE),
+      
+      br(),
+      h4("Current Data Structure"),
+      verbatimTextOutput("data_structure", placeholder = TRUE),
+      
+      br(),
+      actionButton("clear_log", "Clear Log", class = "btn-warning btn-sm"),
+      br(), br(),
+      actionButton("programmatic_update", "Programmatic Update", class = "btn-info btn-sm"),
+      helpText("Updates Score column programmatically to test different source types")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Reactive values to store change log
+  change_log <- reactiveVal(character(0))
+  
+  # Render the handsontable
+  output$demo_table <- renderHandsontable({
+    handsontable(sample_data) |>
+      hot_col(col = 1, readOnly = TRUE, width = 60) |>
+      hot_col(col = 3, type = "numeric", format = "0") |>
+      hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
+      hot_col(col = 5, type = "checkbox") |>
+      hot_table(contextMenu = TRUE, undo = TRUE)
+  })
+  
+  # Observe changes in the handsontable
+  observeEvent(input$demo_table, {
+    if (!is.null(input$demo_table)) {
+      # Check if this is an afterChange event
+      if (!is.null(input$demo_table$event) && input$demo_table$event == "afterChange") {
+        
+        # Extract event details
+        event_type <- input$demo_table$event
+        source_type <- input$demo_table$source %||% "unknown"
+        changes <- input$demo_table$changes
+        
+        # Format the change information
+        if (!is.null(changes) && length(changes) > 0) {
+          # Format timestamp
+          timestamp <- format(Sys.time(), "%H:%M:%S")
+          
+          # Format changes - each change is [row, col, oldValue, newValue]
+          change_details <- sapply(changes, function(change) {
+            row_idx <- change[[1]] + 1  # Convert 0-based to 1-based indexing
+            col_idx <- change[[2]] + 1
+            old_val <- if(is.null(change[[3]])) "NULL" else as.character(change[[3]])
+            new_val <- if(is.null(change[[4]])) "NULL" else as.character(change[[4]])
+            
+            sprintf("  Row %d, Col %d: '%s' → '%s'", row_idx, col_idx, old_val, new_val)
+          })
+          
+          # Create log entry
+          log_entry <- paste0(
+            "[", timestamp, "] EVENT: ", event_type, " | SOURCE: ", source_type, "\n",
+            paste(change_details, collapse = "\n")
+          )
+          
+          # Add to log (keep last 10 entries)
+          current_log <- change_log()
+          new_log <- c(log_entry, current_log)
+          if (length(new_log) > 10) {
+            new_log <- new_log[1:10]
+          }
+          change_log(new_log)
+        }
+      }
+    }
+  })
+  
+  # Display the change log
+  output$change_log <- renderText({
+    log_entries <- change_log()
+    if (length(log_entries) == 0) {
+      "No changes yet. Try editing some cells!"
+    } else {
+      paste(log_entries, collapse = "\n\n---\n\n")
+    }
+  })
+  
+  # Display current data structure
+  output$data_structure <- renderText({
+    if (!is.null(input$demo_table) && !is.null(input$demo_table$data)) {
+      current_data <- hot_to_r(input$demo_table)
+      paste(
+        "Dimensions:", nrow(current_data), "rows ×", ncol(current_data), "columns\n",
+        "Column names:", paste(names(current_data), collapse = ", "), "\n",
+        "Last updated:", format(Sys.time(), "%H:%M:%S")
+      )
+    } else {
+      "No data available yet."
+    }
+  })
+  
+  # Clear log button
+  observeEvent(input$clear_log, {
+    change_log(character(0))
+  })
+  
+  # Programmatic update button - demonstrates different source types
+  observeEvent(input$programmatic_update, {
+    # Update some cells programmatically using set_data
+    new_scores <- sample(70:100, 2)
+    set_data("demo_table", row = c(2, 4), col = 3, val = new_scores)
+    
+    showNotification(
+      paste("Updated scores for rows 2 and 4 to:", paste(new_scores, collapse = ", ")),
+      type = "message",
+      duration = 3
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### afterSelection Hook
+
+The `afterSelection` hook fires when users select cells or ranges in the table.
+
+<details>
+<summary><strong>Click to expand afterSelection example</strong></summary>
+
+```{r afterselection-hook}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("afterSelection Hook Demo"),
+  
+  fluidRow(
+    column(8,
+      h4("Select cells to see selection details"),
+      p("Try selecting single cells, ranges, or multiple selections:"),
+      handsontableOutput("selection_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Selection Information"),
+      verbatimTextOutput("selection_info"),
+      
+      br(),
+      h4("Selected Data"),
+      p("Data from currently selected cells:"),
+      tableOutput("selected_data")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Sample data
+  table_data <- data.frame(
+    Product = c("Widget A", "Widget B", "Widget C", "Widget D", "Widget E"),
+    Category = c("Electronics", "Toys", "Electronics", "Books", "Toys"),
+    Price = c(25.99, 12.50, 45.00, 18.99, 8.75),
+    Stock = c(100, 250, 75, 180, 320),
+    Supplier = c("Acme Corp", "Toy Co", "Acme Corp", "Book Inc", "Toy Co")
+  )
+  
+  output$selection_table <- renderHandsontable({
+    handsontable(table_data) |>
+      hot_col(col = 3, type = "numeric", format = "$0.00") |>
+      hot_col(col = 4, type = "numeric", format = "0,0") |>
+      hot_table(contextMenu = TRUE)
+  })
+  
+  # Display selection information
+  output$selection_info <- renderText({
+    if (is.null(input$selection_table_select)) {
+      "No selection made yet"
+    } else {
+      sel <- input$selection_table_select
+      
+      # Convert 0-based to 1-based indexing
+      start_row <- sel$row + 1
+      start_col <- sel$col + 1
+      end_row <- sel$row2 + 1
+      end_col <- sel$col2 + 1
+      
+      if (start_row == end_row && start_col == end_col) {
+        paste0(
+          "Single cell selected:\n",
+          "Row: ", start_row, ", Column: ", start_col, "\n",
+          "Value: ", table_data[start_row, start_col]
+        )
+      } else {
+        paste0(
+          "Range selected:\n",
+          "From Row ", start_row, ", Col ", start_col, "\n",
+          "To Row ", end_row, ", Col ", end_col, "\n",
+          "Total cells: ", (end_row - start_row + 1) * (end_col - start_col + 1)
+        )
+      }
+    }
+  })
+  
+  # Display selected data
+  output$selected_data <- renderTable({
+    if (is.null(input$selection_table_select)) {
+      data.frame(Message = "No selection")
+    } else {
+      sel <- input$selection_table_select
+      
+      # Convert 0-based to 1-based indexing
+      start_row <- sel$row + 1
+      start_col <- sel$col + 1
+      end_row <- sel$row2 + 1
+      end_col <- sel$col2 + 1
+      
+      # Extract selected data
+      selected_data <- table_data[start_row:end_row, start_col:end_col, drop = FALSE]
+      selected_data
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### afterCreateRow Hook
+
+The `afterCreateRow` hook fires when new rows are added to the table.
+
+<details>
+<summary><strong>Click to expand afterCreateRow example</strong></summary>
+
+```{r aftercreaterow-hook}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("afterCreateRow Hook Demo"),
+  
+  fluidRow(
+    column(8,
+      h4("Right-click and insert rows to see the hook in action"),
+      p("Use the context menu to add new rows:"),
+      handsontableOutput("create_row_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Row Creation Log"),
+      verbatimTextOutput("row_create_log"),
+      
+      br(),
+      actionButton("clear_row_log", "Clear Log", class = "btn-warning btn-sm"),
+      
+      br(), br(),
+      h4("Current Row Count"),
+      textOutput("row_count")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Initial data
+  initial_data <- data.frame(
+    Task = c("Task 1", "Task 2", "Task 3"),
+    Status = c("Pending", "In Progress", "Completed"),
+    Priority = c("High", "Medium", "Low"),
+    Assigned = c("Alice", "Bob", "Charlie")
+  )
+  
+  # Reactive values
+  row_create_log <- reactiveVal(character(0))
+  
+  output$create_row_table <- renderHandsontable({
+    handsontable(initial_data) |>
+      hot_col(col = 2, type = "dropdown", source = c("Pending", "In Progress", "Completed")) |>
+      hot_col(col = 3, type = "dropdown", source = c("High", "Medium", "Low")) |>
+      hot_table(contextMenu = TRUE)
+  })
+  
+  # Observe table changes
+  observeEvent(input$create_row_table, {
+    if (!is.null(input$create_row_table)) {
+      # Check if this is an afterCreateRow event
+      if (!is.null(input$create_row_table$event) && 
+          input$create_row_table$event == "afterCreateRow") {
+        
+        # Extract event details
+        index <- input$create_row_table$index + 1  # Convert to 1-based
+        amount <- input$create_row_table$amount
+        
+        # Create log entry
+        timestamp <- format(Sys.time(), "%H:%M:%S")
+        log_entry <- paste0(
+          "[", timestamp, "] EVENT: afterCreateRow\n",
+          "  Inserted ", amount, " row(s) at position ", index
+        )
+        
+        # Add to log
+        current_log <- row_create_log()
+        new_log <- c(log_entry, current_log)
+        if (length(new_log) > 10) {
+          new_log <- new_log[1:10]
+        }
+        row_create_log(new_log)
+      }
+    }
+  })
+  
+  # Display creation log
+  output$row_create_log <- renderText({
+    log_entries <- row_create_log()
+    if (length(log_entries) == 0) {
+      "No rows created yet. Right-click and select 'Insert row above/below'."
+    } else {
+      paste(log_entries, collapse = "\n\n---\n\n")
+    }
+  })
+  
+  # Clear log button
+  observeEvent(input$clear_row_log, {
+    row_create_log(character(0))
+  })
+  
+  # Display current row count
+  output$row_count <- renderText({
+    if (!is.null(input$create_row_table) && !is.null(input$create_row_table$data)) {
+      paste("Current rows:", length(input$create_row_table$data))
+    } else {
+      paste("Current rows:", nrow(initial_data))
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### afterRemoveRow Hook
+
+The `afterRemoveRow` hook fires when rows are deleted from the table.
+
+<details>
+<summary><strong>Click to expand afterRemoveRow example</strong></summary>
+
+```{r afterremoverow-hook}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("afterRemoveRow Hook Demo"),
+  
+  fluidRow(
+    column(8,
+      h4("Right-click and remove rows to see the hook in action"),
+      p("Use the context menu to delete rows:"),
+      handsontableOutput("remove_row_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Row Deletion Log"),
+      verbatimTextOutput("row_delete_log"),
+      
+      br(),
+      actionButton("clear_delete_log", "Clear Log", class = "btn-warning btn-sm"),
+      
+      br(), br(),
+      h4("Deletion Summary"),
+      verbatimTextOutput("delete_summary")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Initial data with more rows for deletion testing
+  initial_data <- data.frame(
+    ID = 1:8,
+    Employee = paste("Employee", 1:8),
+    Department = sample(c("IT", "HR", "Finance", "Marketing"), 8, replace = TRUE),
+    Salary = sample(40000:80000, 8),
+    Active = sample(c(TRUE, FALSE), 8, replace = TRUE)
+  )
+  
+  # Reactive values
+  row_delete_log <- reactiveVal(character(0))
+  delete_count <- reactiveVal(0)
+  
+  output$remove_row_table <- renderHandsontable({
+    handsontable(initial_data) |>
+      hot_col(col = 1, readOnly = TRUE) |>
+      hot_col(col = 3, type = "dropdown", source = c("IT", "HR", "Finance", "Marketing")) |>
+      hot_col(col = 4, type = "numeric", format = "$0,0") |>
+      hot_col(col = 5, type = "checkbox") |>
+      hot_table(contextMenu = TRUE)
+  })
+  
+  # Observe table changes
+  observeEvent(input$remove_row_table, {
+    if (!is.null(input$remove_row_table)) {
+      # Check if this is an afterRemoveRow event
+      if (!is.null(input$remove_row_table$event) && 
+          input$remove_row_table$event == "afterRemoveRow") {
+        
+        # Extract event details
+        index <- input$remove_row_table$index + 1  # Convert to 1-based
+        amount <- input$remove_row_table$amount
+        
+        # Update delete count
+        delete_count(delete_count() + amount)
+        
+        # Create log entry
+        timestamp <- format(Sys.time(), "%H:%M:%S")
+        log_entry <- paste0(
+          "[", timestamp, "] EVENT: afterRemoveRow\n",
+          "  Removed ", amount, " row(s) starting at position ", index, "\n",
+          "  Total rows remaining: ", length(input$remove_row_table$data)
+        )
+        
+        # Add to log
+        current_log <- row_delete_log()
+        new_log <- c(log_entry, current_log)
+        if (length(new_log) > 10) {
+          new_log <- new_log[1:10]
+        }
+        row_delete_log(new_log)
+      }
+    }
+  })
+  
+  # Display deletion log
+  output$row_delete_log <- renderText({
+    log_entries <- row_delete_log()
+    if (length(log_entries) == 0) {
+      "No rows deleted yet. Right-click and select 'Delete row'."
+    } else {
+      paste(log_entries, collapse = "\n\n---\n\n")
+    }
+  })
+  
+  # Clear log button
+  observeEvent(input$clear_delete_log, {
+    row_delete_log(character(0))
+    delete_count(0)
+  })
+  
+  # Display deletion summary
+  output$delete_summary <- renderText({
+    current_rows <- if (!is.null(input$remove_row_table$data)) {
+      length(input$remove_row_table$data)
+    } else {
+      nrow(initial_data)
+    }
+    
+    paste0(
+      "Original rows: ", nrow(initial_data), "\n",
+      "Current rows: ", current_rows, "\n",
+      "Total deleted: ", delete_count(), "\n",
+      "Remaining: ", current_rows
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### afterCreateCol Hook
+
+The `afterCreateCol` hook fires when new columns are added to the table.
+
+<details>
+<summary><strong>Click to expand afterCreateCol example</strong></summary>
+
+```{r aftercreatecol-hook}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("afterCreateCol Hook Demo"),
+  
+  fluidRow(
+    column(8,
+      h4("Right-click and insert columns to see the hook in action"),
+      p("Use the context menu to add new columns:"),
+      handsontableOutput("create_col_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Column Creation Log"),
+      verbatimTextOutput("col_create_log"),
+      
+      br(),
+      actionButton("clear_col_log", "Clear Log", class = "btn-warning btn-sm"),
+      
+      br(), br(),
+      h4("Column Information"),
+      verbatimTextOutput("col_info")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Initial data
+  initial_data <- data.frame(
+    Name = c("Alice", "Bob", "Charlie"),
+    Age = c(25, 30, 35),
+    City = c("New York", "London", "Tokyo")
+  )
+  
+  # Reactive values
+  col_create_log <- reactiveVal(character(0))
+  
+  output$create_col_table <- renderHandsontable({
+    handsontable(initial_data) |>
+      hot_col(col = 2, type = "numeric") |>
+      hot_table(contextMenu = TRUE)
+  })
+  
+  # Observe table changes
+  observeEvent(input$create_col_table, {
+    if (!is.null(input$create_col_table)) {
+      # Check if this is an afterCreateCol event
+      if (!is.null(input$create_col_table$event) && 
+          input$create_col_table$event == "afterCreateCol") {
+        
+        # Extract event details
+        index <- input$create_col_table$index + 1  # Convert to 1-based
+        amount <- input$create_col_table$amount
+        colnames <- input$create_col_table$colnames
+        
+        # Create log entry
+        timestamp <- format(Sys.time(), "%H:%M:%S")
+        log_entry <- paste0(
+          "[", timestamp, "] EVENT: afterCreateCol\n",
+          "  Inserted ", amount, " column(s) at position ", index, "\n",
+          "  New column names: ", paste(colnames[index:(index + amount - 1)], collapse = ", ")
+        )
+        
+        # Add to log
+        current_log <- col_create_log()
+        new_log <- c(log_entry, current_log)
+        if (length(new_log) > 10) {
+          new_log <- new_log[1:10]
+        }
+        col_create_log(new_log)
+      }
+    }
+  })
+  
+  # Display creation log
+  output$col_create_log <- renderText({
+    log_entries <- col_create_log()
+    if (length(log_entries) == 0) {
+      "No columns created yet. Right-click and select 'Insert column left/right'."
+    } else {
+      paste(log_entries, collapse = "\n\n---\n\n")
+    }
+  })
+  
+  # Clear log button
+  observeEvent(input$clear_col_log, {
+    col_create_log(character(0))
+  })
+  
+  # Display column information
+  output$col_info <- renderText({
+    if (!is.null(input$create_col_table) && !is.null(input$create_col_table$colnames)) {
+      colnames <- input$create_col_table$colnames
+      paste0(
+        "Current columns: ", length(colnames), "\n",
+        "Column names: ", paste(colnames, collapse = ", ")
+      )
+    } else {
+      paste0(
+        "Current columns: ", ncol(initial_data), "\n",
+        "Column names: ", paste(names(initial_data), collapse = ", ")
+      )
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### afterRemoveCol Hook
+
+The `afterRemoveCol` hook fires when columns are deleted from the table.
+
+<details>
+<summary><strong>Click to expand afterRemoveCol example</strong></summary>
+
+```{r afterremovecol-hook}
+library(shiny)
+library(handsontable)
+
+ui <- fluidPage(
+  titlePanel("afterRemoveCol Hook Demo"),
+  
+  fluidRow(
+    column(8,
+      h4("Right-click and remove columns to see the hook in action"),
+      p("Use the context menu to delete columns:"),
+      handsontableOutput("remove_col_table", height = "300px")
+    ),
+    
+    column(4,
+      h4("Column Deletion Log"),
+      verbatimTextOutput("col_delete_log"),
+      
+      br(),
+      actionButton("clear_col_delete_log", "Clear Log", class = "btn-warning btn-sm"),
+      
+      br(), br(),
+      h4("Column Summary"),
+      verbatimTextOutput("col_delete_summary")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Initial data with more columns for deletion testing
+  initial_data <- data.frame(
+    ID = 1:5,
+    Name = paste("Person", 1:5),
+    Age = sample(25:45, 5),
+    Department = sample(c("IT", "HR", "Finance"), 5, replace = TRUE),
+    Salary = sample(40000:80000, 5),
+    Bonus = sample(1000:5000, 5),
+    Active = sample(c(TRUE, FALSE), 5, replace = TRUE)
+  )
+  
+  # Reactive values
+  col_delete_log <- reactiveVal(character(0))
+  original_col_names <- names(initial_data)
+  
+  output$remove_col_table <- renderHandsontable({
+    handsontable(initial_data) |>
+      hot_col(col = 1, readOnly = TRUE) |>
+      hot_col(col = 3, type = "numeric") |>
+      hot_col(col = 4, type = "dropdown", source = c("IT", "HR", "Finance")) |>
+      hot_col(col = 5, type = "numeric", format = "$0,0") |>
+      hot_col(col = 6, type = "numeric", format = "$0,0") |>
+      hot_col(col = 7, type = "checkbox") |>
+      hot_table(contextMenu = TRUE)
+  })
+  
+  # Observe table changes
+  observeEvent(input$remove_col_table, {
+    if (!is.null(input$remove_col_table)) {
+      # Check if this is an afterRemoveCol event
+      if (!is.null(input$remove_col_table$event) && 
+          input$remove_col_table$event == "afterRemoveCol") {
+        
+        # Extract event details
+        index <- input$remove_col_table$index + 1  # Convert to 1-based
+        amount <- input$remove_col_table$amount
+        remaining_colnames <- input$remove_col_table$colnames
+        
+        # Create log entry
+        timestamp <- format(Sys.time(), "%H:%M:%S")
+        log_entry <- paste0(
+          "[", timestamp, "] EVENT: afterRemoveCol\n",
+          "  Removed ", amount, " column(s) starting at position ", index, "\n",
+          "  Remaining columns: ", length(remaining_colnames), "\n",
+          "  Column names: ", paste(remaining_colnames, collapse = ", ")
+        )
+        
+        # Add to log
+        current_log <- col_delete_log()
+        new_log <- c(log_entry, current_log)
+        if (length(new_log) > 10) {
+          new_log <- new_log[1:10]
+        }
+        col_delete_log(new_log)
+      }
+    }
+  })
+  
+  # Display deletion log
+  output$col_delete_log <- renderText({
+    log_entries <- col_delete_log()
+    if (length(log_entries) == 0) {
+      "No columns deleted yet. Right-click and select 'Delete column'."
+    } else {
+      paste(log_entries, collapse = "\n\n---\n\n")
+    }
+  })
+  
+  # Clear log button
+  observeEvent(input$clear_col_delete_log, {
+    col_delete_log(character(0))
+  })
+  
+  # Display deletion summary
+  output$col_delete_summary <- renderText({
+    current_cols <- if (!is.null(input$remove_col_table$colnames)) {
+      input$remove_col_table$colnames
+    } else {
+      original_col_names
+    }
+    
+    deleted_count <- length(original_col_names) - length(current_cols)
+    
+    paste0(
+      "Original columns: ", length(original_col_names), "\n",
+      "Current columns: ", length(current_cols), "\n",
+      "Deleted columns: ", deleted_count, "\n",
+      "Remaining: ", paste(current_cols, collapse = ", ")
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+</details>
+
+### Hook Event Summary
+
+All hooks provide consistent event information:
+
+- **`event`**: The hook name (e.g., "afterChange", "afterSelection")
+- **`data`**: Current table data
+- **`colnames`**: Current column names
+- **Hook-specific parameters**: Additional context like `changes`, `source`, `index`, `amount`, etc.
+
+This event system allows you to create sophisticated reactive applications that respond precisely to user interactions with your handsontables.
+
+This covers the essential patterns for using handsontables in Shiny 
+applications. The next vignette will cover data validation and advanced 
+customization options.
+
 ## Interactive Data Editing
 
 ### Editable Table with Validation
 
 ```{r editable-validation}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Editable Table with Validation"),
   handsontableOutput("table"),
@@ -293,6 +1081,9 @@ shinyApp(ui, server)
 ### Updating Cell Values
 
 ```{r programmatic-updates}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Programmatic Updates"),
   fluidRow(
@@ -364,6 +1155,9 @@ shinyApp(ui, server)
 ### Master-Detail Views
 
 ```{r master-detail}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Master-Detail Pattern"),
   fluidRow(
@@ -424,6 +1218,9 @@ shinyApp(ui, server)
 ### Dynamic Column Generation
 
 ```{r dynamic-columns}
+library(shiny)
+library(handsontable)
+
 ui <- fluidPage(
   titlePanel("Dynamic Columns"),
   fluidRow(
@@ -560,6 +1357,8 @@ output$table <- renderHandsontable({
 
 ```{r dt-integration, eval=FALSE}
 # Use handsontable for editing, DT for display
+library(shiny)
+library(handsontable)
 library(DT)
 
 # In UI
@@ -587,7 +1386,3 @@ observeEvent(input$edit_table, {
   }
 })
 ```
-
-This covers the essential patterns for using handsontables in Shiny 
-applications. The next vignette will cover data validation and advanced 
-customization options.
