@@ -134,7 +134,10 @@ react to table changes in real-time.</p>
 <h4 id="basic-change-detection">Basic Change Detection<a class="anchor" aria-label="anchor" href="#basic-change-detection"></a>
 </h4>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Change Detection"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -214,7 +217,10 @@ information</li>
 <h4 id="detailed-change-information">Detailed Change Information<a class="anchor" aria-label="anchor" href="#detailed-change-information"></a>
 </h4>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Detailed Change Tracking"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -282,13 +288,791 @@ information</li>
 </div>
 </div>
 <div class="section level3">
+<h3 id="event-hooks">Event Hooks<a class="anchor" aria-label="anchor" href="#event-hooks"></a>
+</h3>
+<p>Handsontable provides several event hooks that allow you to react to
+specific user interactions. Each hook sends detailed information about
+the event, including an <code>event</code> type identifier and
+additional context-specific parameters.</p>
+<div class="section level4">
+<h4 id="afterchange-hook">afterChange Hook<a class="anchor" aria-label="anchor" href="#afterchange-hook"></a>
+</h4>
+<p>The <code>afterChange</code> hook fires whenever cell data is
+modified. It provides information about what changed, including the
+source of the change (edit, paste, fill, etc.).</p>
+<details><summary><strong>Click to expand afterChange example</strong>
+</summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Sample data</span></span>
+<span><span class="va">sample_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  Name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>, <span class="st">"Diana"</span>, <span class="st">"Eve"</span><span class="op">)</span>,</span>
+<span>  Score <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">85</span>, <span class="fl">92</span>, <span class="fl">78</span>, <span class="fl">95</span>, <span class="fl">88</span><span class="op">)</span>,</span>
+<span>  Grade <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>,</span>
+<span>  Active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterChange Hook Demo - Event &amp; Source Parameters"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Interactive Handsontable"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Try editing cells, pasting data, or using the context menu to see different source types:"</span><span class="op">)</span>,</span>
+<span>      <span class="va">tags</span><span class="op">$</span><span class="fu">ul</span><span class="op">(</span></span>
+<span>        <span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span><span class="st">"Edit a cell directly (source: 'edit')"</span><span class="op">)</span>,</span>
+<span>        <span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span><span class="st">"Copy/paste data (source: 'paste')"</span><span class="op">)</span>,</span>
+<span>        <span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span><span class="st">"Use fill handle to drag data (source: 'autofill')"</span><span class="op">)</span>,</span>
+<span>        <span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span><span class="st">"Right-click and insert/remove rows (source: 'UndoRedo.redo' or similar)"</span><span class="op">)</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"demo_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Change Event Log"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Real-time log of afterChange events:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"change_log"</span>, placeholder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Current Data Structure"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"data_structure"</span>, placeholder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"clear_log"</span>, <span class="st">"Clear Log"</span>, class <span class="op">=</span> <span class="st">"btn-warning btn-sm"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"programmatic_update"</span>, <span class="st">"Programmatic Update"</span>, class <span class="op">=</span> <span class="st">"btn-info btn-sm"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/helpText.html" class="external-link">helpText</a></span><span class="op">(</span><span class="st">"Updates Score column programmatically to test different source types"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Reactive values to store change log</span></span>
+<span>  <span class="va">change_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Render the handsontable</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">demo_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">sample_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">1</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span>, width <span class="op">=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">3</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="st">"dropdown"</span>, source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>, <span class="st">"F"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"checkbox"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span>, undo <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Observe changes in the handsontable</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="co"># Check if this is an afterChange event</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">event</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">event</span> <span class="op">==</span> <span class="st">"afterChange"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        </span>
+<span>        <span class="co"># Extract event details</span></span>
+<span>        <span class="va">event_type</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">event</span></span>
+<span>        <span class="va">source_type</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">source</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"unknown"</span></span>
+<span>        <span class="va">changes</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">changes</span></span>
+<span>        </span>
+<span>        <span class="co"># Format the change information</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">changes</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">changes</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="co"># Format timestamp</span></span>
+<span>          <span class="va">timestamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>          </span>
+<span>          <span class="co"># Format changes - each change is [row, col, oldValue, newValue]</span></span>
+<span>          <span class="va">change_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">changes</span>, <span class="kw">function</span><span class="op">(</span><span class="va">change</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">row_idx</span> <span class="op">&lt;-</span> <span class="va">change</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>  <span class="co"># Convert 0-based to 1-based indexing</span></span>
+<span>            <span class="va">col_idx</span> <span class="op">&lt;-</span> <span class="va">change</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>            <span class="va">old_val</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">change</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="st">"NULL"</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">change</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>            <span class="va">new_val</span> <span class="op">&lt;-</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">change</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="st">"NULL"</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">change</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>            </span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Row %d, Col %d: '%s' → '%s'"</span>, <span class="va">row_idx</span>, <span class="va">col_idx</span>, <span class="va">old_val</span>, <span class="va">new_val</span><span class="op">)</span></span>
+<span>          <span class="op">}</span><span class="op">)</span></span>
+<span>          </span>
+<span>          <span class="co"># Create log entry</span></span>
+<span>          <span class="va">log_entry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>            <span class="st">"["</span>, <span class="va">timestamp</span>, <span class="st">"] EVENT: "</span>, <span class="va">event_type</span>, <span class="st">" | SOURCE: "</span>, <span class="va">source_type</span>, <span class="st">"\n"</span>,</span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">change_details</span>, collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span>
+<span>          <span class="op">)</span></span>
+<span>          </span>
+<span>          <span class="co"># Add to log (keep last 10 entries)</span></span>
+<span>          <span class="va">current_log</span> <span class="op">&lt;-</span> <span class="fu">change_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>          <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">log_entry</span>, <span class="va">current_log</span><span class="op">)</span></span>
+<span>          <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="va">new_log</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span>          <span class="op">}</span></span>
+<span>          <span class="fu">change_log</span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display the change log</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">change_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">log_entries</span> <span class="op">&lt;-</span> <span class="fu">change_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">log_entries</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No changes yet. Try editing some cells!"</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">log_entries</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display current data structure</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">data_structure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">current_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hot_to_r.html">hot_to_r</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">demo_table</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>        <span class="st">"Dimensions:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span>, <span class="st">"rows ×"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span>, <span class="st">"columns\n"</span>,</span>
+<span>        <span class="st">"Column names:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_data</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>        <span class="st">"Last updated:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="st">"No data available yet."</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Clear log button</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear_log</span>, <span class="op">{</span></span>
+<span>    <span class="fu">change_log</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Programmatic update button - demonstrates different source types</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">programmatic_update</span>, <span class="op">{</span></span>
+<span>    <span class="co"># Update some cells programmatically using set_data</span></span>
+<span>    <span class="va">new_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">70</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/set_data.html">set_data</a></span><span class="op">(</span><span class="st">"demo_table"</span>, row <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">3</span>, val <span class="op">=</span> <span class="va">new_scores</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/showNotification.html" class="external-link">showNotification</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Updated scores for rows 2 and 4 to:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">new_scores</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      type <span class="op">=</span> <span class="st">"message"</span>,</span>
+<span>      duration <span class="op">=</span> <span class="fl">3</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="afterselection-hook">afterSelection Hook<a class="anchor" aria-label="anchor" href="#afterselection-hook"></a>
+</h4>
+<p>The <code>afterSelection</code> hook fires when users select cells or
+ranges in the table.</p>
+<details><summary><strong>Click to expand afterSelection example</strong>
+</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterSelection Hook Demo"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Select cells to see selection details"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Try selecting single cells, ranges, or multiple selections:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"selection_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Selection Information"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"selection_info"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Selected Data"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Data from currently selected cells:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderTable.html" class="external-link">tableOutput</a></span><span class="op">(</span><span class="st">"selected_data"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Sample data</span></span>
+<span>  <span class="va">table_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Product <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Widget A"</span>, <span class="st">"Widget B"</span>, <span class="st">"Widget C"</span>, <span class="st">"Widget D"</span>, <span class="st">"Widget E"</span><span class="op">)</span>,</span>
+<span>    Category <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Electronics"</span>, <span class="st">"Toys"</span>, <span class="st">"Electronics"</span>, <span class="st">"Books"</span>, <span class="st">"Toys"</span><span class="op">)</span>,</span>
+<span>    Price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25.99</span>, <span class="fl">12.50</span>, <span class="fl">45.00</span>, <span class="fl">18.99</span>, <span class="fl">8.75</span><span class="op">)</span>,</span>
+<span>    Stock <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">250</span>, <span class="fl">75</span>, <span class="fl">180</span>, <span class="fl">320</span><span class="op">)</span>,</span>
+<span>    Supplier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acme Corp"</span>, <span class="st">"Toy Co"</span>, <span class="st">"Acme Corp"</span>, <span class="st">"Book Inc"</span>, <span class="st">"Toy Co"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">selection_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">table_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">3</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0.00"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"0,0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display selection information</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">selection_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">selection_table_select</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No selection made yet"</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">sel</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">selection_table_select</span></span>
+<span>      </span>
+<span>      <span class="co"># Convert 0-based to 1-based indexing</span></span>
+<span>      <span class="va">start_row</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">row</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">start_col</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">col</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">end_row</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">row2</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">end_col</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">col2</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      </span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="va">start_row</span> <span class="op">==</span> <span class="va">end_row</span> <span class="op">&amp;&amp;</span> <span class="va">start_col</span> <span class="op">==</span> <span class="va">end_col</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"Single cell selected:\n"</span>,</span>
+<span>          <span class="st">"Row: "</span>, <span class="va">start_row</span>, <span class="st">", Column: "</span>, <span class="va">start_col</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"Value: "</span>, <span class="va">table_data</span><span class="op">[</span><span class="va">start_row</span>, <span class="va">start_col</span><span class="op">]</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"Range selected:\n"</span>,</span>
+<span>          <span class="st">"From Row "</span>, <span class="va">start_row</span>, <span class="st">", Col "</span>, <span class="va">start_col</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"To Row "</span>, <span class="va">end_row</span>, <span class="st">", Col "</span>, <span class="va">end_col</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"Total cells: "</span>, <span class="op">(</span><span class="va">end_row</span> <span class="op">-</span> <span class="va">start_row</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">end_col</span> <span class="op">-</span> <span class="va">start_col</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display selected data</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">selected_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderTable.html" class="external-link">renderTable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">selection_table_select</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Message <span class="op">=</span> <span class="st">"No selection"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">sel</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">selection_table_select</span></span>
+<span>      </span>
+<span>      <span class="co"># Convert 0-based to 1-based indexing</span></span>
+<span>      <span class="va">start_row</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">row</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">start_col</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">col</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">end_row</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">row2</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      <span class="va">end_col</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">col2</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>      </span>
+<span>      <span class="co"># Extract selected data</span></span>
+<span>      <span class="va">selected_data</span> <span class="op">&lt;-</span> <span class="va">table_data</span><span class="op">[</span><span class="va">start_row</span><span class="op">:</span><span class="va">end_row</span>, <span class="va">start_col</span><span class="op">:</span><span class="va">end_col</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>      <span class="va">selected_data</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="aftercreaterow-hook">afterCreateRow Hook<a class="anchor" aria-label="anchor" href="#aftercreaterow-hook"></a>
+</h4>
+<p>The <code>afterCreateRow</code> hook fires when new rows are added to
+the table.</p>
+<details><summary><strong>Click to expand afterCreateRow example</strong>
+</summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterCreateRow Hook Demo"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Right-click and insert rows to see the hook in action"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Use the context menu to add new rows:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"create_row_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Row Creation Log"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"row_create_log"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"clear_row_log"</span>, <span class="st">"Clear Log"</span>, class <span class="op">=</span> <span class="st">"btn-warning btn-sm"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Current Row Count"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">textOutput</a></span><span class="op">(</span><span class="st">"row_count"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Initial data</span></span>
+<span>  <span class="va">initial_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Task <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Task 1"</span>, <span class="st">"Task 2"</span>, <span class="st">"Task 3"</span><span class="op">)</span>,</span>
+<span>    Status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pending"</span>, <span class="st">"In Progress"</span>, <span class="st">"Completed"</span><span class="op">)</span>,</span>
+<span>    Priority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"High"</span>, <span class="st">"Medium"</span>, <span class="st">"Low"</span><span class="op">)</span>,</span>
+<span>    Assigned <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Reactive values</span></span>
+<span>  <span class="va">row_create_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">create_row_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"dropdown"</span>, source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pending"</span>, <span class="st">"In Progress"</span>, <span class="st">"Completed"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">3</span>, type <span class="op">=</span> <span class="st">"dropdown"</span>, source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"High"</span>, <span class="st">"Medium"</span>, <span class="st">"Low"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Observe table changes</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="co"># Check if this is an afterCreateRow event</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">event</span><span class="op">)</span> <span class="op">&amp;&amp;</span> </span>
+<span>          <span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">event</span> <span class="op">==</span> <span class="st">"afterCreateRow"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        </span>
+<span>        <span class="co"># Extract event details</span></span>
+<span>        <span class="va">index</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">index</span> <span class="op">+</span> <span class="fl">1</span>  <span class="co"># Convert to 1-based</span></span>
+<span>        <span class="va">amount</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">amount</span></span>
+<span>        </span>
+<span>        <span class="co"># Create log entry</span></span>
+<span>        <span class="va">timestamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>        <span class="va">log_entry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"["</span>, <span class="va">timestamp</span>, <span class="st">"] EVENT: afterCreateRow\n"</span>,</span>
+<span>          <span class="st">"  Inserted "</span>, <span class="va">amount</span>, <span class="st">" row(s) at position "</span>, <span class="va">index</span></span>
+<span>        <span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="co"># Add to log</span></span>
+<span>        <span class="va">current_log</span> <span class="op">&lt;-</span> <span class="fu">row_create_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">log_entry</span>, <span class="va">current_log</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="va">new_log</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="fu">row_create_log</span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display creation log</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">row_create_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">log_entries</span> <span class="op">&lt;-</span> <span class="fu">row_create_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">log_entries</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No rows created yet. Right-click and select 'Insert row above/below'."</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">log_entries</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Clear log button</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear_row_log</span>, <span class="op">{</span></span>
+<span>    <span class="fu">row_create_log</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display current row count</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">row_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Current rows:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_row_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Current rows:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="afterremoverow-hook">afterRemoveRow Hook<a class="anchor" aria-label="anchor" href="#afterremoverow-hook"></a>
+</h4>
+<p>The <code>afterRemoveRow</code> hook fires when rows are deleted from
+the table.</p>
+<details><summary><strong>Click to expand afterRemoveRow example</strong>
+</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterRemoveRow Hook Demo"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Right-click and remove rows to see the hook in action"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Use the context menu to delete rows:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"remove_row_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Row Deletion Log"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"row_delete_log"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"clear_delete_log"</span>, <span class="st">"Clear Log"</span>, class <span class="op">=</span> <span class="st">"btn-warning btn-sm"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Deletion Summary"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"delete_summary"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Initial data with more rows for deletion testing</span></span>
+<span>  <span class="va">initial_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>,</span>
+<span>    Employee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Employee"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span>,</span>
+<span>    Department <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IT"</span>, <span class="st">"HR"</span>, <span class="st">"Finance"</span>, <span class="st">"Marketing"</span><span class="op">)</span>, <span class="fl">8</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    Salary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">40000</span><span class="op">:</span><span class="fl">80000</span>, <span class="fl">8</span><span class="op">)</span>,</span>
+<span>    Active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="fl">8</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Reactive values</span></span>
+<span>  <span class="va">row_delete_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">delete_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">remove_row_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">1</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">3</span>, type <span class="op">=</span> <span class="st">"dropdown"</span>, source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IT"</span>, <span class="st">"HR"</span>, <span class="st">"Finance"</span>, <span class="st">"Marketing"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0,0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"checkbox"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Observe table changes</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="co"># Check if this is an afterRemoveRow event</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">event</span><span class="op">)</span> <span class="op">&amp;&amp;</span> </span>
+<span>          <span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">event</span> <span class="op">==</span> <span class="st">"afterRemoveRow"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        </span>
+<span>        <span class="co"># Extract event details</span></span>
+<span>        <span class="va">index</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">index</span> <span class="op">+</span> <span class="fl">1</span>  <span class="co"># Convert to 1-based</span></span>
+<span>        <span class="va">amount</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">amount</span></span>
+<span>        </span>
+<span>        <span class="co"># Update delete count</span></span>
+<span>        <span class="fu">delete_count</span><span class="op">(</span><span class="fu">delete_count</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="va">amount</span><span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="co"># Create log entry</span></span>
+<span>        <span class="va">timestamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>        <span class="va">log_entry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"["</span>, <span class="va">timestamp</span>, <span class="st">"] EVENT: afterRemoveRow\n"</span>,</span>
+<span>          <span class="st">"  Removed "</span>, <span class="va">amount</span>, <span class="st">" row(s) starting at position "</span>, <span class="va">index</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"  Total rows remaining: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="co"># Add to log</span></span>
+<span>        <span class="va">current_log</span> <span class="op">&lt;-</span> <span class="fu">row_delete_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">log_entry</span>, <span class="va">current_log</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="va">new_log</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="fu">row_delete_log</span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display deletion log</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">row_delete_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">log_entries</span> <span class="op">&lt;-</span> <span class="fu">row_delete_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">log_entries</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No rows deleted yet. Right-click and select 'Delete row'."</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">log_entries</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Clear log button</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear_delete_log</span>, <span class="op">{</span></span>
+<span>    <span class="fu">row_delete_log</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu">delete_count</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display deletion summary</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">delete_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">current_rows</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_row_table</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>      <span class="st">"Original rows: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Current rows: "</span>, <span class="va">current_rows</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Total deleted: "</span>, <span class="fu">delete_count</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Remaining: "</span>, <span class="va">current_rows</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="aftercreatecol-hook">afterCreateCol Hook<a class="anchor" aria-label="anchor" href="#aftercreatecol-hook"></a>
+</h4>
+<p>The <code>afterCreateCol</code> hook fires when new columns are added
+to the table.</p>
+<details><summary><strong>Click to expand afterCreateCol example</strong>
+</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterCreateCol Hook Demo"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Right-click and insert columns to see the hook in action"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Use the context menu to add new columns:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"create_col_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Column Creation Log"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"col_create_log"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"clear_col_log"</span>, <span class="st">"Clear Log"</span>, class <span class="op">=</span> <span class="st">"btn-warning btn-sm"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Column Information"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"col_info"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Initial data</span></span>
+<span>  <span class="va">initial_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span><span class="op">)</span>,</span>
+<span>    Age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">30</span>, <span class="fl">35</span><span class="op">)</span>,</span>
+<span>    City <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"New York"</span>, <span class="st">"London"</span>, <span class="st">"Tokyo"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Reactive values</span></span>
+<span>  <span class="va">col_create_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">create_col_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Observe table changes</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="co"># Check if this is an afterCreateCol event</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">event</span><span class="op">)</span> <span class="op">&amp;&amp;</span> </span>
+<span>          <span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">event</span> <span class="op">==</span> <span class="st">"afterCreateCol"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        </span>
+<span>        <span class="co"># Extract event details</span></span>
+<span>        <span class="va">index</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">index</span> <span class="op">+</span> <span class="fl">1</span>  <span class="co"># Convert to 1-based</span></span>
+<span>        <span class="va">amount</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">amount</span></span>
+<span>        <span class="va">colnames</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">colnames</span></span>
+<span>        </span>
+<span>        <span class="co"># Create log entry</span></span>
+<span>        <span class="va">timestamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>        <span class="va">log_entry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"["</span>, <span class="va">timestamp</span>, <span class="st">"] EVENT: afterCreateCol\n"</span>,</span>
+<span>          <span class="st">"  Inserted "</span>, <span class="va">amount</span>, <span class="st">" column(s) at position "</span>, <span class="va">index</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"  New column names: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">colnames</span><span class="op">[</span><span class="va">index</span><span class="op">:</span><span class="op">(</span><span class="va">index</span> <span class="op">+</span> <span class="va">amount</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="co"># Add to log</span></span>
+<span>        <span class="va">current_log</span> <span class="op">&lt;-</span> <span class="fu">col_create_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">log_entry</span>, <span class="va">current_log</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="va">new_log</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="fu">col_create_log</span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display creation log</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">col_create_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">log_entries</span> <span class="op">&lt;-</span> <span class="fu">col_create_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">log_entries</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No columns created yet. Right-click and select 'Insert column left/right'."</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">log_entries</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Clear log button</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear_col_log</span>, <span class="op">{</span></span>
+<span>    <span class="fu">col_create_log</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display column information</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">col_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">colnames</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">colnames</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">create_col_table</span><span class="op">$</span><span class="va">colnames</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>        <span class="st">"Current columns: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">colnames</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>        <span class="st">"Column names: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">colnames</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>        <span class="st">"Current columns: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>        <span class="st">"Column names: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="afterremovecol-hook">afterRemoveCol Hook<a class="anchor" aria-label="anchor" href="#afterremovecol-hook"></a>
+</h4>
+<p>The <code>afterRemoveCol</code> hook fires when columns are deleted
+from the table.</p>
+<details><summary><strong>Click to expand afterRemoveCol example</strong>
+</summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"afterRemoveCol Hook Demo"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Right-click and remove columns to see the hook in action"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Use the context menu to delete columns:"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"remove_col_table"</span>, height <span class="op">=</span> <span class="st">"300px"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">4</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Column Deletion Log"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"col_delete_log"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"clear_col_delete_log"</span>, <span class="st">"Clear Log"</span>, class <span class="op">=</span> <span class="st">"btn-warning btn-sm"</span><span class="op">)</span>,</span>
+<span>      </span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Column Summary"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"col_delete_summary"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Initial data with more columns for deletion testing</span></span>
+<span>  <span class="va">initial_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>    Name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Person"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,</span>
+<span>    Age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">25</span><span class="op">:</span><span class="fl">45</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    Department <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IT"</span>, <span class="st">"HR"</span>, <span class="st">"Finance"</span><span class="op">)</span>, <span class="fl">5</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    Salary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">40000</span><span class="op">:</span><span class="fl">80000</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    Bonus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">:</span><span class="fl">5000</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    Active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="fl">5</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Reactive values</span></span>
+<span>  <span class="va">col_delete_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveVal.html" class="external-link">reactiveVal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">original_col_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">remove_col_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/renderHandsontable.html">renderHandsontable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">initial_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">1</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">3</span>, type <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="st">"dropdown"</span>, source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IT"</span>, <span class="st">"HR"</span>, <span class="st">"Finance"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0,0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">6</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0,0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">7</span>, type <span class="op">=</span> <span class="st">"checkbox"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Observe table changes</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="co"># Check if this is an afterRemoveCol event</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">event</span><span class="op">)</span> <span class="op">&amp;&amp;</span> </span>
+<span>          <span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">event</span> <span class="op">==</span> <span class="st">"afterRemoveCol"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        </span>
+<span>        <span class="co"># Extract event details</span></span>
+<span>        <span class="va">index</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">index</span> <span class="op">+</span> <span class="fl">1</span>  <span class="co"># Convert to 1-based</span></span>
+<span>        <span class="va">amount</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">amount</span></span>
+<span>        <span class="va">remaining_colnames</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">colnames</span></span>
+<span>        </span>
+<span>        <span class="co"># Create log entry</span></span>
+<span>        <span class="va">timestamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%H:%M:%S"</span><span class="op">)</span></span>
+<span>        <span class="va">log_entry</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>          <span class="st">"["</span>, <span class="va">timestamp</span>, <span class="st">"] EVENT: afterRemoveCol\n"</span>,</span>
+<span>          <span class="st">"  Removed "</span>, <span class="va">amount</span>, <span class="st">" column(s) starting at position "</span>, <span class="va">index</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"  Remaining columns: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">remaining_colnames</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>          <span class="st">"  Column names: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">remaining_colnames</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="co"># Add to log</span></span>
+<span>        <span class="va">current_log</span> <span class="op">&lt;-</span> <span class="fu">col_delete_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">log_entry</span>, <span class="va">current_log</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="va">new_log</span> <span class="op">&lt;-</span> <span class="va">new_log</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="fu">col_delete_log</span><span class="op">(</span><span class="va">new_log</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display deletion log</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">col_delete_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">log_entries</span> <span class="op">&lt;-</span> <span class="fu">col_delete_log</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">log_entries</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="st">"No columns deleted yet. Right-click and select 'Delete column'."</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">log_entries</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Clear log button</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear_col_delete_log</span>, <span class="op">{</span></span>
+<span>    <span class="fu">col_delete_log</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Display deletion summary</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">col_delete_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">current_cols</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">colnames</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">input</span><span class="op">$</span><span class="va">remove_col_table</span><span class="op">$</span><span class="va">colnames</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">original_col_names</span></span>
+<span>    <span class="op">}</span></span>
+<span>    </span>
+<span>    <span class="va">deleted_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">original_col_names</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">current_cols</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>      <span class="st">"Original columns: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">original_col_names</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Current columns: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">current_cols</span><span class="op">)</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Deleted columns: "</span>, <span class="va">deleted_count</span>, <span class="st">"\n"</span>,</span>
+<span>      <span class="st">"Remaining: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">current_cols</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div class="section level4">
+<h4 id="hook-event-summary">Hook Event Summary<a class="anchor" aria-label="anchor" href="#hook-event-summary"></a>
+</h4>
+<p>All hooks provide consistent event information:</p>
+<ul>
+<li>
+<strong><code>event</code></strong>: The hook name (e.g.,
+“afterChange”, “afterSelection”)</li>
+<li>
+<strong><code>data</code></strong>: Current table data</li>
+<li>
+<strong><code>colnames</code></strong>: Current column names</li>
+<li>
+<strong>Hook-specific parameters</strong>: Additional context like
+<code>changes</code>, <code>source</code>, <code>index</code>,
+<code>amount</code>, etc.</li>
+</ul>
+<p>This event system allows you to create sophisticated reactive
+applications that respond precisely to user interactions with your
+handsontables.</p>
+<p>This covers the essential patterns for using handsontables in Shiny
+applications. The next vignette will cover data validation and advanced
+customization options.</p>
+</div>
+</div>
+<div class="section level3">
 <h3 id="interactive-data-editing">Interactive Data Editing<a class="anchor" aria-label="anchor" href="#interactive-data-editing"></a>
 </h3>
 <div class="section level4">
 <h4 id="editable-table-with-validation">Editable Table with Validation<a class="anchor" aria-label="anchor" href="#editable-table-with-validation"></a>
 </h4>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Editable Table with Validation"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">br</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -377,8 +1161,11 @@ information</li>
 <div class="section level4">
 <h4 id="updating-cell-values">Updating Cell Values<a class="anchor" aria-label="anchor" href="#updating-cell-values"></a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Programmatic Updates"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -450,8 +1237,11 @@ information</li>
 <div class="section level4">
 <h4 id="master-detail-views">Master-Detail Views<a class="anchor" aria-label="anchor" href="#master-detail-views"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Master-Detail Pattern"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h4</a></span><span class="op">(</span><span class="st">"Employees"</span><span class="op">)</span>, <span class="fu"><a href="../reference/handsontableOutput.html">handsontableOutput</a></span><span class="op">(</span><span class="st">"employees"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -510,8 +1300,11 @@ information</li>
 <div class="section level4">
 <h4 id="dynamic-column-generation">Dynamic Column Generation<a class="anchor" aria-label="anchor" href="#dynamic-column-generation"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/titlePanel.html" class="external-link">titlePanel</a></span><span class="op">(</span><span class="st">"Dynamic Columns"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidRow</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/column.html" class="external-link">column</a></span><span class="op">(</span></span>
@@ -593,7 +1386,7 @@ information</li>
 <h4 id="debouncing-changes">1. Debouncing Changes<a class="anchor" aria-label="anchor" href="#debouncing-changes"></a>
 </h4>
 <p>For large tables, consider debouncing change events:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use a reactive timer to batch updates</span></span>
 <span><span class="va">values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactiveValues.html" class="external-link">reactiveValues</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, last_update <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -613,7 +1406,7 @@ information</li>
 <h4 id="selective-updates">2. Selective Updates<a class="anchor" aria-label="anchor" href="#selective-updates"></a>
 </h4>
 <p>Only update what’s necessary:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">table</span>, <span class="op">{</span></span>
 <span>  <span class="co"># Only process if data actually changed</span></span>
 <span>  <span class="va">new_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hot_to_r.html">hot_to_r</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">table</span><span class="op">)</span></span>
@@ -627,7 +1420,7 @@ information</li>
 <h4 id="large-dataset-handling">3. Large Dataset Handling<a class="anchor" aria-label="anchor" href="#large-dataset-handling"></a>
 </h4>
 <p>For very large datasets:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use server-side filtering and pagination</span></span>
 <span><span class="co"># Limit initial display to reasonable size</span></span>
 <span><span class="va">display_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span></span>
@@ -649,8 +1442,10 @@ information</li>
 <div class="section level4">
 <h4 id="with-dt-package">With DT Package<a class="anchor" aria-label="anchor" href="#with-dt-package"></a>
 </h4>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use handsontable for editing, DT for display</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kennedymwavu/handsontable" class="external-link">handsontable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># In UI</span></span>
@@ -677,9 +1472,6 @@ information</li>
 <span>    <span class="fu">shared_data</span><span class="op">(</span><span class="fu"><a href="../reference/hot_to_r.html">hot_to_r</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">edit_table</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p>This covers the essential patterns for using handsontables in Shiny
-applications. The next vignette will cover data validation and advanced
-customization options.</p>
 </div>
 </div>
 </div>
