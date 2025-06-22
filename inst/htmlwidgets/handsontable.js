@@ -1,4 +1,3 @@
-
 HTMLWidgets.widget({
   name: "handsontable",
 
@@ -83,7 +82,7 @@ HTMLWidgets.widget({
         );
 
         // Calculate adaptive height if enabled
-        if (config.adaptiveHeight !== false) {
+        if (config.adaptiveHeight === true) {
           config.height = calculateAdaptiveHeight(config, height);
         }
 
@@ -99,75 +98,83 @@ HTMLWidgets.widget({
           });
         }
 
-        // Add CSV export functionality to context menu
-        if (config.contextMenu === true) {
-          config.contextMenu = {
-            items: {
-              "row_above": {},
-              "row_below": {},
-              "col_left": {},
-              "col_right": {},
-              "remove_row": {},
-              "remove_col": {},
-              "separator1": "---------",
-              "copy": {},
-              "cut": {},
-              "separator2": "---------",
-              "export_csv": {
-                name: "Download to CSV",
-                callback: function() {
-                  // CSV export that handles empty values (fixes #434)
-                  const hot = this;
-                  const data = hot.getData();
-                  const settings = hot.getSettings();
-                  const colHeaders = settings.colHeaders;
-                  
-                  let csvContent = '';
-                  
-                  // Add headers if they exist and are not just true/false
-                  if (colHeaders && Array.isArray(colHeaders) && colHeaders.length > 0) {
-                    csvContent += colHeaders.map(header => {
-                      // Handle null/undefined headers
-                      const value = header == null ? '' : String(header);
-                      // Escape quotes and wrap in quotes if contains comma, quote, or newline
-                      return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
-                        ? '"' + value.replace(/"/g, '""') + '"' 
+        // contextMenu
+        const defaultContextMenu = {
+          row_above: {},
+          row_below: {},
+          col_left: {},
+          col_right: {},
+          remove_row: {},
+          remove_col: {},
+          separator1: "---------",
+          copy: {},
+          cut: {},
+          separator2: "---------",
+          export_csv: {
+            name: "Download to CSV",
+            callback: function () {
+              // Same CSV export function as above
+              const hot = this;
+              const data = hot.getData();
+              const settings = hot.getSettings();
+              const colHeaders = settings.colHeaders;
+
+              let csvContent = "";
+
+              if (
+                colHeaders &&
+                Array.isArray(colHeaders) &&
+                colHeaders.length > 0
+              ) {
+                csvContent +=
+                  colHeaders
+                    .map((header) => {
+                      const value = header == null ? "" : String(header);
+                      return value.indexOf(",") !== -1 ||
+                        value.indexOf('"') !== -1 ||
+                        value.indexOf("\n") !== -1
+                        ? '"' + value.replace(/"/g, '""') + '"'
                         : value;
-                    }).join(',') + '\n';
-                  }
-                  
-                  // Add data rows
-                  data.forEach(row => {
-                    if (row) {
-                      const csvRow = row.map(cell => {
-                        // Handle null/undefined/empty values (key fix for issue #434)
-                        const value = cell == null ? '' : String(cell);
-                        // Escape quotes and wrap in quotes if contains comma, quote, or newline
-                        return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
-                          ? '"' + value.replace(/"/g, '""') + '"' 
-                          : value;
-                      }).join(',');
-                      csvContent += csvRow + '\n';
-                    }
-                  });
-                  
-                  // Create and download file
-                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                  const link = document.createElement('a');
-                  
-                  if (link.download !== undefined) {
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', 'handsontable_export.csv');
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }
-                }
+                    })
+                    .join(",") + "\n";
               }
-            }
-          };
+
+              data.forEach((row) => {
+                if (row) {
+                  const csvRow = row
+                    .map((cell) => {
+                      const value = cell == null ? "" : String(cell);
+                      return value.indexOf(",") !== -1 ||
+                        value.indexOf('"') !== -1 ||
+                        value.indexOf("\n") !== -1
+                        ? '"' + value.replace(/"/g, '""') + '"'
+                        : value;
+                    })
+                    .join(",");
+                  csvContent += csvRow + "\n";
+                }
+              });
+
+              const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+              });
+              const link = document.createElement("a");
+
+              if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "handsontable_export.csv");
+                link.style.visibility = "hidden";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+            },
+          },
+        };
+
+        if (config.contextMenu === true) {
+          config.contextMenu = defaultContextMenu;
         }
 
         // Transform context menu customOpts to Handsontable v6.2.2 format
@@ -178,70 +185,13 @@ HTMLWidgets.widget({
         ) {
           // Start with default items including CSV export
           let defaultItems = {};
-          
+
           if (config.contextMenu.items) {
             // If items already exist, use them as base
             defaultItems = { ...config.contextMenu.items };
           } else {
             // Create default items with CSV export
-            defaultItems = {
-              "row_above": {},
-              "row_below": {},
-              "col_left": {},
-              "col_right": {},
-              "remove_row": {},
-              "remove_col": {},
-              "separator1": "---------",
-              "copy": {},
-              "cut": {},
-              "separator2": "---------",
-              "export_csv": {
-                name: "Download to CSV",
-                callback: function() {
-                  // Same CSV export function as above
-                  const hot = this;
-                  const data = hot.getData();
-                  const settings = hot.getSettings();
-                  const colHeaders = settings.colHeaders;
-                  
-                  let csvContent = '';
-                  
-                  if (colHeaders && Array.isArray(colHeaders) && colHeaders.length > 0) {
-                    csvContent += colHeaders.map(header => {
-                      const value = header == null ? '' : String(header);
-                      return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
-                        ? '"' + value.replace(/"/g, '""') + '"' 
-                        : value;
-                    }).join(',') + '\n';
-                  }
-                  
-                  data.forEach(row => {
-                    if (row) {
-                      const csvRow = row.map(cell => {
-                        const value = cell == null ? '' : String(cell);
-                        return value.indexOf(',') !== -1 || value.indexOf('"') !== -1 || value.indexOf('\n') !== -1 
-                          ? '"' + value.replace(/"/g, '""') + '"' 
-                          : value;
-                      }).join(',');
-                      csvContent += csvRow + '\n';
-                    }
-                  });
-                  
-                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                  const link = document.createElement('a');
-                  
-                  if (link.download !== undefined) {
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', 'handsontable_export.csv');
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }
-                }
-              }
-            };
+            defaultItems = defaultContextMenu;
           }
 
           const transformedItems = { ...defaultItems };
@@ -405,9 +355,11 @@ HTMLWidgets.widget({
         // Create Handsontable instance
         try {
           hot = new Handsontable(el, config);
-          
+
           // Initialize dynamic column names tracking
-          let currentColnames = config.originalColnames ? [...config.originalColnames] : [];
+          let currentColnames = config.originalColnames
+            ? [...config.originalColnames]
+            : [];
 
           // Column name tracking - no special default value handling needed
 
@@ -420,11 +372,11 @@ HTMLWidgets.widget({
               if (source !== "loadData" && changes) {
                 const data = hot.getData();
                 // Transform changes to named objects with 1-indexed values
-                const transformedChanges = changes.map(change => ({
-                  row_idx: change[0] + 1,  // Convert to 1-indexed
-                  col_idx: change[1] + 1,  // Convert to 1-indexed
+                const transformedChanges = changes.map((change) => ({
+                  row_idx: change[0] + 1, // Convert to 1-indexed
+                  col_idx: change[1] + 1, // Convert to 1-indexed
                   old_val: change[2],
-                  new_val: change[3]
+                  new_val: change[3],
                 }));
                 // Send to input$table_id (main input) with current column names
                 Shiny.setInputValue(
@@ -463,9 +415,9 @@ HTMLWidgets.widget({
                 Shiny.setInputValue(
                   el.id + "_select",
                   {
-                    row_idx: row + 1,      // Convert to 1-indexed
-                    col_idx: column + 1,   // Convert to 1-indexed
-                    row2_idx: row2 + 1,    // Convert to 1-indexed
+                    row_idx: row + 1, // Convert to 1-indexed
+                    col_idx: column + 1, // Convert to 1-indexed
+                    row2_idx: row2 + 1, // Convert to 1-indexed
                     col2_idx: column2 + 1, // Convert to 1-indexed
                   },
                   { priority: "event" },
@@ -481,7 +433,7 @@ HTMLWidgets.widget({
                   {
                     data: data,
                     event: "afterCreateRow",
-                    index: index + 1,  // Convert to 1-indexed
+                    index: index + 1, // Convert to 1-indexed
                     amount: amount,
                     colnames: currentColnames, // Use dynamic column names
                   },
@@ -505,7 +457,7 @@ HTMLWidgets.widget({
                     {
                       data: data,
                       event: "afterRemoveRow",
-                      index: index + 1,  // Convert to 1-indexed
+                      index: index + 1, // Convert to 1-indexed
                       amount: amount,
                       colnames: currentColnames, // Use dynamic column names
                     },
@@ -527,14 +479,14 @@ HTMLWidgets.widget({
                   const newColName = "col_" + (currentColnames.length + i + 1);
                   currentColnames.splice(index + i, 0, newColName);
                 }
-                
+
                 const data = hot.getData();
                 Shiny.setInputValue(
                   el.id,
                   {
                     data: data,
                     event: "afterCreateCol",
-                    index: index + 1,  // Convert to 1-indexed
+                    index: index + 1, // Convert to 1-indexed
                     amount: amount,
                     colnames: currentColnames, // Updated column names
                   },
@@ -554,14 +506,14 @@ HTMLWidgets.widget({
                 if (source !== "loadData") {
                   // Update column names array for removed columns
                   currentColnames.splice(index, amount);
-                  
+
                   const data = hot.getData();
                   Shiny.setInputValue(
                     el.id,
                     {
                       data: data,
                       event: "afterRemoveCol",
-                      index: index + 1,  // Convert to 1-indexed
+                      index: index + 1, // Convert to 1-indexed
                       amount: amount,
                       colnames: currentColnames, // Updated column names
                     },
