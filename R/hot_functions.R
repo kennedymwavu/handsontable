@@ -124,7 +124,6 @@ hot_rows <- function(
 #' @param undo Logical, enable undo/redo functionality
 #' @param outsideClickDeselects Logical, deselect on outside click
 #' @param fillHandle Logical or object, configure fill handle
-#' @param themeName Character, theme name (e.g., "ht-theme-main-dark-auto")
 #' @param ... Additional table configuration options
 #'
 #' @return Modified handsontable widget
@@ -166,7 +165,6 @@ hot_table <- function(
   undo = NULL,
   outsideClickDeselects = NULL,
   fillHandle = NULL,
-  themeName = NULL,
   ...
 ) {
   config <- list(
@@ -179,7 +177,6 @@ hot_table <- function(
     undo = undo,
     outsideClickDeselects = outsideClickDeselects,
     fillHandle = fillHandle,
-    themeName = themeName,
     ...
   ) |>
     Filter(f = Negate(is.null))

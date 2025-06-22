@@ -62,13 +62,6 @@ HTMLWidgets.widget({
           hot = null;
         }
 
-        // Apply theme class to container
-        if (x.themeName) {
-          el.className = x.themeName;
-        } else {
-          el.className = "ht-theme-main-dark-auto";
-        }
-
         // Set default configuration
         const config = Object.assign(
           {

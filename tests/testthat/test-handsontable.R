@@ -155,12 +155,6 @@ test_that("hot_table configures general table options", {
   expect_true(ht$x$undo)
 })
 
-test_that("hot_table handles theme configuration", {
-  ht <- handsontable(mtcars) |>
-    hot_table(themeName = "ht-theme-main-dark-auto")
-
-  expect_equal(ht$x$themeName, "ht-theme-main-dark-auto")
-})
 
 test_that("hot_table removes NULL values", {
   ht <- handsontable(iris) |>
