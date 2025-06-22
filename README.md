@@ -28,7 +28,7 @@ library(handsontable)
 handsontable(mtcars[1:5, 1:4])
 
 # With validation and formatting
-handsontable(iris[1:8, ]) |>
+handsontable(iris[1:8, ], search = TRUE) |>
   hot_col(
     col = 5,
     type = "dropdown",
@@ -39,7 +39,7 @@ handsontable(iris[1:8, ]) |>
     type = "numeric",
     min = 0
   ) |>
-  handsontable(contextMenu = TRUE, search = TRUE)
+  hot_context_menu()
 ```
 
 ## Shiny Integration
@@ -51,7 +51,8 @@ ui <- fluidPage(handsontableOutput("table"))
 
 server <- function(input, output) {
   output$table <- renderHandsontable({
-    handsontable(iris[1:10, ])
+    handsontable(iris[1:10, ]) |>
+      hot_context_menu()
   })
 
   observeEvent(input$table, {
