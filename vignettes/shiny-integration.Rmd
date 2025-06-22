@@ -230,12 +230,12 @@ server <- function(input, output, session) {
           # Format timestamp
           timestamp <- format(Sys.time(), "%H:%M:%S")
           
-          # Format changes - each change is [row, col, oldValue, newValue]
+          # Format changes - each change is now a named object with 1-indexed values
           change_details <- sapply(changes, function(change) {
-            row_idx <- change[[1]] + 1  # Convert 0-based to 1-based indexing
-            col_idx <- change[[2]] + 1
-            old_val <- if(is.null(change[[3]])) "NULL" else as.character(change[[3]])
-            new_val <- if(is.null(change[[4]])) "NULL" else as.character(change[[4]])
+            row_idx <- change$row_idx  # Already 1-indexed
+            col_idx <- change$col_idx  # Already 1-indexed
+            old_val <- if(is.null(change$old_val)) "NULL" else as.character(change$old_val)
+            new_val <- if(is.null(change$new_val)) "NULL" else as.character(change$new_val)
             
             sprintf("  Row %d, Col %d: '%s' → '%s'", row_idx, col_idx, old_val, new_val)
           })
@@ -363,11 +363,11 @@ server <- function(input, output, session) {
     } else {
       sel <- input$selection_table_select
       
-      # Convert 0-based to 1-based indexing
-      start_row <- sel$row + 1
-      start_col <- sel$col + 1
-      end_row <- sel$row2 + 1
-      end_col <- sel$col2 + 1
+      # Selection coordinates are now 1-indexed
+      start_row <- sel$row_idx
+      start_col <- sel$col_idx
+      end_row <- sel$row2_idx
+      end_col <- sel$col2_idx
       
       if (start_row == end_row && start_col == end_col) {
         paste0(
@@ -393,11 +393,11 @@ server <- function(input, output, session) {
     } else {
       sel <- input$selection_table_select
       
-      # Convert 0-based to 1-based indexing
-      start_row <- sel$row + 1
-      start_col <- sel$col + 1
-      end_row <- sel$row2 + 1
-      end_col <- sel$col2 + 1
+      # Selection coordinates are now 1-indexed
+      start_row <- sel$row_idx
+      start_col <- sel$col_idx
+      end_row <- sel$row2_idx
+      end_col <- sel$col2_idx
       
       # Extract selected data
       selected_data <- table_data[start_row:end_row, start_col:end_col, drop = FALSE]
@@ -473,7 +473,7 @@ server <- function(input, output, session) {
           input$create_row_table$event == "afterCreateRow") {
         
         # Extract event details
-        index <- input$create_row_table$index + 1  # Convert to 1-based
+        index <- input$create_row_table$index  # Already 1-indexed
         amount <- input$create_row_table$amount
         
         # Create log entry
@@ -590,7 +590,7 @@ server <- function(input, output, session) {
           input$remove_row_table$event == "afterRemoveRow") {
         
         # Extract event details
-        index <- input$remove_row_table$index + 1  # Convert to 1-based
+        index <- input$remove_row_table$index # Already 1-indexed
         amount <- input$remove_row_table$amount
         
         # Update delete count
@@ -713,7 +713,7 @@ server <- function(input, output, session) {
           input$create_col_table$event == "afterCreateCol") {
         
         # Extract event details
-        index <- input$create_col_table$index + 1  # Convert to 1-based
+        index <- input$create_col_table$index # Already 1-indexed
         amount <- input$create_col_table$amount
         colnames <- input$create_col_table$colnames
         
@@ -843,7 +843,7 @@ server <- function(input, output, session) {
           input$remove_col_table$event == "afterRemoveCol") {
         
         # Extract event details
-        index <- input$remove_col_table$index + 1  # Convert to 1-based
+        index <- input$remove_col_table$index # Already 1-indexed
         amount <- input$remove_col_table$amount
         remaining_colnames <- input$remove_col_table$colnames
         
@@ -1120,7 +1120,7 @@ server <- function(input, output, session) {
   # Get selected employee
   selected_employee <- reactive({
     if (!is.null(input$employees_select)) {
-      row_index <- input$employees_select$row + 1 # Convert to 1-based
+      row_index <- input$employees_select$row_idx # Already 1-indexed
       if (row_index <= nrow(employees)) {
         employees[row_index, ]
       } else {
