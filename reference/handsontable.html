@@ -66,7 +66,6 @@ conditional formatting, formulas, and extensive customization options.</p>
 <span>  colHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rowHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  readOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  contextMenu <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  elementId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -106,11 +105,6 @@ If character vector, uses custom column names.</p></dd>
 <dd><p>Logical. If TRUE, makes the entire table read-only.</p></dd>
 
 
-<dt id="arg-contextmenu">contextMenu<a class="anchor" aria-label="anchor" href="#arg-contextmenu"></a></dt>
-<dd><p>Logical or list. If TRUE, enables default context menu.
-If list, provides custom context menu configuration.</p></dd>
-
-
 <dt id="arg-elementid">elementId<a class="anchor" aria-label="anchor" href="#arg-elementid"></a></dt>
 <dd><p>Optional HTML element ID for the widget container</p></dd>
 
@@ -137,12 +131,13 @@ If list, provides custom context menu configuration.</p></dd>
 <span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Read-only table with context menu</span></span></span>
-<span class="r-in"><span>  <span class="fu">handsontable</span><span class="op">(</span><span class="va">airquality</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span>, contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">handsontable</span><span class="op">(</span><span class="va">airquality</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Using pipe operator for configuration</span></span></span>
 <span class="r-in"><span>  <span class="fu">handsontable</span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="hot_cols.html">hot_cols</a></span><span class="op">(</span>colWidths <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="hot_cols.html">hot_cols</a></span><span class="op">(</span>colWidths <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

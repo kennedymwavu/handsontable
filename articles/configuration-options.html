@@ -134,50 +134,50 @@ options.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="general-table-configuration-with-hot_table">General Table Configuration with <code>hot_table()</code><a class="anchor" aria-label="anchor" href="#general-table-configuration-with-hot_table"></a>
+<h3 id="general-table-configuration">General Table Configuration<a class="anchor" aria-label="anchor" href="#general-table-configuration"></a>
 </h3>
-<p>The <code><a href="../reference/hot_table.html">hot_table()</a></code> function controls overall table behavior
-and features.</p>
+<p>The <code><a href="../reference/handsontable.html">handsontable()</a></code> function controls overall table
+behavior and features.</p>
 <div class="section level4">
 <h4 id="context-menu-and-interaction">Context Menu and Interaction<a class="anchor" aria-label="anchor" href="#context-menu-and-interaction"></a>
 </h4>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Enable context menu and other interactive features</span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, <span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
-<span>    contextMenu <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    filters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    manualColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    search <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    undo <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, <span class="op">]</span>,</span>
+<span>  filters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  manualColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  search <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  undo <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="multiple-column-sorting">Multiple Column Sorting<a class="anchor" aria-label="anchor" href="#multiple-column-sorting"></a>
 </h4>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Enable multi-column sorting</span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
-<span>    multiColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    outsideClickDeselects <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,</span>
+<span>  multiColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  outsideClickDeselects <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="fill-handle-configuration">Fill Handle Configuration<a class="anchor" aria-label="anchor" href="#fill-handle-configuration"></a>
 </h4>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Configure fill handle behavior</span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Numbers <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>  Letters <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
-<span>    fillHandle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>      direction <span class="op">=</span> <span class="st">"vertical"</span>,</span>
-<span>      autoInsertRow <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Numbers <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>    Letters <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  fillHandle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    direction <span class="op">=</span> <span class="st">"vertical"</span>,</span>
+<span>    autoInsertRow <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -388,11 +388,7 @@ different types and behaviors.</p>
 </h4>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span></span>
-<span>    allowRowEdit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    allowColEdit <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="csv-export-built-in-feature">CSV Export (Built-in Feature)<a class="anchor" aria-label="anchor" href="#csv-export-built-in-feature"></a>
@@ -413,79 +409,41 @@ that properly handles empty values, NAs, and special characters:</p>
 <span></span>
 <span><span class="co"># Right-click to see "Download to CSV" option</span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">csv_test_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>contextMenu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="custom-context-menu-options">Custom Context Menu Options<a class="anchor" aria-label="anchor" href="#custom-context-menu-options"></a>
+<h4 id="custom-context-menu-configuration">Custom Context Menu Configuration<a class="anchor" aria-label="anchor" href="#custom-context-menu-configuration"></a>
 </h4>
-<div class="section level5">
-<h5 id="built-in-actions-recommended">Built-in Actions (Recommended)<a class="anchor" aria-label="anchor" href="#built-in-actions-recommended"></a>
-</h5>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use built-in Handsontable actions for full functionality</span></span>
-<span><span class="co"># CSV export is automatically included</span></span>
-<span><span class="va">builtin_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"copy"</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Built-in copy</span></span>
-<span>  <span class="st">"paste"</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Built-in paste</span></span>
-<span>  <span class="st">"sep1"</span> <span class="op">=</span> <span class="st">"---------"</span>, <span class="co"># Separator</span></span>
-<span>  <span class="st">"clear_column"</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Built-in clear column</span></span>
-<span>  <span class="st">"remove_row"</span> <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Built-in remove row</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>customOpts <span class="op">=</span> <span class="va">builtin_options</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Use specific built-in context menu options</span></span>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">csv_test_data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row_above"</span>, <span class="st">"row_below"</span>, <span class="st">"---------"</span>, <span class="st">"copy"</span>, <span class="st">"cut"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level5">
-<h5 id="custom-actions-with-javascript-callbacks">Custom Actions with JavaScript Callbacks<a class="anchor" aria-label="anchor" href="#custom-actions-with-javascript-callbacks"></a>
-</h5>
+<div class="section level4">
+<h4 id="custom-actions-with-javascript-callbacks">Custom Actions with JavaScript Callbacks<a class="anchor" aria-label="anchor" href="#custom-actions-with-javascript-callbacks"></a>
+</h4>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add custom actions with JavaScript callbacks</span></span>
-<span><span class="co"># CSV export is still included automatically</span></span>
 <span><span class="va">custom_actions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"copy"</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="st">"cut"</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="st">"separator1"</span> <span class="op">=</span> <span class="st">"---------"</span>,</span>
-<span>  custom_action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"Custom Action"</span>,</span>
 <span>    callback <span class="op">=</span> <span class="fu">htmlwidgets</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function() { alert('Custom action clicked!'); }"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">csv_test_data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>customOpts <span class="op">=</span> <span class="va">custom_actions</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">csv_test_data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span></span>
+<span>    opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"copy"</span>, <span class="st">"cut"</span>, <span class="st">"clear_column"</span><span class="op">)</span>,</span>
+<span>    customOpts <span class="op">=</span> <span class="va">custom_actions</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level5">
-<h5 id="disabling-csv-export">Disabling CSV Export<a class="anchor" aria-label="anchor" href="#disabling-csv-export"></a>
-</h5>
+<div class="section level4">
+<h4 id="limited-context-menu-options">Limited Context Menu Options<a class="anchor" aria-label="anchor" href="#limited-context-menu-options"></a>
+</h4>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Users can disable CSV export if they don't want it</span></span>
-<span><span class="va">no_csv_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"export_csv"</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># This disables the CSV export</span></span>
-<span>  <span class="st">"copy"</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="st">"cut"</span> <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="st">"separator1"</span> <span class="op">=</span> <span class="st">"---------"</span>,</span>
-<span>  <span class="st">"remove_row"</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="co"># Only show specific context menu options</span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>customOpts <span class="op">=</span> <span class="va">no_csv_options</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level5">
-<h5 id="custom-labels-with-built-in-actions">Custom Labels with Built-in Actions<a class="anchor" aria-label="anchor" href="#custom-labels-with-built-in-actions"></a>
-</h5>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Customize labels while keeping built-in functionality</span></span>
-<span><span class="va">custom_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"copy"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Copy cells"</span><span class="op">)</span>,</span>
-<span>  <span class="st">"paste"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Paste cells"</span><span class="op">)</span>,</span>
-<span>  <span class="st">"sep1"</span> <span class="op">=</span> <span class="st">"---------"</span>,</span>
-<span>  <span class="st">"clear_column"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Clear column"</span><span class="op">)</span></span>
-<span>  <span class="co"># CSV export keeps default label "Download to CSV"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>customOpts <span class="op">=</span> <span class="va">custom_labels</span><span class="op">)</span></span></code></pre></div>
-</div>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span>opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"copy"</span>, <span class="st">"undo"</span>, <span class="st">"redo"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -496,7 +454,7 @@ data.</p>
 <div class="section level4">
 <h4 id="basic-border-configuration">Basic Border Configuration<a class="anchor" aria-label="anchor" href="#basic-border-configuration"></a>
 </h4>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add red borders around specific cells</span></span>
 <span><span class="va">financial_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Quarter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span><span class="op">)</span>,</span>
@@ -505,7 +463,7 @@ data.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">financial_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
 <span>    customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>      <span class="co"># Border around revenue header and data (0-based indexing)</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -521,7 +479,7 @@ data.</p>
 <div class="section level4">
 <h4 id="multiple-border-regions">Multiple Border Regions<a class="anchor" aria-label="anchor" href="#multiple-border-regions"></a>
 </h4>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add different colored borders for different regions</span></span>
 <span><span class="va">performance_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Team <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sales"</span>, <span class="st">"Marketing"</span>, <span class="st">"Engineering"</span>, <span class="st">"Support"</span><span class="op">)</span>,</span>
@@ -532,7 +490,7 @@ data.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">performance_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
 <span>    customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>      <span class="co"># Green border for high performers (Engineering row - row 2, cols 1-4)</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -556,7 +514,7 @@ data.</p>
 <div class="section level4">
 <h4 id="border-styles-and-patterns">Border Styles and Patterns<a class="anchor" aria-label="anchor" href="#border-styles-and-patterns"></a>
 </h4>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Different border styles for different purposes</span></span>
 <span><span class="va">budget_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Category <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Revenue"</span>, <span class="st">"Expenses"</span>, <span class="st">"Net Income"</span>, <span class="st">"Forecast"</span><span class="op">)</span>,</span>
@@ -566,7 +524,7 @@ data.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">budget_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
 <span>    customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>      <span class="co"># Thick blue border for Net Income row (row 2, all columns)</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -589,7 +547,7 @@ data.</p>
 <h4 id="dynamic-border-updates">Dynamic Border Updates<a class="anchor" aria-label="anchor" href="#dynamic-border-updates"></a>
 </h4>
 <p>Borders can be updated dynamically in Shiny applications:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example for Shiny (not executed in vignette)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span></span>
@@ -612,7 +570,7 @@ data.</p>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">border_state</span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="co"># Add borders around profit column (col 2, rows 0-2)</span></span>
 <span>      <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>        <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span></span>
 <span>          customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>            <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>              range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -626,7 +584,7 @@ data.</p>
 <span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>      <span class="co"># No borders</span></span>
 <span>      <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>        <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span>customBorders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span></span>
@@ -675,7 +633,7 @@ customBorders uses JavaScript’s 0-based indexing</li>
 </h3>
 <p>Most real-world applications require combining multiple configuration
 options:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A comprehensive example with multiple configurations</span></span>
 <span><span class="va">sales_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-01"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
@@ -686,7 +644,12 @@ options:</p>
 <span>  Approved <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">sales_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">sales_data</span>,</span>
+<span>  filters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  manualColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  search <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  undo <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># Configure individual columns</span></span>
 <span>  <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"date"</span>, dateFormat <span class="op">=</span> <span class="st">"YYYY-MM-DD"</span>, width <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span></span>
@@ -697,14 +660,8 @@ options:</p>
 <span>  <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0.00"</span>, width <span class="op">=</span> <span class="fl">80</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"numeric"</span>, format <span class="op">=</span> <span class="st">"$0.00"</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span>, width <span class="op">=</span> <span class="fl">80</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/hot_col.html">hot_col</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fl">6</span>, type <span class="op">=</span> <span class="st">"checkbox"</span>, width <span class="op">=</span> <span class="fl">80</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="co"># Configure table features</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span></span>
-<span>    contextMenu <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    filters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    manualColumnSorting <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    search <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    undo <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="co"># Configure context menu</span></span>
+<span>  <span class="fu"><a href="../reference/hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># Configure columns and rows</span></span>
 <span>  <span class="fu"><a href="../reference/hot_cols.html">hot_cols</a></span><span class="op">(</span></span>
 <span>    fixedColumnsLeft <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -725,7 +682,7 @@ options:</p>
 configurations (<code><a href="../reference/hot_col.html">hot_col()</a></code>) 2. Individual row configurations
 (<code><a href="../reference/hot_row.html">hot_row()</a></code>) 3. Column-wide settings
 (<code><a href="../reference/hot_cols.html">hot_cols()</a></code>) 4. Row-wide settings (<code><a href="../reference/hot_rows.html">hot_rows()</a></code>)
-5. Table-wide features (<code><a href="../reference/hot_table.html">hot_table()</a></code>) 6. Context menu
+5. Table-wide features (<code><a href="../reference/handsontable.html">handsontable()</a></code>) 6. Context menu
 customizations (<code><a href="../reference/hot_context_menu.html">hot_context_menu()</a></code>)</p>
 </div>
 <div class="section level4">
@@ -750,11 +707,11 @@ filtering</li>
 <div class="section level4">
 <h4 id="responsive-design">4. Responsive Design<a class="anchor" aria-label="anchor" href="#responsive-design"></a>
 </h4>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create responsive tables</span></span>
 <span><span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/hot_cols.html">hot_cols</a></span><span class="op">(</span>colWidths <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># Auto-size columns</span></span>
-<span>  <span class="fu"><a href="../reference/hot_table.html">hot_table</a></span><span class="op">(</span>stretchH <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span> <span class="co"># Stretch to container</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/handsontable.html">handsontable</a></span><span class="op">(</span>stretchH <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span> <span class="co"># Stretch to container</span></span></code></pre></div>
 <p>This covers the main configuration options available in the
 handsontable package. The next vignettes will cover data validation and
 Shiny integration.</p>
