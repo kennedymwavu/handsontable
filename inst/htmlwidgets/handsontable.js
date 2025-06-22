@@ -99,17 +99,7 @@ HTMLWidgets.widget({
         }
 
         // contextMenu
-        const defaultContextMenu = {
-          row_above: {},
-          row_below: {},
-          col_left: {},
-          col_right: {},
-          remove_row: {},
-          remove_col: {},
-          separator1: "---------",
-          copy: {},
-          cut: {},
-          separator2: "---------",
+        const exportToCSV = {
           export_csv: {
             name: "Download to CSV",
             callback: function () {
@@ -172,51 +162,6 @@ HTMLWidgets.widget({
             },
           },
         };
-
-        if (config.contextMenu === true) {
-          config.contextMenu = defaultContextMenu;
-        }
-
-        // Transform context menu customOpts to Handsontable v6.2.2 format
-        if (
-          config.contextMenu &&
-          typeof config.contextMenu === "object" &&
-          config.contextMenu.customOpts
-        ) {
-          // Start with default items including CSV export
-          let defaultItems = {};
-
-          if (config.contextMenu.items) {
-            // If items already exist, use them as base
-            defaultItems = { ...config.contextMenu.items };
-          } else {
-            // Create default items with CSV export
-            defaultItems = defaultContextMenu;
-          }
-
-          const transformedItems = { ...defaultItems };
-
-          for (const [key, value] of Object.entries(
-            config.contextMenu.customOpts,
-          )) {
-            if (value === true) {
-              // For boolean true, use the key as a built-in action
-              transformedItems[key] = {};
-            } else if (value === false) {
-              // Skip false values (disabled items) - this allows users to disable CSV export
-              if (key === "export_csv") {
-                delete transformedItems[key];
-              }
-              continue;
-            } else {
-              // Use the value as-is for objects with name/callback, etc.
-              transformedItems[key] = value;
-            }
-          }
-
-          config.contextMenu = { items: transformedItems };
-          delete config.contextMenu.customOpts;
-        }
 
         // Transform R configuration to Handsontable v6.2.2 format
         if (config.columns && Array.isArray(config.columns)) {
@@ -350,6 +295,54 @@ HTMLWidgets.widget({
 
             return transformedCol;
           });
+        }
+
+        // Process context menu configuration from R
+        if (
+          config.contextMenu &&
+          typeof config.contextMenu === "object" &&
+          (config.contextMenu.opts || config.contextMenu.customOpts)
+        ) {
+          const contextMenuItems = {};
+
+          // Add built-in options from opts
+          if (
+            config.contextMenu.opts &&
+            Array.isArray(config.contextMenu.opts)
+          ) {
+            config.contextMenu.opts.forEach((opt) => {
+              if (typeof opt === "string") {
+                if (opt === "export_csv") {
+                  // Special handling for CSV export
+                  contextMenuItems[opt] = exportToCSV.export_csv;
+                } else {
+                  // Empty object for other built-in options
+                  contextMenuItems[opt] = {};
+                }
+              }
+            });
+          }
+
+          // Add custom options from customOpts (object from R)
+          if (
+            config.contextMenu.customOpts &&
+            typeof config.contextMenu.customOpts === "object" &&
+            !Array.isArray(config.contextMenu.customOpts)
+          ) {
+            Object.keys(config.contextMenu.customOpts).forEach((key) => {
+              const customOpt = config.contextMenu.customOpts[key];
+              if (customOpt && typeof customOpt === "object") {
+                const itemKey = customOpt.key || key;
+                contextMenuItems[itemKey] = { ...customOpt };
+                delete contextMenuItems[itemKey].key;
+              }
+            });
+          }
+
+          // Transform to Handsontable format
+          config.contextMenu = {
+            items: contextMenuItems,
+          };
         }
 
         // Create Handsontable instance

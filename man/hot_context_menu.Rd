@@ -4,24 +4,26 @@
 \alias{hot_context_menu}
 \title{Configure Context Menu}
 \usage{
-hot_context_menu(
-  hot,
-  allowRowEdit = TRUE,
-  allowColEdit = TRUE,
-  customOpts = NULL,
-  ...
-)
+hot_context_menu(hot, opts = NULL, customOpts = NULL)
 }
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{allowRowEdit}{Logical, allow row operations in context menu}
+\item{opts}{Character vector of built-in context menu options. If NULL, uses default options.
+Available built-in options:
+\itemize{
+  \item Standard options: "row_above", "row_below", "col_left", "col_right",
+        "remove_row", "remove_col", "clear_column", "undo", "redo", "cut", "copy",
+        "make_read_only", "alignment", "export_csv"
+  \item Plugin-specific options: "freeze_column", "unfreeze_column", "borders",
+        "commentsAddEdit", "commentsRemove", "commentsReadOnly", "mergeCells",
+        "add_child", "detach_from_parent"
+  \item Separator: "---------" (adds a visual separator line)
+}}
 
-\item{allowColEdit}{Logical, allow column operations in context menu}
-
-\item{customOpts}{List of custom context menu options}
-
-\item{...}{Additional context menu options}
+\item{customOpts}{List of custom context menu options. Each custom option should be a list
+with elements like \code{name}, \code{callback}, \code{disabled}, etc.
+Example: \code{list(list(name = "Custom Action", callback = htmlwidgets::JS("function() {...}")))}}
 }
 \value{
 Modified handsontable widget
@@ -33,15 +35,41 @@ Configure Context Menu
 if (interactive()) {
   library(shiny)
 
+  # Basic usage with default options
   ui <- fluidPage(
     titlePanel("Context Menu Configuration"),
-    handsontableOutput("table")
+    handsontableOutput("table1"),
+    br(),
+    handsontableOutput("table2"),
+    br(),
+    handsontableOutput("table3")
   )
 
   server <- function(input, output, session) {
-    output$table <- renderHandsontable({
-      handsontable(mtcars[1:8, 1:5]) |>
-        hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+    # Default context menu
+    output$table1 <- renderHandsontable({
+      handsontable(mtcars[1:5, 1:4]) |>
+        hot_context_menu()
+    })
+
+    # Custom selection of built-in options
+    output$table2 <- renderHandsontable({
+      handsontable(mtcars[1:5, 1:4]) |>
+        hot_context_menu(opts = c("row_above", "row_below", "---------", "copy", "cut"))
+    })
+
+    # With custom options
+    output$table3 <- renderHandsontable({
+      handsontable(mtcars[1:5, 1:4]) |>
+        hot_context_menu(
+          opts = c("copy", "cut"),
+          customOpts = list(
+            list(
+              name = "Alert",
+              callback = htmlwidgets::JS("function() { alert('Custom action!'); }")
+            )
+          )
+        )
     })
   }
 

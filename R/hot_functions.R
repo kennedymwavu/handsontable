@@ -231,10 +231,20 @@ hot_validate <- function(
 #' Configure Context Menu
 #'
 #' @param hot A handsontable widget object
-#' @param allowRowEdit Logical, allow row operations in context menu
-#' @param allowColEdit Logical, allow column operations in context menu
-#' @param customOpts List of custom context menu options
-#' @param ... Additional context menu options
+#' @param opts Character vector of built-in context menu options. If NULL, uses default options.
+#'   Available built-in options:
+#'   \itemize{
+#'     \item Standard options: "row_above", "row_below", "col_left", "col_right",
+#'           "remove_row", "remove_col", "clear_column", "undo", "redo", "cut", "copy",
+#'           "make_read_only", "alignment", "export_csv"
+#'     \item Plugin-specific options: "freeze_column", "unfreeze_column", "borders",
+#'           "commentsAddEdit", "commentsRemove", "commentsReadOnly", "mergeCells",
+#'           "add_child", "detach_from_parent"
+#'     \item Separator: "---------" (adds a visual separator line)
+#'   }
+#' @param customOpts List of custom context menu options. Each custom option should be a list
+#'   with elements like \code{name}, \code{callback}, \code{disabled}, etc.
+#'   Example: \code{list(list(name = "Custom Action", callback = htmlwidgets::JS("function() {...}")))}
 #'
 #' @return Modified handsontable widget
 #'
@@ -242,15 +252,41 @@ hot_validate <- function(
 #' if (interactive()) {
 #'   library(shiny)
 #'
+#'   # Basic usage with default options
 #'   ui <- fluidPage(
 #'     titlePanel("Context Menu Configuration"),
-#'     handsontableOutput("table")
+#'     handsontableOutput("table1"),
+#'     br(),
+#'     handsontableOutput("table2"),
+#'     br(),
+#'     handsontableOutput("table3")
 #'   )
 #'
 #'   server <- function(input, output, session) {
-#'     output$table <- renderHandsontable({
-#'       handsontable(mtcars[1:8, 1:5]) |>
-#'         hot_context_menu(allowRowEdit = TRUE, allowColEdit = TRUE)
+#'     # Default context menu
+#'     output$table1 <- renderHandsontable({
+#'       handsontable(mtcars[1:5, 1:4]) |>
+#'         hot_context_menu()
+#'     })
+#'
+#'     # Custom selection of built-in options
+#'     output$table2 <- renderHandsontable({
+#'       handsontable(mtcars[1:5, 1:4]) |>
+#'         hot_context_menu(opts = c("row_above", "row_below", "---------", "copy", "cut"))
+#'     })
+#'
+#'     # With custom options
+#'     output$table3 <- renderHandsontable({
+#'       handsontable(mtcars[1:5, 1:4]) |>
+#'         hot_context_menu(
+#'           opts = c("copy", "cut"),
+#'           customOpts = list(
+#'             list(
+#'               name = "Alert",
+#'               callback = htmlwidgets::JS("function() { alert('Custom action!'); }")
+#'             )
+#'           )
+#'         )
 #'     })
 #'   }
 #'
@@ -258,35 +294,34 @@ hot_validate <- function(
 #' }
 #'
 #' @export
-hot_context_menu <- function(
-  hot,
-  allowRowEdit = TRUE,
-  allowColEdit = TRUE,
-  customOpts = NULL,
-  ...
-) {
-  # If context menu is a logical & disabled, enable it first
-  is_disabled <- is.logical(hot$x$contextMenu) && isFALSE(hot$x$contextMenu)
-  if (is_disabled) {
-    hot$x$contextMenu <- TRUE
+hot_context_menu <- function(hot, opts = NULL, customOpts = NULL) {
+  # Default context menu options
+  if (is.null(opts)) {
+    opts <- c(
+      "row_above",
+      "row_below",
+      "col_left",
+      "col_right",
+      "---------",
+      "remove_row",
+      "remove_col",
+      "clear_column",
+      "undo",
+      "redo",
+      "cut",
+      "copy",
+      "---------",
+      "export_csv"
+    )
   }
 
-  menu_config <- list(
-    allowRowEdit = allowRowEdit,
-    allowColEdit = allowColEdit,
-    ...
-  )
-
+  context_menu <- list(opts = opts)
   if (!is.null(customOpts)) {
-    menu_config$customOpts <- customOpts
+    context_menu$customOpts <- customOpts
   }
 
-  # If contextMenu is TRUE, convert to configuration object
-  if (isTRUE(hot$x$contextMenu)) {
-    hot$x$contextMenu <- menu_config
-  } else if (is.list(hot$x$contextMenu)) {
-    hot$x$contextMenu <- utils::modifyList(hot$x$contextMenu, menu_config)
-  }
+  # Set context menu configuration
+  hot$x$contextMenu <- context_menu
 
   hot
 }
