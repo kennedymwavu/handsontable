@@ -426,13 +426,20 @@ HTMLWidgets.widget({
             hot.addHook("afterChange", function (changes, source) {
               if (source !== "loadData" && changes) {
                 const data = hot.getData();
+                // Transform changes to named objects with 1-indexed values
+                const transformedChanges = changes.map(change => ({
+                  row_idx: change[0] + 1,  // Convert to 1-indexed
+                  col_idx: change[1] + 1,  // Convert to 1-indexed
+                  old_val: change[2],
+                  new_val: change[3]
+                }));
                 // Send to input$table_id (main input) with current column names
                 Shiny.setInputValue(
                   el.id,
                   {
                     data: data,
                     event: "afterChange",
-                    changes: changes,
+                    changes: transformedChanges,
                     source: source,
                     colnames: currentColnames, // Use dynamic column names
                   },
@@ -444,7 +451,7 @@ HTMLWidgets.widget({
                 Shiny.setInputValue(el.id + "_data", data, {
                   priority: "event",
                 });
-                Shiny.setInputValue(el.id + "_changes", changes, {
+                Shiny.setInputValue(el.id + "_changes", transformedChanges, {
                   priority: "event",
                 });
               }
