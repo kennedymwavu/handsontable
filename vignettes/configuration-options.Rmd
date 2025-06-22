@@ -70,49 +70,49 @@ handsontable(mtcars[1:10, 1:4]) |>
   )
 ```
 
-## General Table Configuration with `hot_table()`
+## General Table Configuration
 
-The `hot_table()` function controls overall table behavior and features.
+The `handsontable()` function controls overall table behavior and features.
 
 ### Context Menu and Interaction
 
 ```{r context-menu}
 # Enable context menu and other interactive features
-handsontable(iris[1:8, ]) |>
-  hot_table(
-    contextMenu = TRUE,
-    filters = TRUE,
-    manualColumnSorting = TRUE,
-    search = TRUE,
-    undo = TRUE
-  )
+handsontable(
+  data = iris[1:8, ],
+  contextMenu = TRUE,
+  filters = TRUE,
+  manualColumnSorting = TRUE,
+  search = TRUE,
+  undo = TRUE
+)
 ```
 
 ### Multiple Column Sorting
 
 ```{r multi-sort}
 # Enable multi-column sorting
-handsontable(mtcars[1:10, 1:6]) |>
-  hot_table(
-    multiColumnSorting = TRUE,
-    outsideClickDeselects = TRUE
-  )
+handsontable(
+  data = mtcars[1:10, 1:6],
+  multiColumnSorting = TRUE,
+  outsideClickDeselects = TRUE
+)
 ```
 
 ### Fill Handle Configuration
 
 ```{r fill-handle}
 # Configure fill handle behavior
-handsontable(data.frame(
-  Numbers = 1:5,
-  Letters = letters[1:5]
-)) |>
-  hot_table(
-    fillHandle = list(
-      direction = "vertical",
-      autoInsertRow = TRUE
-    )
+handsontable(
+  data = data.frame(
+    Numbers = 1:5,
+    Letters = letters[1:5]
+  ),
+  fillHandle = list(
+    direction = "vertical",
+    autoInsertRow = TRUE
   )
+)
 ```
 
 ## Individual Column Configuration with `hot_col()`
@@ -319,12 +319,7 @@ Customize the right-click context menu.
 ### Basic Context Menu
 
 ```{r basic-context}
-handsontable(mtcars[1:6, 1:4]) |>
-  hot_table(contextMenu = TRUE) |>
-  hot_context_menu(
-    allowRowEdit = TRUE,
-    allowColEdit = TRUE
-  )
+handsontable(mtcars[1:6, 1:4], contextMenu = TRUE)
 ```
 
 ### CSV Export (Built-in Feature)
@@ -344,55 +339,30 @@ csv_test_data <- data.frame(
 )
 
 # Right-click to see "Download to CSV" option
-handsontable(csv_test_data) |>
-  hot_table(contextMenu = TRUE)
+handsontable(csv_test_data, contextMenu = TRUE)
 ```
 
-### Custom Context Menu Options
-
-#### Built-in Actions (Recommended)
-```{r custom-context-builtin}
-# Use built-in Handsontable actions for full functionality
-# CSV export is automatically included
-builtin_options <- list(
-  "copy" = TRUE, # Built-in copy
-  "paste" = TRUE, # Built-in paste
-  "sep1" = "---------", # Separator
-  "clear_column" = TRUE, # Built-in clear column
-  "remove_row" = TRUE # Built-in remove row
-)
-
-handsontable(iris[1:5, 1:3]) |>
-  hot_context_menu(customOpts = builtin_options)
-```
-
-#### Custom Actions with JavaScript Callbacks
+### Custom Actions with JavaScript Callbacks
 ```{r custom-context-callbacks}
 # Add custom actions with JavaScript callbacks
 # CSV export is still included automatically
 custom_actions <- list(
-  "copy" = TRUE,
-  "cut" = TRUE,
-  "separator1" = "---------",
   custom_action = list(
     name = "Custom Action",
     callback = htmlwidgets::JS("function() { alert('Custom action clicked!'); }")
   )
 )
 
-handsontable(csv_test_data[1:5, 1:3]) |>
+handsontable(data = csv_test_data[1:5, 1:3]) |>
   hot_context_menu(customOpts = custom_actions)
 ```
 
-#### Disabling CSV Export
+### Disabling Context Menu Options
 ```{r disable-csv-export}
-# Users can disable CSV export if they don't want it
-no_csv_options <- list(
-  "export_csv" = FALSE, # This disables the CSV export
-  "copy" = TRUE,
-  "cut" = TRUE,
-  "separator1" = "---------",
-  "remove_row" = TRUE
+custom_options <- list(
+  "export_csv" = FALSE, # disable the CSV export
+  "copy" = FALSE, # disable "Copy"
+  "remove_row" = FALSE # disable "Remove Row"
 )
 
 handsontable(iris[1:5, 1:3]) |>
@@ -429,7 +399,7 @@ financial_data <- data.frame(
 )
 
 handsontable(financial_data) |>
-  hot_table(
+  handsontable(
     customBorders = list(
       # Border around revenue header and data (0-based indexing)
       list(
@@ -456,7 +426,7 @@ performance_data <- data.frame(
 )
 
 handsontable(performance_data) |>
-  hot_table(
+  handsontable(
     customBorders = list(
       # Green border for high performers (Engineering row - row 2, cols 1-4)
       list(
@@ -490,7 +460,7 @@ budget_data <- data.frame(
 )
 
 handsontable(budget_data) |>
-  hot_table(
+  handsontable(
     customBorders = list(
       # Thick blue border for Net Income row (row 2, all columns)
       list(
@@ -537,7 +507,7 @@ server <- function(input, output, session) {
     if (border_state() == 1) {
       # Add borders around profit column (col 2, rows 0-2)
       handsontable(data) |>
-        hot_table(
+        handsontable(
           customBorders = list(
             list(
               range = list(from = list(row = 0, col = 2), to = list(row = 2, col = 2)),
@@ -551,7 +521,7 @@ server <- function(input, output, session) {
     } else {
       # No borders
       handsontable(data) |>
-        hot_table(customBorders = list())
+        handsontable(customBorders = list())
     }
   })
 
@@ -602,7 +572,7 @@ handsontable(sales_data) |>
   hot_col(col = 5, type = "numeric", format = "$0.00", readOnly = TRUE, width = 80) |>
   hot_col(col = 6, type = "checkbox", width = 80) |>
   # Configure table features
-  hot_table(
+  handsontable(
     contextMenu = TRUE,
     filters = TRUE,
     manualColumnSorting = TRUE,
@@ -628,7 +598,7 @@ Apply configurations in this typical order:
 2. Individual row configurations (`hot_row()`)
 3. Column-wide settings (`hot_cols()`)
 4. Row-wide settings (`hot_rows()`)
-5. Table-wide features (`hot_table()`)
+5. Table-wide features (`handsontable()`)
 6. Context menu customizations (`hot_context_menu()`)
 
 ### 2. Column Indexing
@@ -645,7 +615,7 @@ Apply configurations in this typical order:
 # Create responsive tables
 handsontable(mtcars[1:5, 1:4]) |>
   hot_cols(colWidths = "auto") |> # Auto-size columns
-  hot_table(stretchH = "all") # Stretch to container
+  handsontable(stretchH = "all") # Stretch to container
 ```
 
 This covers the main configuration options available in the handsontable 

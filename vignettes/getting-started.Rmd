@@ -123,6 +123,16 @@ handsontable(
 )
 ```
 
+### Context Menu
+
+Set `contextMenu = TRUE`:
+
+```r
+handsontable(iris[1:5, ], contextMenu = TRUE)
+```
+
+Right click on a cell, row or column to see the context menu.
+
 ### Read-Only Tables
 
 Make the entire table read-only:
@@ -159,17 +169,6 @@ ht <- handsontable(iris[1:3, 1:3])
 # - x$colHeaders: Column header names
 # - x$rowHeaders: Whether to show row headers
 # - x$readOnly: Whether the table is read-only
-```
-
-## Basic Pipe Operations
-
-The package is designed to work well with the pipe operator:
-
-```{r pipe-example}
-iris[1:5, ] |>
-  handsontable() |>
-  hot_cols(colWidths = 100) |>
-  hot_table(contextMenu = TRUE)
 ```
 
 ## Next Steps

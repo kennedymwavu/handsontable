@@ -211,51 +211,75 @@ server <- function(input, output, session) {
       hot_col(col = 3, type = "numeric", format = "0") |>
       hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
       hot_col(col = 5, type = "checkbox") |>
-      hot_table(contextMenu = TRUE, undo = TRUE)
+      handsontable(contextMenu = TRUE, undo = TRUE)
   })
   
   # Observe changes in the handsontable
   observeEvent(input$demo_table, {
-    if (!is.null(input$demo_table)) {
-      # Check if this is an afterChange event
-      if (!is.null(input$demo_table$event) && input$demo_table$event == "afterChange") {
-        
-        # Extract event details
-        event_type <- input$demo_table$event
-        source_type <- input$demo_table$source %||% "unknown"
-        changes <- input$demo_table$changes
-        
-        # Format the change information
-        if (!is.null(changes) && length(changes) > 0) {
-          # Format timestamp
-          timestamp <- format(Sys.time(), "%H:%M:%S")
-          
-          # Format changes - each change is now a named object with 1-indexed values
-          change_details <- sapply(changes, function(change) {
-            row_idx <- change$row_idx  # Already 1-indexed
-            col_idx <- change$col_idx  # Already 1-indexed
-            old_val <- if(is.null(change$old_val)) "NULL" else as.character(change$old_val)
-            new_val <- if(is.null(change$new_val)) "NULL" else as.character(change$new_val)
-            
-            sprintf("  Row %d, Col %d: '%s' → '%s'", row_idx, col_idx, old_val, new_val)
-          })
-          
-          # Create log entry
-          log_entry <- paste0(
-            "[", timestamp, "] EVENT: ", event_type, " | SOURCE: ", source_type, "\n",
-            paste(change_details, collapse = "\n")
-          )
-          
-          # Add to log (keep last 10 entries)
-          current_log <- change_log()
-          new_log <- c(log_entry, current_log)
-          if (length(new_log) > 10) {
-            new_log <- new_log[1:10]
-          }
-          change_log(new_log)
-        }
-      }
+    if (is.null(input$demo_table)) {
+      return()
     }
+
+    is_after_change <- identical(input$demo_table$event, "afterChange")
+    if (!is_after_change) {
+      return()
+    }
+
+    # Extract event details
+    event_type <- input$demo_table$event
+    source_type <- input$demo_table$source %||% "unknown"
+    changes <- input$demo_table$changes
+
+    if (!length(changes)) {
+      return()
+    }
+
+    # Format timestamp
+    timestamp <- format(Sys.time(), "%H:%M:%S")
+
+    # Format changes - each change is now a named object with 1-indexed values
+    change_details <- sapply(changes, function(change) {
+      row_idx <- change$row_idx # Already 1-indexed
+      col_idx <- change$col_idx # Already 1-indexed
+      old_val <- if (is.null(change$old_val)) {
+        "NULL"
+      } else {
+        as.character(change$old_val)
+      }
+      new_val <- if (is.null(change$new_val)) {
+        "NULL"
+      } else {
+        as.character(change$new_val)
+      }
+
+      sprintf(
+        "  Row %d, Col %d: '%s' → '%s'",
+        row_idx,
+        col_idx,
+        old_val,
+        new_val
+      )
+    })
+
+    # Create log entry
+    log_entry <- paste0(
+      "[",
+      timestamp,
+      "] EVENT: ",
+      event_type,
+      " | SOURCE: ",
+      source_type,
+      "\n",
+      paste(change_details, collapse = "\n")
+    )
+
+    # Add to log (keep last 10 entries)
+    current_log <- change_log()
+    new_log <- c(log_entry, current_log)
+    if (length(new_log) > 10) {
+      new_log <- new_log[1:10]
+    }
+    change_log(new_log)
   })
   
   # Display the change log
@@ -353,7 +377,7 @@ server <- function(input, output, session) {
     handsontable(table_data) |>
       hot_col(col = 3, type = "numeric", format = "$0.00") |>
       hot_col(col = 4, type = "numeric", format = "0,0") |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
   
   # Display selection information
@@ -462,36 +486,38 @@ server <- function(input, output, session) {
     handsontable(initial_data) |>
       hot_col(col = 2, type = "dropdown", source = c("Pending", "In Progress", "Completed")) |>
       hot_col(col = 3, type = "dropdown", source = c("High", "Medium", "Low")) |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
   
   # Observe table changes
   observeEvent(input$create_row_table, {
-    if (!is.null(input$create_row_table)) {
-      # Check if this is an afterCreateRow event
-      if (!is.null(input$create_row_table$event) && 
-          input$create_row_table$event == "afterCreateRow") {
-        
-        # Extract event details
-        index <- input$create_row_table$index  # Already 1-indexed
-        amount <- input$create_row_table$amount
-        
-        # Create log entry
-        timestamp <- format(Sys.time(), "%H:%M:%S")
-        log_entry <- paste0(
-          "[", timestamp, "] EVENT: afterCreateRow\n",
-          "  Inserted ", amount, " row(s) at position ", index
-        )
-        
-        # Add to log
-        current_log <- row_create_log()
-        new_log <- c(log_entry, current_log)
-        if (length(new_log) > 10) {
-          new_log <- new_log[1:10]
-        }
-        row_create_log(new_log)
-      }
+    if (is.null(input$create_row_table)) {
+      return()
     }
+
+    is_after_create_row <- identical(input$create_row_table$event, "afterCreateRow")
+    if (!is_after_create_row) {
+      return()
+    }
+
+    # Extract event details
+    index <- input$create_row_table$index  # Already 1-indexed
+    amount <- input$create_row_table$amount
+
+    # Create log entry
+    timestamp <- format(Sys.time(), "%H:%M:%S")
+    log_entry <- paste0(
+      "[", timestamp, "] EVENT: afterCreateRow\n",
+      "  Inserted ", amount, " row(s) at position ", index
+    )
+
+    # Add to log
+    current_log <- row_create_log()
+    new_log <- c(log_entry, current_log)
+    if (length(new_log) > 10) {
+      new_log <- new_log[1:10]
+    }
+    row_create_log(new_log)
   })
   
   # Display creation log
@@ -579,40 +605,42 @@ server <- function(input, output, session) {
       hot_col(col = 3, type = "dropdown", source = c("IT", "HR", "Finance", "Marketing")) |>
       hot_col(col = 4, type = "numeric", format = "$0,0") |>
       hot_col(col = 5, type = "checkbox") |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
   
   # Observe table changes
   observeEvent(input$remove_row_table, {
-    if (!is.null(input$remove_row_table)) {
-      # Check if this is an afterRemoveRow event
-      if (!is.null(input$remove_row_table$event) && 
-          input$remove_row_table$event == "afterRemoveRow") {
-        
-        # Extract event details
-        index <- input$remove_row_table$index # Already 1-indexed
-        amount <- input$remove_row_table$amount
-        
-        # Update delete count
-        delete_count(delete_count() + amount)
-        
-        # Create log entry
-        timestamp <- format(Sys.time(), "%H:%M:%S")
-        log_entry <- paste0(
-          "[", timestamp, "] EVENT: afterRemoveRow\n",
-          "  Removed ", amount, " row(s) starting at position ", index, "\n",
-          "  Total rows remaining: ", length(input$remove_row_table$data)
-        )
-        
-        # Add to log
-        current_log <- row_delete_log()
-        new_log <- c(log_entry, current_log)
-        if (length(new_log) > 10) {
-          new_log <- new_log[1:10]
-        }
-        row_delete_log(new_log)
-      }
+    if (is.null(input$remove_row_table)) {
+      return()
     }
+
+    is_after_remove_row <- identical(input$remove_row_table$event, "afterRemoveRow")
+    if (!is_after_remove_row) {
+      return()
+    }
+
+    # Extract event details
+    index <- input$remove_row_table$index # Already 1-indexed
+    amount <- input$remove_row_table$amount
+
+    # Update delete count
+    delete_count(delete_count() + amount)
+
+    # Create log entry
+    timestamp <- format(Sys.time(), "%H:%M:%S")
+    log_entry <- paste0(
+      "[", timestamp, "] EVENT: afterRemoveRow\n",
+      "  Removed ", amount, " row(s) starting at position ", index, "\n",
+      "  Total rows remaining: ", length(input$remove_row_table$data)
+    )
+
+    # Add to log
+    current_log <- row_delete_log()
+    new_log <- c(log_entry, current_log)
+    if (length(new_log) > 10) {
+      new_log <- new_log[1:10]
+    }
+    row_delete_log(new_log)
   })
   
   # Display deletion log
@@ -702,38 +730,40 @@ server <- function(input, output, session) {
   output$create_col_table <- renderHandsontable({
     handsontable(initial_data) |>
       hot_col(col = 2, type = "numeric") |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
   
   # Observe table changes
   observeEvent(input$create_col_table, {
-    if (!is.null(input$create_col_table)) {
-      # Check if this is an afterCreateCol event
-      if (!is.null(input$create_col_table$event) && 
-          input$create_col_table$event == "afterCreateCol") {
-        
-        # Extract event details
-        index <- input$create_col_table$index # Already 1-indexed
-        amount <- input$create_col_table$amount
-        colnames <- input$create_col_table$colnames
-        
-        # Create log entry
-        timestamp <- format(Sys.time(), "%H:%M:%S")
-        log_entry <- paste0(
-          "[", timestamp, "] EVENT: afterCreateCol\n",
-          "  Inserted ", amount, " column(s) at position ", index, "\n",
-          "  New column names: ", paste(colnames[index:(index + amount - 1)], collapse = ", ")
-        )
-        
-        # Add to log
-        current_log <- col_create_log()
-        new_log <- c(log_entry, current_log)
-        if (length(new_log) > 10) {
-          new_log <- new_log[1:10]
-        }
-        col_create_log(new_log)
-      }
+    if (is.null(input$create_col_table)) {
+      return()
     }
+
+    is_after_create_col <- identical(input$create_col_table$event, "afterCreateCol")
+    if (!is_after_create_col) {
+      return()
+    }
+
+    # Extract event details
+    index <- input$create_col_table$index # Already 1-indexed
+    amount <- input$create_col_table$amount
+    colnames <- input$create_col_table$colnames
+
+    # Create log entry
+    timestamp <- format(Sys.time(), "%H:%M:%S")
+    log_entry <- paste0(
+      "[", timestamp, "] EVENT: afterCreateCol\n",
+      "  Inserted ", amount, " column(s) at position ", index, "\n",
+      "  New column names: ", paste(colnames[index:(index + amount - 1)], collapse = ", ")
+    )
+
+    # Add to log
+    current_log <- col_create_log()
+    new_log <- c(log_entry, current_log)
+    if (length(new_log) > 10) {
+      new_log <- new_log[1:10]
+    }
+    col_create_log(new_log)
   })
   
   # Display creation log
@@ -832,39 +862,41 @@ server <- function(input, output, session) {
       hot_col(col = 5, type = "numeric", format = "$0,0") |>
       hot_col(col = 6, type = "numeric", format = "$0,0") |>
       hot_col(col = 7, type = "checkbox") |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
   
   # Observe table changes
   observeEvent(input$remove_col_table, {
-    if (!is.null(input$remove_col_table)) {
-      # Check if this is an afterRemoveCol event
-      if (!is.null(input$remove_col_table$event) && 
-          input$remove_col_table$event == "afterRemoveCol") {
-        
-        # Extract event details
-        index <- input$remove_col_table$index # Already 1-indexed
-        amount <- input$remove_col_table$amount
-        remaining_colnames <- input$remove_col_table$colnames
-        
-        # Create log entry
-        timestamp <- format(Sys.time(), "%H:%M:%S")
-        log_entry <- paste0(
-          "[", timestamp, "] EVENT: afterRemoveCol\n",
-          "  Removed ", amount, " column(s) starting at position ", index, "\n",
-          "  Remaining columns: ", length(remaining_colnames), "\n",
-          "  Column names: ", paste(remaining_colnames, collapse = ", ")
-        )
-        
-        # Add to log
-        current_log <- col_delete_log()
-        new_log <- c(log_entry, current_log)
-        if (length(new_log) > 10) {
-          new_log <- new_log[1:10]
-        }
-        col_delete_log(new_log)
-      }
+    if (is.null(input$remove_col_table)) {
+      return()
     }
+
+    is_after_remove_col <- identical(input$remove_col_table$event, "afterRemoveCol")
+    if (!is_after_remove_col) {
+      return()
+    }
+
+    # Extract event details
+    index <- input$remove_col_table$index # Already 1-indexed
+    amount <- input$remove_col_table$amount
+    remaining_colnames <- input$remove_col_table$colnames
+
+    # Create log entry
+    timestamp <- format(Sys.time(), "%H:%M:%S")
+    log_entry <- paste0(
+      "[", timestamp, "] EVENT: afterRemoveCol\n",
+      "  Removed ", amount, " column(s) starting at position ", index, "\n",
+      "  Remaining columns: ", length(remaining_colnames), "\n",
+      "  Column names: ", paste(remaining_colnames, collapse = ", ")
+    )
+
+    # Add to log
+    current_log <- col_delete_log()
+    new_log <- c(log_entry, current_log)
+    if (length(new_log) > 10) {
+      new_log <- new_log[1:10]
+    }
+    col_delete_log(new_log)
   })
   
   # Display deletion log
@@ -977,7 +1009,7 @@ server <- function(input, output, session) {
         source = c("IT", "HR", "Finance", "Marketing"),
         strict = TRUE
       ) |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
 
   # Update current data when table changes
@@ -1114,7 +1146,7 @@ server <- function(input, output, session) {
     handsontable(employees) |>
       hot_col(col = 1, readOnly = TRUE) |>
       hot_col(col = 4, type = "numeric", format = "$0,0") |>
-      hot_table(contextMenu = TRUE)
+      handsontable(contextMenu = TRUE)
   })
 
   # Get selected employee
@@ -1201,7 +1233,7 @@ server <- function(input, output, session) {
     req(table_data())
 
     ht <- handsontable(table_data()) |>
-      hot_table(
+      handsontable(
         contextMenu = TRUE,
         filters = TRUE,
         manualColumnSorting = TRUE
@@ -1280,7 +1312,7 @@ display_data <- reactive({
 
 output$table <- renderHandsontable({
   handsontable(display_data()) |>
-    hot_table(
+    handsontable(
       filters = FALSE, # Disable client-side filtering
       manualColumnSorting = FALSE # Handle sorting server-side
     )

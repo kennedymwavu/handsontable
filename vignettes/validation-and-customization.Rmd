@@ -276,7 +276,7 @@ handsontable(order_data, height = "400px") |>
     source = c("Low", "Medium", "High", "Critical")
   ) |>
   # Table features
-  hot_table(
+  handsontable(
     contextMenu = TRUE,
     search = TRUE,
     filters = TRUE,
