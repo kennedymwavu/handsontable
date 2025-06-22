@@ -15,7 +15,6 @@ hot_table(
   undo = NULL,
   outsideClickDeselects = NULL,
   fillHandle = NULL,
-  themeName = NULL,
   ...
 )
 }
@@ -39,8 +38,6 @@ hot_table(
 \item{outsideClickDeselects}{Logical, deselect on outside click}
 
 \item{fillHandle}{Logical or object, configure fill handle}
-
-\item{themeName}{Character, theme name (e.g., "ht-theme-main-dark-auto")}
 
 \item{...}{Additional table configuration options}
 }
