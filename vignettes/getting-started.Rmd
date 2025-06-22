@@ -125,10 +125,11 @@ handsontable(
 
 ### Context Menu
 
-Set `contextMenu = TRUE`:
+Use `hot_context_menu()`:
 
 ```r
-handsontable(iris[1:5, ], contextMenu = TRUE)
+handsontable(iris[1:5, ]) |>
+  hot_context_menu()
 ```
 
 Right click on a cell, row or column to see the context menu.

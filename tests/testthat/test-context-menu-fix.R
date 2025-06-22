@@ -1,89 +1,71 @@
 test_that("custom context menu options are properly structured", {
   custom_options <- list(
-    "copy" = list(name = "Copy data"),
-    "paste" = list(name = "Paste data"),
-    "sep1" = "---------",
-    "clear" = list(name = "Clear content")
+    list(name = "Copy data", key = "copy"),
+    list(name = "Paste data", key = "paste"),
+    list(name = "Clear content", key = "clear")
   )
-  
+
   ht <- handsontable(iris[1:3, 1:3]) |>
-    hot_context_menu(customOpts = custom_options)
-  
-  # Check that customOpts is stored correctly
-  expect_true(is.list(ht$x$contextMenu))
-  expect_true(!is.null(ht$x$contextMenu$customOpts))
+    hot_context_menu(
+      opts = c("row_above", "row_below"),
+      customOpts = custom_options
+    )
+
+  # Check that contextMenu has opts and customOpts structure
+  expect_true(!is.null(ht$x$contextMenu))
+  expect_equal(ht$x$contextMenu$opts, c("row_above", "row_below"))
   expect_equal(ht$x$contextMenu$customOpts, custom_options)
-  
-  # Check specific custom options
-  expect_equal(ht$x$contextMenu$customOpts$copy$name, "Copy data")
-  expect_equal(ht$x$contextMenu$customOpts$paste$name, "Paste data")
-  expect_equal(ht$x$contextMenu$customOpts$sep1, "---------")
-  expect_equal(ht$x$contextMenu$customOpts$clear$name, "Clear content")
 })
 
-test_that("context menu works without custom options", {
+test_that("context menu works with only built-in options", {
   ht <- handsontable(iris[1:3, 1:3]) |>
-    hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
-  
-  expect_true(is.list(ht$x$contextMenu))
-  expect_true(ht$x$contextMenu$allowRowEdit)
-  expect_false(ht$x$contextMenu$allowColEdit)
-  expect_null(ht$x$contextMenu$customOpts)
+    hot_context_menu(opts = c("copy", "cut", "clear_column"))
+
+  expect_equal(ht$x$contextMenu$opts, c("copy", "cut", "clear_column"))
 })
 
-test_that("vignette example format works", {
-  # Test the exact format from the vignette
+test_that("context menu uses defaults when opts is NULL", {
+  ht <- handsontable(iris[1:3, 1:3]) |>
+    hot_context_menu()
+
+  expected_defaults <- c(
+    "row_above",
+    "row_below",
+    "col_left",
+    "col_right",
+    "---------",
+    "remove_row",
+    "remove_col",
+    "clear_column",
+    "undo",
+    "redo",
+    "cut",
+    "copy",
+    "---------",
+    "export_csv"
+  )
+
+  expect_equal(ht$x$contextMenu$opts, expected_defaults)
+})
+
+test_that("custom options work without built-in options", {
   custom_options <- list(
-    "copy" = list(name = "Copy data"),
-    "paste" = list(name = "Paste data"),
-    "sep1" = "---------",
-    "clear" = list(name = "Clear content")
+    list(name = "Custom Action 1"),
+    list(name = "Custom Action 2")
   )
-  
-  ht <- handsontable(iris[1:5, 1:3]) |>
-    hot_context_menu(customOpts = custom_options)
-  
-  expect_true(is.list(ht$x$contextMenu$customOpts))
-  expect_length(ht$x$contextMenu$customOpts, 4)
-  expect_named(ht$x$contextMenu$customOpts, c("copy", "paste", "sep1", "clear"))
+
+  ht <- handsontable(iris[1:3, 1:3]) |>
+    hot_context_menu(opts = character(0), customOpts = custom_options)
+
+  expect_equal(ht$x$contextMenu$opts, character(0))
+  expect_equal(ht$x$contextMenu$customOpts, custom_options)
 })
 
-test_that("boolean TRUE values work for built-in actions", {
-  # Test the new boolean TRUE format for built-in actions
-  builtin_options <- list(
-    "copy" = TRUE,
-    "paste" = TRUE,
-    "sep1" = "---------",
-    "clear_column" = TRUE,
-    "remove_row" = TRUE
-  )
-  
+test_that("separators work correctly", {
   ht <- handsontable(iris[1:3, 1:3]) |>
-    hot_context_menu(customOpts = builtin_options)
-  
-  expect_true(is.list(ht$x$contextMenu$customOpts))
-  expect_length(ht$x$contextMenu$customOpts, 5)
-  expect_true(ht$x$contextMenu$customOpts$copy)
-  expect_true(ht$x$contextMenu$customOpts$paste)
-  expect_equal(ht$x$contextMenu$customOpts$sep1, "---------")
-  expect_true(ht$x$contextMenu$customOpts$clear_column)
-  expect_true(ht$x$contextMenu$customOpts$remove_row)
+    hot_context_menu(opts = c("copy", "---------", "remove_row"))
+
+  expect_equal(ht$x$contextMenu$opts, c("copy", "---------", "remove_row"))
+  expect_equal(ht$x$contextMenu$opts[2], "---------")
 })
 
-test_that("FALSE values are excluded from context menu", {
-  # Test that FALSE values are properly excluded
-  mixed_options <- list(
-    "copy" = TRUE,
-    "paste" = FALSE,  # This should be excluded
-    "clear_column" = TRUE
-  )
-  
-  ht <- handsontable(iris[1:3, 1:3]) |>
-    hot_context_menu(customOpts = mixed_options)
-  
-  expect_true(is.list(ht$x$contextMenu$customOpts))
-  expect_length(ht$x$contextMenu$customOpts, 3)  # paste should be excluded in JS transformation
-  expect_true(ht$x$contextMenu$customOpts$copy)
-  expect_false(ht$x$contextMenu$customOpts$paste)  # Still in R config
-  expect_true(ht$x$contextMenu$customOpts$clear_column)
-})

@@ -12,7 +12,6 @@ handsontable(
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
-  contextMenu = FALSE,
   elementId = NULL,
   ...
 )
@@ -35,9 +34,6 @@ If character vector, uses custom column names.}
 \item{rowHeaders}{Logical. If TRUE, shows row numbers as headers.}
 
 \item{readOnly}{Logical. If TRUE, makes the entire table read-only.}
-
-\item{contextMenu}{Logical or list. If TRUE, enables default context menu.
-If list, provides custom context menu configuration.}
 
 \item{elementId}{Optional HTML element ID for the widget container}
 
@@ -63,10 +59,12 @@ if (interactive()) {
   ))
 
   # Read-only table with context menu
-  handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
+  handsontable(airquality, readOnly = TRUE) |>
+    hot_context_menu()
 
   # Using pipe operator for configuration
-  handsontable(mtcars, contextMenu = TRUE) |>
+  handsontable(mtcars) |>
+    hot_context_menu() |>
     hot_cols(colWidths = 100)
 }
 

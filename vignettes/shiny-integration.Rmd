@@ -211,7 +211,8 @@ server <- function(input, output, session) {
       hot_col(col = 3, type = "numeric", format = "0") |>
       hot_col(col = 4, type = "dropdown", source = c("A", "B", "C", "D", "F")) |>
       hot_col(col = 5, type = "checkbox") |>
-      handsontable(contextMenu = TRUE, undo = TRUE)
+      handsontable(undo = TRUE) |>
+      hot_context_menu()
   })
   
   # Observe changes in the handsontable
@@ -377,7 +378,8 @@ server <- function(input, output, session) {
     handsontable(table_data) |>
       hot_col(col = 3, type = "numeric", format = "$0.00") |>
       hot_col(col = 4, type = "numeric", format = "0,0") |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
   
   # Display selection information
@@ -486,7 +488,8 @@ server <- function(input, output, session) {
     handsontable(initial_data) |>
       hot_col(col = 2, type = "dropdown", source = c("Pending", "In Progress", "Completed")) |>
       hot_col(col = 3, type = "dropdown", source = c("High", "Medium", "Low")) |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
   
   # Observe table changes
@@ -605,7 +608,8 @@ server <- function(input, output, session) {
       hot_col(col = 3, type = "dropdown", source = c("IT", "HR", "Finance", "Marketing")) |>
       hot_col(col = 4, type = "numeric", format = "$0,0") |>
       hot_col(col = 5, type = "checkbox") |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
   
   # Observe table changes
@@ -730,7 +734,8 @@ server <- function(input, output, session) {
   output$create_col_table <- renderHandsontable({
     handsontable(initial_data) |>
       hot_col(col = 2, type = "numeric") |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
   
   # Observe table changes
@@ -862,7 +867,8 @@ server <- function(input, output, session) {
       hot_col(col = 5, type = "numeric", format = "$0,0") |>
       hot_col(col = 6, type = "numeric", format = "$0,0") |>
       hot_col(col = 7, type = "checkbox") |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
   
   # Observe table changes
@@ -1009,7 +1015,8 @@ server <- function(input, output, session) {
         source = c("IT", "HR", "Finance", "Marketing"),
         strict = TRUE
       ) |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
 
   # Update current data when table changes
@@ -1146,7 +1153,8 @@ server <- function(input, output, session) {
     handsontable(employees) |>
       hot_col(col = 1, readOnly = TRUE) |>
       hot_col(col = 4, type = "numeric", format = "$0,0") |>
-      handsontable(contextMenu = TRUE)
+      handsontable() |>
+      hot_context_menu()
   })
 
   # Get selected employee

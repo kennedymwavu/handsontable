@@ -80,12 +80,12 @@ The `handsontable()` function controls overall table behavior and features.
 # Enable context menu and other interactive features
 handsontable(
   data = iris[1:8, ],
-  contextMenu = TRUE,
   filters = TRUE,
   manualColumnSorting = TRUE,
   search = TRUE,
   undo = TRUE
-)
+) |>
+  hot_context_menu()
 ```
 
 ### Multiple Column Sorting
@@ -319,7 +319,8 @@ Customize the right-click context menu.
 ### Basic Context Menu
 
 ```{r basic-context}
-handsontable(mtcars[1:6, 1:4], contextMenu = TRUE)
+handsontable(mtcars[1:6, 1:4]) |>
+  hot_context_menu()
 ```
 
 ### CSV Export (Built-in Feature)
@@ -339,49 +340,40 @@ csv_test_data <- data.frame(
 )
 
 # Right-click to see "Download to CSV" option
-handsontable(csv_test_data, contextMenu = TRUE)
+handsontable(csv_test_data) |>
+  hot_context_menu()
+```
+
+### Custom Context Menu Configuration
+
+```{r custom-context-menu}
+# Use specific built-in context menu options
+handsontable(csv_test_data[1:3, 1:3]) |>
+  hot_context_menu(opts = c("row_above", "row_below", "---------", "copy", "cut"))
 ```
 
 ### Custom Actions with JavaScript Callbacks
 ```{r custom-context-callbacks}
 # Add custom actions with JavaScript callbacks
-# CSV export is still included automatically
 custom_actions <- list(
-  custom_action = list(
+  list(
     name = "Custom Action",
     callback = htmlwidgets::JS("function() { alert('Custom action clicked!'); }")
   )
 )
 
 handsontable(data = csv_test_data[1:5, 1:3]) |>
-  hot_context_menu(customOpts = custom_actions)
+  hot_context_menu(
+    opts = c("copy", "cut", "clear_column"),
+    customOpts = custom_actions
+  )
 ```
 
-### Disabling Context Menu Options
-```{r disable-csv-export}
-custom_options <- list(
-  "export_csv" = FALSE, # disable the CSV export
-  "copy" = FALSE, # disable "Copy"
-  "remove_row" = FALSE # disable "Remove Row"
-)
-
+### Limited Context Menu Options
+```{r limited-context}
+# Only show specific context menu options
 handsontable(iris[1:5, 1:3]) |>
-  hot_context_menu(customOpts = no_csv_options)
-```
-
-#### Custom Labels with Built-in Actions
-```{r custom-context-labels}
-# Customize labels while keeping built-in functionality
-custom_labels <- list(
-  "copy" = list(name = "Copy cells"),
-  "paste" = list(name = "Paste cells"),
-  "sep1" = "---------",
-  "clear_column" = list(name = "Clear column")
-  # CSV export keeps default label "Download to CSV"
-)
-
-handsontable(iris[1:5, 1:3]) |>
-  hot_context_menu(customOpts = custom_labels)
+  hot_context_menu(opts = c("copy", "undo", "redo"))
 ```
 
 ## Custom Borders with `customBorders`
@@ -560,7 +552,12 @@ sales_data <- data.frame(
   Approved = rep(FALSE, 10)
 )
 
-handsontable(sales_data) |>
+handsontable(sales_data,
+  filters = TRUE,
+  manualColumnSorting = TRUE,
+  search = TRUE,
+  undo = TRUE
+) |>
   # Configure individual columns
   hot_col(col = 1, type = "date", dateFormat = "YYYY-MM-DD", width = 100) |>
   hot_col(
@@ -571,14 +568,8 @@ handsontable(sales_data) |>
   hot_col(col = 4, type = "numeric", format = "$0.00", width = 80) |>
   hot_col(col = 5, type = "numeric", format = "$0.00", readOnly = TRUE, width = 80) |>
   hot_col(col = 6, type = "checkbox", width = 80) |>
-  # Configure table features
-  handsontable(
-    contextMenu = TRUE,
-    filters = TRUE,
-    manualColumnSorting = TRUE,
-    search = TRUE,
-    undo = TRUE
-  ) |>
+  # Configure context menu
+  hot_context_menu() |>
   # Configure columns and rows
   hot_cols(
     fixedColumnsLeft = 1,

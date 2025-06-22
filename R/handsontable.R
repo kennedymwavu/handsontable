@@ -16,8 +16,6 @@
 #'   If character vector, uses custom column names.
 #' @param rowHeaders Logical. If TRUE, shows row numbers as headers.
 #' @param readOnly Logical. If TRUE, makes the entire table read-only.
-#' @param contextMenu Logical or list. If TRUE, enables default context menu.
-#'   If list, provides custom context menu configuration.
 #' @param elementId Optional HTML element ID for the widget container
 #' @param ... Additional configuration options passed to Handsontable
 #'
@@ -35,10 +33,12 @@
 #'   ))
 #'
 #'   # Read-only table with context menu
-#'   handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
+#'   handsontable(airquality, readOnly = TRUE) |>
+#'     hot_context_menu()
 #'
 #'   # Using pipe operator for configuration
-#'   handsontable(mtcars, contextMenu = TRUE) |>
+#'   handsontable(mtcars) |>
+#'     hot_context_menu() |>
 #'     hot_cols(colWidths = 100)
 #' }
 #'
@@ -51,7 +51,6 @@ handsontable <- function(
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
-  contextMenu = FALSE,
   elementId = NULL,
   ...
 ) {
@@ -88,7 +87,6 @@ handsontable <- function(
     colHeaders = colHeaders,
     rowHeaders = rowHeaders,
     readOnly = readOnly,
-    contextMenu = contextMenu,
     adaptiveHeight = adaptiveHeight,
     # Store original column names for hot_to_r()
     originalColnames = names(data),
@@ -173,7 +171,7 @@ handsontableOutput <- function(outputId, width = "100%", height = "400px") {
 #'     output$editable_table <- renderHandsontable({
 #'       handsontable(iris[1:10, ], readOnly = FALSE) |>
 #'         hot_cols(colWidths = 120) |>
-#'         handsontable(contextMenu = TRUE)
+#'         hot_context_menu()
 #'     })
 #'   }
 #'

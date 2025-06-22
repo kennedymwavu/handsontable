@@ -29,7 +29,7 @@ if (interactive()) {
     output$editable_table <- renderHandsontable({
       handsontable(iris[1:10, ], readOnly = FALSE) |>
         hot_cols(colWidths = 120) |>
-        handsontable(contextMenu = TRUE)
+        hot_context_menu()
     })
   }
 
