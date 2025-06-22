@@ -470,10 +470,10 @@ HTMLWidgets.widget({
                 Shiny.setInputValue(
                   el.id + "_select",
                   {
-                    row: row,
-                    col: column,
-                    row2: row2,
-                    col2: column2,
+                    row_idx: row + 1,      // Convert to 1-indexed
+                    col_idx: column + 1,   // Convert to 1-indexed
+                    row2_idx: row2 + 1,    // Convert to 1-indexed
+                    col2_idx: column2 + 1, // Convert to 1-indexed
                   },
                   { priority: "event" },
                 );
@@ -488,7 +488,7 @@ HTMLWidgets.widget({
                   {
                     data: data,
                     event: "afterCreateRow",
-                    index: index,
+                    index: index + 1,  // Convert to 1-indexed
                     amount: amount,
                     colnames: currentColnames, // Use dynamic column names
                   },
@@ -512,7 +512,7 @@ HTMLWidgets.widget({
                     {
                       data: data,
                       event: "afterRemoveRow",
-                      index: index,
+                      index: index + 1,  // Convert to 1-indexed
                       amount: amount,
                       colnames: currentColnames, // Use dynamic column names
                     },
@@ -541,7 +541,7 @@ HTMLWidgets.widget({
                   {
                     data: data,
                     event: "afterCreateCol",
-                    index: index,
+                    index: index + 1,  // Convert to 1-indexed
                     amount: amount,
                     colnames: currentColnames, // Updated column names
                   },
@@ -568,7 +568,7 @@ HTMLWidgets.widget({
                     {
                       data: data,
                       event: "afterRemoveCol",
-                      index: index,
+                      index: index + 1,  // Convert to 1-indexed
                       amount: amount,
                       colnames: currentColnames, // Updated column names
                     },
