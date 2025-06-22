@@ -129,86 +129,22 @@ shinyApp(ui, server)
 When a handsontable changes, several input values become available:
 
 - **`input$table`** - Main input with complete information
+- `input$table$event`: The event hook that triggered the change:
+  - "afterChange"
+  - "afterSelection"
+  - "afterCreateRow"
+  - "afteRemoveRow"
+  - "afterCreateCol"
+  - "afterRemoveCol"
 - **`input$table_data`** - Just the current data
 - **`input$table_changes`** - Specific change details
 - **`input$table_select`** - Current selection information
 
-### Detailed Change Information
-
-```{r detailed-changes}
-library(shiny)
-library(handsontable)
-
-ui <- fluidPage(
-  titlePanel("Detailed Change Tracking"),
-  handsontableOutput("table"),
-  br(),
-  fluidRow(
-    column(6, h4("Current Data:"), tableOutput("current_data")),
-    column(6, h4("Recent Changes:"), verbatimTextOutput("changes"))
-  )
-)
-
-server <- function(input, output, session) {
-  # Reactive value to store data
-  table_data <- reactiveVal(data.frame(
-    Product = c("Widget A", "Widget B", "Widget C"),
-    Price = c(19.99, 24.50, 15.75),
-    Stock = c(100, 250, 75)
-  ))
-
-  output$table <- renderHandsontable({
-    handsontable(table_data()) |>
-      hot_col(col = 2, type = "numeric", format = "$0.00") |>
-      hot_col(col = 3, type = "numeric", format = "0,0") |>
-      hot_table(contextMenu = TRUE)
-  })
-
-  # Update reactive value when table changes
-  observeEvent(input$table, {
-    if (!is.null(input$table)) {
-      new_data <- hot_to_r(input$table)
-      table_data(new_data)
-    }
-  })
-
-  # Display current data
-  output$current_data <- renderTable({
-    table_data()
-  })
-
-  # Display change information
-  output$changes <- renderText({
-    if (is.null(input$table$changes)) {
-      "No changes yet"
-    } else {
-      changes <- input$table$changes
-      paste(
-        "Changes made:",
-        paste(
-          sapply(changes, function(change) {
-            sprintf(
-              "Row %d, Col %d: %s -> %s",
-              change[[1]] + 1,
-              change[[2]] + 1,
-              change[[3]],
-              change[[4]]
-            )
-          }),
-          collapse = "\n"
-        ),
-        sep = "\n"
-      )
-    }
-  })
-}
-
-shinyApp(ui, server)
-```
-
 ## Event Hooks
 
-Handsontable provides several event hooks that allow you to react to specific user interactions. Each hook sends detailed information about the event, including an `event` type identifier and additional context-specific parameters.
+Handsontable provides several event hooks that allow you to react to 
+specific user interactions. Each hook sends detailed information about 
+the event, including an `event` type identifier and additional context-specific parameters.
 
 ### afterChange Hook
 
