@@ -137,16 +137,15 @@ test_that("hot_rows handles default values", {
   expect_false(ht$x$manualRowMove)
 })
 
-# Tests for hot_table function
-test_that("hot_table configures general table options", {
-  ht <- handsontable(iris) |>
-    hot_table(
-      contextMenu = TRUE,
-      filters = TRUE,
-      manualColumnSorting = TRUE,
-      search = TRUE,
-      undo = TRUE
-    )
+# Tests for general table options
+test_that("handsontable configures general table options", {
+  ht <- handsontable(iris,
+    contextMenu = TRUE,
+    filters = TRUE,
+    manualColumnSorting = TRUE,
+    search = TRUE,
+    undo = TRUE
+  )
 
   expect_true(ht$x$contextMenu)
   expect_true(ht$x$filters)
@@ -156,13 +155,12 @@ test_that("hot_table configures general table options", {
 })
 
 
-test_that("hot_table removes NULL values", {
-  ht <- handsontable(iris) |>
-    hot_table(
-      contextMenu = TRUE,
-      filters = NULL,
-      search = FALSE
-    )
+test_that("handsontable removes NULL values", {
+  ht <- handsontable(iris,
+    contextMenu = TRUE,
+    filters = NULL,
+    search = FALSE
+  )
 
   expect_true(ht$x$contextMenu)
   expect_false(ht$x$search)
@@ -171,8 +169,7 @@ test_that("hot_table removes NULL values", {
 
 # Tests for hot_context_menu function
 test_that("hot_context_menu configures context menu options", {
-  ht <- handsontable(mtcars) |>
-    hot_table(contextMenu = TRUE) |>
+  ht <- handsontable(mtcars, contextMenu = TRUE) |>
     hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
 
   expect_true(is.list(ht$x$contextMenu))
@@ -196,8 +193,7 @@ test_that("hot_context_menu handles custom options", {
     )
   )
 
-  ht <- handsontable(mtcars) |>
-    hot_table(contextMenu = TRUE) |>
+  ht <- handsontable(mtcars, contextMenu = TRUE) |>
     hot_context_menu(customOpts = custom_opts)
 
   expect_equal(ht$x$contextMenu$customOpts, custom_opts)

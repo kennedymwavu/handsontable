@@ -66,9 +66,8 @@ if (interactive()) {
   handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
 
   # Using pipe operator for configuration
-  handsontable(mtcars) |>
-    hot_cols(colWidths = 100) |>
-    hot_table(contextMenu = TRUE)
+  handsontable(mtcars, contextMenu = TRUE) |>
+    hot_cols(colWidths = 100)
 }
 
 }

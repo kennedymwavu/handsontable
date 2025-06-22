@@ -39,7 +39,7 @@ handsontable(iris[1:8, ]) |>
     type = "numeric",
     min = 0
   ) |>
-  hot_table(contextMenu = TRUE, search = TRUE)
+  handsontable(contextMenu = TRUE, search = TRUE)
 ```
 
 ## Shiny Integration

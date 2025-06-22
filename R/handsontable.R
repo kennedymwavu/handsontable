@@ -38,9 +38,8 @@
 #'   handsontable(airquality, readOnly = TRUE, contextMenu = TRUE)
 #'
 #'   # Using pipe operator for configuration
-#'   handsontable(mtcars) |>
-#'     hot_cols(colWidths = 100) |>
-#'     hot_table(contextMenu = TRUE)
+#'   handsontable(mtcars, contextMenu = TRUE) |>
+#'     hot_cols(colWidths = 100)
 #' }
 #'
 #' @export
@@ -174,7 +173,7 @@ handsontableOutput <- function(outputId, width = "100%", height = "400px") {
 #'     output$editable_table <- renderHandsontable({
 #'       handsontable(iris[1:10, ], readOnly = FALSE) |>
 #'         hot_cols(colWidths = 120) |>
-#'         hot_table(contextMenu = TRUE)
+#'         handsontable(contextMenu = TRUE)
 #'     })
 #'   }
 #'
