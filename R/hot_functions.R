@@ -342,8 +342,9 @@ hot_context_menu <- function(
   customOpts = NULL,
   ...
 ) {
-  if (is.logical(hot$x$contextMenu) && !hot$x$contextMenu) {
-    # If context menu is disabled, enable it first
+  # If context menu is a logical & disabled, enable it first
+  is_disabled <- is.logical(hot$x$contextMenu) && isFALSE(hot$x$contextMenu)
+  if (is_disabled) {
     hot$x$contextMenu <- TRUE
   }
 
