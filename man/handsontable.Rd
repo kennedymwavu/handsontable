@@ -13,6 +13,15 @@ handsontable(
   rowHeaders = TRUE,
   readOnly = FALSE,
   elementId = NULL,
+  colWidths = NULL,
+  fixedColumnsLeft = 0,
+  manualColumnResize = TRUE,
+  manualColumnMove = FALSE,
+  fixedRowsTop = 0,
+  fixedRowsBottom = 0,
+  manualRowResize = TRUE,
+  manualRowMove = FALSE,
+  stretchH = "all",
   ...
 )
 }
@@ -36,6 +45,24 @@ If character vector, uses custom column names.}
 \item{readOnly}{Logical. If TRUE, makes the entire table read-only.}
 
 \item{elementId}{Optional HTML element ID for the widget container}
+
+\item{colWidths}{Numeric vector or single value for column widths}
+
+\item{fixedColumnsLeft}{Number of columns to freeze on the left}
+
+\item{manualColumnResize}{Logical, enable manual column resizing}
+
+\item{manualColumnMove}{Logical, enable manual column reordering}
+
+\item{fixedRowsTop}{Number of rows to freeze at the top}
+
+\item{fixedRowsBottom}{Number of rows to freeze at the bottom}
+
+\item{manualRowResize}{Logical, enable manual row resizing}
+
+\item{manualRowMove}{Logical, enable manual row reordering}
+
+\item{stretchH}{`stretchH` option.}
 
 \item{...}{Additional configuration options passed to Handsontable}
 }
@@ -61,11 +88,6 @@ if (interactive()) {
   # Read-only table with context menu
   handsontable(airquality, readOnly = TRUE) |>
     hot_context_menu()
-
-  # Using pipe operator for configuration
-  handsontable(mtcars) |>
-    hot_context_menu() |>
-    hot_cols(colWidths = 100)
 }
 
 }

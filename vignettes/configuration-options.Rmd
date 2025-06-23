@@ -24,52 +24,6 @@ library(handsontable)
 This vignette covers the various configuration functions available in the 
 handsontable package, allowing you to customize every aspect of your tables.
 
-## Column Configuration with `hot_cols()`
-
-The `hot_cols()` function controls column-level settings that apply to all 
-columns or specific ranges.
-
-### Column Widths
-
-```{r column-widths}
-# Set uniform column width
-handsontable(mtcars[1:5, 1:4]) |>
-  hot_cols(colWidths = 120)
-
-# Set individual column widths
-handsontable(iris[1:5, ]) |>
-  hot_cols(colWidths = c(80, 80, 80, 80, 120))
-```
-
-### Column Freezing and Resizing
-
-```{r column-freezing}
-# Freeze first 2 columns and enable column operations
-handsontable(mtcars[1:8, ]) |>
-  hot_cols(
-    fixedColumnsLeft = 2,
-    manualColumnResize = TRUE,
-    manualColumnMove = TRUE
-  )
-```
-
-## Row Configuration with `hot_rows()`
-
-The `hot_rows()` function provides row-level configuration options.
-
-### Row Freezing
-
-```{r row-freezing}
-# Freeze top 2 rows and bottom 1 row
-handsontable(mtcars[1:10, 1:4]) |>
-  hot_rows(
-    fixedRowsTop = 2,
-    fixedRowsBottom = 1,
-    manualRowResize = TRUE,
-    manualRowMove = TRUE
-  )
-```
-
 ## General Table Configuration
 
 The `handsontable()` function controls overall table behavior and features.
@@ -569,28 +523,17 @@ handsontable(sales_data,
   hot_col(col = 5, type = "numeric", format = "$0.00", readOnly = TRUE, width = 80) |>
   hot_col(col = 6, type = "checkbox", width = 80) |>
   # Configure context menu
-  hot_context_menu() |>
-  # Configure columns and rows
-  hot_cols(
-    fixedColumnsLeft = 1,
-    manualColumnResize = TRUE
-  ) |>
-  hot_rows(
-    manualRowResize = TRUE,
-    manualRowMove = TRUE
-  )
+  hot_context_menu()
 ```
 
 ## Tips for Configuration
 
 ### 1. Order Matters
 Apply configurations in this typical order:
-1. Individual column configurations (`hot_col()`)
-2. Individual row configurations (`hot_row()`)
-3. Column-wide settings (`hot_cols()`)
-4. Row-wide settings (`hot_rows()`)
-5. Table-wide features (`handsontable()`)
-6. Context menu customizations (`hot_context_menu()`)
+1. Column configurations (`hot_col()`)
+1. Row configurations (`hot_row()`)
+1. Table-wide features (`handsontable()`)
+1. Context menu customizations (`hot_context_menu()`)
 
 ### 2. Column Indexing
 - Columns are 1-indexed in R (first column is 1)
@@ -604,9 +547,7 @@ Apply configurations in this typical order:
 ### 4. Responsive Design
 ```{r responsive}
 # Create responsive tables
-handsontable(mtcars[1:5, 1:4]) |>
-  hot_cols(colWidths = "auto") |> # Auto-size columns
-  handsontable(stretchH = "all") # Stretch to container
+handsontable(mtcars[1:5, 1:4], colWidths = "auto", stretchH = "all")
 ```
 
 This covers the main configuration options available in the handsontable 

@@ -280,13 +280,11 @@ handsontable(order_data, height = "400px") |>
     search = TRUE,
     filters = TRUE,
     manualColumnSorting = TRUE,
-    undo = TRUE
-  ) |>
-  hot_context_menu() |>
-  hot_cols(
+    undo = TRUE,
     manualColumnResize = TRUE,
     fixedColumnsLeft = 1
-  )
+  ) |>
+  hot_context_menu()
 ```
 
 # Shiny Integration Example
