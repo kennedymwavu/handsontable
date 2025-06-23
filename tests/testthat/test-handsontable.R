@@ -8,27 +8,6 @@ test_that("handsontable creates widget with basic data", {
   expect_equal(length(ht$x$data[[1]]), ncol(mtcars))
 })
 
-test_that("hot_cols modifies column configuration", {
-  ht <- handsontable(iris) |> hot_cols(colWidths = 100)
-
-  expect_equal(ht$x$colWidths, 100)
-})
-
-test_that("hot_cols handles multiple configuration options", {
-  ht <- handsontable(iris) |>
-    hot_cols(
-      colWidths = c(50, 100, 150, 200, 250),
-      fixedColumnsLeft = 2,
-      manualColumnResize = FALSE,
-      manualColumnMove = TRUE
-    )
-
-  expect_equal(ht$x$colWidths, c(50, 100, 150, 200, 250))
-  expect_equal(ht$x$fixedColumnsLeft, 2)
-  expect_false(ht$x$manualColumnResize)
-  expect_true(ht$x$manualColumnMove)
-})
-
 test_that("hot_validate adds validation to columns", {
   ht <- handsontable(mtcars) |>
     hot_validate(cols = 1:3, type = "numeric", min = 0)
@@ -39,7 +18,7 @@ test_that("hot_validate adds validation to columns", {
   expect_equal(ht$x$columns[[1]]$validator$allowInvalid, FALSE)
   expect_equal(ht$x$columns[[2]]$validator$type, "numeric")
   expect_equal(ht$x$columns[[3]]$validator$type, "numeric")
-  expect_null(ht$x$columns[[1]]$validator$strict)  # strict parameter removed
+  expect_null(ht$x$columns[[1]]$validator$strict) # strict parameter removed
 })
 
 test_that("hot_validate handles list validation", {
@@ -112,34 +91,10 @@ test_that("hot_to_r handles empty data", {
   expect_equal(ncol(result), 0)
 })
 
-# Tests for hot_rows function
-test_that("hot_rows configures row settings", {
-  ht <- handsontable(mtcars) |>
-    hot_rows(
-      fixedRowsTop = 3,
-      fixedRowsBottom = 2,
-      manualRowResize = FALSE,
-      manualRowMove = TRUE
-    )
-
-  expect_equal(ht$x$fixedRowsTop, 3)
-  expect_equal(ht$x$fixedRowsBottom, 2)
-  expect_false(ht$x$manualRowResize)
-  expect_true(ht$x$manualRowMove)
-})
-
-test_that("hot_rows handles default values", {
-  ht <- handsontable(iris) |> hot_rows()
-
-  expect_equal(ht$x$fixedRowsTop, 0)
-  expect_equal(ht$x$fixedRowsBottom, 0)
-  expect_true(ht$x$manualRowResize)
-  expect_false(ht$x$manualRowMove)
-})
-
 # Tests for general table options
 test_that("handsontable configures general table options", {
-  ht <- handsontable(iris,
+  ht <- handsontable(
+    iris,
     filters = TRUE,
     manualColumnSorting = TRUE,
     search = TRUE,
@@ -156,10 +111,7 @@ test_that("handsontable configures general table options", {
 
 
 test_that("handsontable removes NULL values", {
-  ht <- handsontable(iris,
-    filters = NULL,
-    search = FALSE
-  )
+  ht <- handsontable(iris, filters = NULL, search = FALSE)
 
   expect_false(ht$x$search)
   expect_null(ht$x$filters)
@@ -277,7 +229,7 @@ test_that("hot_row configures individual row properties", {
     hot_row(row = 1, readOnly = TRUE)
 
   expect_true(!is.null(ht$x$rowConfig))
-  expect_true(ht$x$rowConfig[["0"]]$readOnly)  # 0-based indexing for JS
+  expect_true(ht$x$rowConfig[["0"]]$readOnly) # 0-based indexing for JS
   expect_true(!is.null(ht$x$cells))
 })
 
@@ -286,8 +238,8 @@ test_that("hot_row handles multiple row configurations", {
     hot_row(row = 1, readOnly = TRUE) |>
     hot_row(row = 3, readOnly = FALSE)
 
-  expect_true(ht$x$rowConfig[["0"]]$readOnly)   # Row 1 -> JS index 0
-  expect_false(ht$x$rowConfig[["2"]]$readOnly)  # Row 3 -> JS index 2
+  expect_true(ht$x$rowConfig[["0"]]$readOnly) # Row 1 -> JS index 0
+  expect_false(ht$x$rowConfig[["2"]]$readOnly) # Row 3 -> JS index 2
   expect_true(!is.null(ht$x$cells))
 })
 
@@ -357,10 +309,14 @@ test_that("set_data requires Shiny session", {
 
 # Tests for JavaScript change detection
 test_that("JavaScript includes change detection hooks", {
-  js_file <- system.file("htmlwidgets", "handsontable.js", package = "handsontable")
+  js_file <- system.file(
+    "htmlwidgets",
+    "handsontable.js",
+    package = "handsontable"
+  )
   js_content <- readLines(js_file, warn = FALSE)
   js_text <- paste(js_content, collapse = "\n")
-  
+
   # Check for key event hooks
   expect_true(grepl("afterChange", js_text))
   expect_true(grepl("afterCreateRow", js_text))

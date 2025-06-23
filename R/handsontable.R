@@ -17,6 +17,15 @@
 #' @param rowHeaders Logical. If TRUE, shows row numbers as headers.
 #' @param readOnly Logical. If TRUE, makes the entire table read-only.
 #' @param elementId Optional HTML element ID for the widget container
+#' @param colWidths Numeric vector or single value for column widths
+#' @param fixedColumnsLeft Number of columns to freeze on the left
+#' @param manualColumnResize Logical, enable manual column resizing
+#' @param manualColumnMove Logical, enable manual column reordering
+#' @param fixedRowsTop Number of rows to freeze at the top
+#' @param fixedRowsBottom Number of rows to freeze at the bottom
+#' @param manualRowResize Logical, enable manual row resizing
+#' @param manualRowMove Logical, enable manual row reordering
+#' @param stretchH `stretchH` option.
 #' @param ... Additional configuration options passed to Handsontable
 #'
 #' @return An htmlwidget object for rendering the Handsontable
@@ -35,11 +44,6 @@
 #'   # Read-only table with context menu
 #'   handsontable(airquality, readOnly = TRUE) |>
 #'     hot_context_menu()
-#'
-#'   # Using pipe operator for configuration
-#'   handsontable(mtcars) |>
-#'     hot_context_menu() |>
-#'     hot_cols(colWidths = 100)
 #' }
 #'
 #' @export
@@ -52,6 +56,15 @@ handsontable <- function(
   rowHeaders = TRUE,
   readOnly = FALSE,
   elementId = NULL,
+  colWidths = NULL,
+  fixedColumnsLeft = 0,
+  manualColumnResize = TRUE,
+  manualColumnMove = FALSE,
+  fixedRowsTop = 0,
+  fixedRowsBottom = 0,
+  manualRowResize = TRUE,
+  manualRowMove = FALSE,
+  stretchH = "all",
   ...
 ) {
   # Validate inputs
@@ -88,13 +101,20 @@ handsontable <- function(
     rowHeaders = rowHeaders,
     readOnly = readOnly,
     adaptiveHeight = adaptiveHeight,
+    colWidths = colWidths,
+    fixedColumnsLeft = fixedColumnsLeft,
+    manualColumnResize = manualColumnResize,
+    manualColumnMove = manualColumnMove,
+    fixedRowsTop = fixedRowsTop,
+    fixedRowsBottom = fixedRowsBottom,
+    manualRowResize = manualRowResize,
+    manualRowMove = manualRowMove,
+    stretchH = stretchH,
     # Store original column names for hot_to_r()
     originalColnames = names(data),
     ...
-  )
-
-  # Remove NULL values
-  config <- config[!sapply(config, is.null)]
+  ) |>
+    Filter(f = Negate(is.null))
 
   # Create widget
   htmlwidgets::createWidget(
@@ -169,8 +189,7 @@ handsontableOutput <- function(outputId, width = "100%", height = "400px") {
 #'
 #'   server <- function(input, output, session) {
 #'     output$editable_table <- renderHandsontable({
-#'       handsontable(iris[1:10, ], readOnly = FALSE) |>
-#'         hot_cols(colWidths = 120) |>
+#'       handsontable(iris[1:10, ], readOnly = FALSE, colWidths = 120)
 #'         hot_context_menu()
 #'     })
 #'   }
