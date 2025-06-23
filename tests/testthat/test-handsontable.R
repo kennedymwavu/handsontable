@@ -224,6 +224,53 @@ test_that("hot_col throws error for invalid column name", {
   )
 })
 
+# Tests for hidden columns functionality
+test_that("hot_col hides column by setting width to 0.1", {
+  ht <- handsontable(iris) |>
+    hot_col(col = 2, hidden = TRUE)
+
+  expect_equal(ht$x$columns[[2]]$width, 0.1)
+})
+
+test_that("hot_col overrides user width when hidden is TRUE", {
+  ht <- handsontable(iris) |>
+    hot_col(col = 3, width = 200, hidden = TRUE)
+
+  expect_equal(ht$x$columns[[3]]$width, 0.1)
+})
+
+test_that("hot_col respects user width when hidden is FALSE", {
+  ht <- handsontable(iris) |>
+    hot_col(col = 1, width = 150, hidden = FALSE)
+
+  expect_equal(ht$x$columns[[1]]$width, 150)
+})
+
+test_that("hot_col hidden defaults to FALSE and preserves width", {
+  ht <- handsontable(iris) |>
+    hot_col(col = 4, width = 100)
+
+  expect_equal(ht$x$columns[[4]]$width, 100)
+})
+
+test_that("hot_col can hide multiple columns", {
+  ht <- handsontable(iris) |>
+    hot_col(col = 1, hidden = TRUE) |>
+    hot_col(col = 3, hidden = TRUE) |>
+    hot_col(col = 5, hidden = TRUE)
+
+  expect_equal(ht$x$columns[[1]]$width, 0.1)
+  expect_equal(ht$x$columns[[3]]$width, 0.1)
+  expect_equal(ht$x$columns[[5]]$width, 0.1)
+})
+
+test_that("hot_col hidden works with column names", {
+  ht <- handsontable(iris, colHeaders = TRUE) |>
+    hot_col(col = "Sepal.Width", hidden = TRUE)
+
+  expect_equal(ht$x$columns[[2]]$width, 0.1)
+})
+
 # Tests for hot_row function
 test_that("hot_row configures individual row properties", {
   ht <- handsontable(iris) |>

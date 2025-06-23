@@ -500,6 +500,7 @@ hot_col <- function(
   defaultDate = NULL,
   datePickerConfig = NULL,
   className = NULL,
+  hidden = FALSE,
   ...
 ) {
   # Validate type parameter
@@ -548,7 +549,7 @@ hot_col <- function(
     source = source,
     strict = strict,
     readOnly = readOnly,
-    width = width,
+    width = if (hidden) 0.1 else width,
     format = format,
     dateFormat = dateFormat,
     checkedTemplate = checkedTemplate,

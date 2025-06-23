@@ -68,4 +68,3 @@ test_that("separators work correctly", {
   expect_equal(ht$x$contextMenu$opts, c("copy", "---------", "remove_row"))
   expect_equal(ht$x$contextMenu$opts[2], "---------")
 })
-
