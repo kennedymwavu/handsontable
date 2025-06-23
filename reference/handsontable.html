@@ -67,6 +67,15 @@ conditional formatting, formulas, and extensive customization options.</p>
 <span>  rowHeaders <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  readOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  elementId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colWidths <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fixedColumnsLeft <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  manualColumnResize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  manualColumnMove <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fixedRowsTop <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  fixedRowsBottom <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  manualRowResize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  manualRowMove <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  stretchH <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -109,6 +118,42 @@ If character vector, uses custom column names.</p></dd>
 <dd><p>Optional HTML element ID for the widget container</p></dd>
 
 
+<dt id="arg-colwidths">colWidths<a class="anchor" aria-label="anchor" href="#arg-colwidths"></a></dt>
+<dd><p>Numeric vector or single value for column widths</p></dd>
+
+
+<dt id="arg-fixedcolumnsleft">fixedColumnsLeft<a class="anchor" aria-label="anchor" href="#arg-fixedcolumnsleft"></a></dt>
+<dd><p>Number of columns to freeze on the left</p></dd>
+
+
+<dt id="arg-manualcolumnresize">manualColumnResize<a class="anchor" aria-label="anchor" href="#arg-manualcolumnresize"></a></dt>
+<dd><p>Logical, enable manual column resizing</p></dd>
+
+
+<dt id="arg-manualcolumnmove">manualColumnMove<a class="anchor" aria-label="anchor" href="#arg-manualcolumnmove"></a></dt>
+<dd><p>Logical, enable manual column reordering</p></dd>
+
+
+<dt id="arg-fixedrowstop">fixedRowsTop<a class="anchor" aria-label="anchor" href="#arg-fixedrowstop"></a></dt>
+<dd><p>Number of rows to freeze at the top</p></dd>
+
+
+<dt id="arg-fixedrowsbottom">fixedRowsBottom<a class="anchor" aria-label="anchor" href="#arg-fixedrowsbottom"></a></dt>
+<dd><p>Number of rows to freeze at the bottom</p></dd>
+
+
+<dt id="arg-manualrowresize">manualRowResize<a class="anchor" aria-label="anchor" href="#arg-manualrowresize"></a></dt>
+<dd><p>Logical, enable manual row resizing</p></dd>
+
+
+<dt id="arg-manualrowmove">manualRowMove<a class="anchor" aria-label="anchor" href="#arg-manualrowmove"></a></dt>
+<dd><p>Logical, enable manual row reordering</p></dd>
+
+
+<dt id="arg-stretchh">stretchH<a class="anchor" aria-label="anchor" href="#arg-stretchh"></a></dt>
+<dd><p>`stretchH` option.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional configuration options passed to Handsontable</p></dd>
 
@@ -133,11 +178,6 @@ If character vector, uses custom column names.</p></dd>
 <span class="r-in"><span>  <span class="co"># Read-only table with context menu</span></span></span>
 <span class="r-in"><span>  <span class="fu">handsontable</span><span class="op">(</span><span class="va">airquality</span>, readOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Using pipe operator for configuration</span></span></span>
-<span class="r-in"><span>  <span class="fu">handsontable</span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="hot_context_menu.html">hot_context_menu</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="hot_cols.html">hot_cols</a></span><span class="op">(</span>colWidths <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
