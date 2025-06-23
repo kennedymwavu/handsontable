@@ -28,6 +28,7 @@ hot_col(
   defaultDate = NULL,
   datePickerConfig = NULL,
   className = NULL,
+  hidden = FALSE,
   ...
 )
 }
