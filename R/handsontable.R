@@ -162,7 +162,7 @@ handsontable <- function(
 #' }
 #'
 #' @export
-handsontableOutput <- function(outputId, width = "100%", height = "400px") {
+handsontableOutput <- function(outputId, width = "100%", height = "100%") {
   htmlwidgets::shinyWidgetOutput(
     outputId,
     "handsontable",
