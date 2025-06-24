@@ -19,8 +19,13 @@ HTMLWidgets.widget({
 
       const rowCount = config.data.length;
       const hasHeaders = config.colHeaders ? 1 : 0;
-      const headerHeight = 30; // Approximate header height in pixels
-      let totalRowHeight = 0;
+      // Approximate header height in pixels:
+      const headerHeight = 22;
+      // default row height in pixels
+      const defaultRowHeight = 22;
+      // approximate row border heights in pixels:
+      // ps: don't know why i added 5, just seems to work really well.
+      let totalRowHeight = rowCount + 5;
 
       // Handle different types of rowHeights configuration as per Handsontable docs
       if (typeof config.rowHeights === "number") {
@@ -28,7 +33,6 @@ HTMLWidgets.widget({
         totalRowHeight = rowCount * config.rowHeights;
       } else if (Array.isArray(config.rowHeights)) {
         // If rowHeights is an array, sum up specified heights and use default for the rest
-        const defaultRowHeight = 30; // Default row height in pixels
         for (let i = 0; i < rowCount; i++) {
           if (i < config.rowHeights.length) {
             totalRowHeight += config.rowHeights[i] || defaultRowHeight;
@@ -39,18 +43,16 @@ HTMLWidgets.widget({
       } else if (typeof config.rowHeights === "function") {
         // If rowHeights is a function, we can't calculate exactly without rendering
         // So we use an approximation based on default height
-        totalRowHeight = rowCount * 30;
+        totalRowHeight += rowCount * defaultRowHeight;
       } else {
         // Default case: use standard row height for all rows
-        const defaultRowHeight = 30;
-        totalRowHeight = rowCount * defaultRowHeight;
+        totalRowHeight += rowCount * defaultRowHeight;
       }
 
       // Calculate required height: header + total row height
       const requiredHeight = hasHeaders * headerHeight + totalRowHeight;
 
-      // If adaptiveHeight is set to true or not specified, adapt the height
-      return Math.max(Math.min(requiredHeight, 1000), 100); // Min 100px, max 1000px
+      return requiredHeight;
     }
 
     return {
