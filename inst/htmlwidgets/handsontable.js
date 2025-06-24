@@ -69,8 +69,9 @@ HTMLWidgets.widget({
             data: [],
             colHeaders: true,
             rowHeaders: true,
-            width: width,
-            height: height,
+            // ignore the width & height for now
+            // width: width,
+            // height: height,
             autoWrapRow: true,
             autoWrapCol: true,
             copyPaste: true,
