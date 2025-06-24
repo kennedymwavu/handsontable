@@ -5,5 +5,5 @@ dependencies:
     script:
       - handsontable.full.min.js
     stylesheet:
-      - handsontable.min.css
+      - handsontable.full.min.css
     all_files: false
