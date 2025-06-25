@@ -70,9 +70,8 @@ HTMLWidgets.widget({
             data: [],
             colHeaders: true,
             rowHeaders: true,
-            // ignore the width & height for now
             width: el.offsetWidth,
-            // height: height,
+            height: height,
             autoWrapRow: true,
             autoWrapCol: true,
             copyPaste: true,
@@ -88,8 +87,7 @@ HTMLWidgets.widget({
         // Calculate adaptive height if enabled
         if (config.adaptiveHeight === true) {
           const adaptiveHeight = calculateAdaptiveHeight(config, height);
-          // Set height on container instead of handsontable instance
-          el.style.height = adaptiveHeight + "px";
+          config.height = adaptiveHeight;
           el.style.overflow = "auto";
         }
 
@@ -544,11 +542,9 @@ HTMLWidgets.widget({
           // Apply adaptive height if enabled
           if (config.adaptiveHeight === true) {
             const adaptiveHeight = calculateAdaptiveHeight(config, height, hot);
-            // Set height on container instead of handsontable instance
-            el.style.height = adaptiveHeight + "px";
-            // Update handsontable without height constraint
             hot.updateSettings({
               width: el.offsetWidth,
+              height: adaptiveHeight,
             });
           } else {
             hot.updateSettings({
