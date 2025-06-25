@@ -336,8 +336,10 @@ hot_to_r <- function(data) {
 #' Configure Individual Column
 #'
 #' @param hot A handsontable widget object
-#' @param col Column name or index to configure
+#' @param col Character vector or Integer vector.
+#' Column name or index to configure.
 #' @param readOnly Logical, make column read-only
+#' @param hidden Logical. Should the column be hidden?
 #' @param width Column width in pixels
 #' @param ... Additional column configuration options
 #'
@@ -405,11 +407,6 @@ hot_col <- function(
     length(hot$x$columns) <- col_idx
   }
 
-  # Initialize column config if NULL
-  if (is.null(hot$x$columns[[col_idx]])) {
-    hot$x$columns[[col_idx]] <- list()
-  }
-
   # Set column properties
   col_config <- list(
     readOnly = readOnly,
@@ -418,11 +415,18 @@ hot_col <- function(
   ) |>
     Filter(f = Negate(is.null))
 
-  # Merge with existing column configuration
-  hot$x$columns[[col_idx]] <- utils::modifyList(
-    hot$x$columns[[col_idx]],
-    col_config
-  )
+  for (idx in col_idx) {
+    # Initialize column config if NULL
+    if (is.null(hot$x$columns[[idx]])) {
+      hot$x$columns[[idx]] <- list()
+    }
+
+    # Merge with existing column configuration
+    hot$x$columns[[idx]] <- utils::modifyList(
+      hot$x$columns[[idx]],
+      col_config
+    )
+  }
 
   hot
 }
@@ -473,7 +477,7 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
   ) |>
     Filter(f = Negate(is.null))
 
-  if (length(row_config) > 0) {
+  if (length(row_config)) {
     # Convert 1-based R index to 0-based JavaScript index
     js_row <- row - 1
     hot$x$rowConfig[[as.character(js_row)]] <- row_config
