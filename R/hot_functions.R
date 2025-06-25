@@ -434,7 +434,7 @@ hot_col <- function(
 #' Configure Row Properties
 #'
 #' @param hot A handsontable widget object
-#' @param row Row index to configure
+#' @param row Integer vector. Row indices to configure
 #' @param readOnly Logical, make row read-only
 #' @param ... Additional row configuration options
 #'
@@ -480,7 +480,10 @@ hot_row <- function(hot, row, readOnly = NULL, ...) {
   if (length(row_config)) {
     # Convert 1-based R index to 0-based JavaScript index
     js_row <- row - 1
-    hot$x$rowConfig[[as.character(js_row)]] <- row_config
+
+    for (idx in js_row) {
+      hot$x$rowConfig[[as.character(idx)]] <- row_config
+    }
 
     # Create cells function that applies row configurations
     hot$x$cells <- htmlwidgets::JS(
