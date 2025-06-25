@@ -4,79 +4,19 @@
 \alias{hot_col}
 \title{Configure Individual Column}
 \usage{
-hot_col(
-  hot,
-  col,
-  type = c("text", "numeric", "checkbox", "date", "time", "dropdown", "autocomplete",
-    "password", "select", "handsontable"),
-  source = NULL,
-  strict = NULL,
-  readOnly = NULL,
-  width = NULL,
-  format = NULL,
-  dateFormat = NULL,
-  checkedTemplate = NULL,
-  uncheckedTemplate = NULL,
-  visibleRows = NULL,
-  allowInvalid = NULL,
-  trimDropdown = NULL,
-  filter = NULL,
-  allowEmpty = NULL,
-  copyable = NULL,
-  numericFormat = NULL,
-  correctFormat = NULL,
-  defaultDate = NULL,
-  datePickerConfig = NULL,
-  className = NULL,
-  hidden = FALSE,
-  ...
-)
+hot_col(hot, col, readOnly = NULL, hidden = FALSE, width = NULL, ...)
 }
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{col}{Column name or index to configure}
-
-\item{type}{Column type: "text", "numeric", "checkbox", "date", "time",
-"dropdown", "autocomplete", "password", "select", "handsontable"}
-
-\item{source}{For dropdown/autocomplete type, vector of allowed values}
-
-\item{strict}{Logical, strict validation for dropdowns/autocomplete}
+\item{col}{Character vector or Integer vector.
+Column name or index to configure.}
 
 \item{readOnly}{Logical, make column read-only}
 
+\item{hidden}{Logical. Should the column be hidden?}
+
 \item{width}{Column width in pixels}
-
-\item{format}{For numeric columns, number format}
-
-\item{dateFormat}{For date columns, date format}
-
-\item{checkedTemplate}{For checkbox columns, value when checked}
-
-\item{uncheckedTemplate}{For checkbox columns, value when unchecked}
-
-\item{visibleRows}{For dropdown type, number of visible rows in dropdown}
-
-\item{allowInvalid}{Logical, allow invalid values}
-
-\item{trimDropdown}{For autocomplete, trim dropdown width to fit content}
-
-\item{filter}{For autocomplete, enable filtering of dropdown options}
-
-\item{allowEmpty}{For autocomplete, allow empty values}
-
-\item{copyable}{For password type, allow copying values (default FALSE)}
-
-\item{numericFormat}{For numeric type, advanced formatting options (list)}
-
-\item{correctFormat}{For numeric type, auto-correct number format}
-
-\item{defaultDate}{For date type, default date value}
-
-\item{datePickerConfig}{For date type, date picker configuration (list)}
-
-\item{className}{CSS class name for cells}
 
 \item{...}{Additional column configuration options}
 }

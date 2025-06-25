@@ -9,7 +9,7 @@ hot_row(hot, row, readOnly = NULL, ...)
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{row}{Row index to configure}
+\item{row}{Integer vector. Row indices to configure}
 
 \item{readOnly}{Logical, make row read-only}
 

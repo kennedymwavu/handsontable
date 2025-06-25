@@ -4,34 +4,24 @@
 \alias{hot_validate}
 \title{Configure Data Validation}
 \usage{
-hot_validate(
-  hot,
-  cols,
-  type = c("numeric", "list", "regexp"),
-  source = NULL,
-  pattern = NULL,
-  min = NULL,
-  max = NULL,
-  allowInvalid = FALSE,
-  ...
-)
+hot_validate(hot, col, type = NULL, allowInvalid = FALSE, ...)
 }
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{cols}{Column indices to apply validation (numeric vector)}
-
 \item{type}{Validation type: "numeric", "list", "regexp"}
+
+\item{allowInvalid}{Logical, allow invalid values to be entered}
+
+\item{...}{Additional validation options}
+
+\item{cols}{Column indices to apply validation (numeric vector)}
 
 \item{source}{For "list" type, vector of allowed values}
 
 \item{pattern}{For "regexp" type, regular expression pattern}
 
 \item{min, max}{For "numeric" type, minimum and maximum values}
-
-\item{allowInvalid}{Logical, allow invalid values to be entered}
-
-\item{...}{Additional validation options}
 }
 \value{
 Modified handsontable widget
