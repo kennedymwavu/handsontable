@@ -8,9 +8,9 @@
 #' @param width,height Widget dimensions. Can be specified as pixels
 #'   (e.g., "400px") or percentage (e.g., "100%"). If NULL, dimensions are
 #'   automatically determined.
-#' @param adaptiveHeight Logical. If TRUE (default), the table's height
-#'   will automatically adjust based on the number of rows displayed. If FALSE,
-#'   the specified height will be used.
+#' @param adaptiveHeight Logical. If TRUE, the table's height
+#'   will automatically adjust based on the number of rows displayed.
+#'   If FALSE (default), the specified height will be used.
 #' @param colHeaders Logical or character vector. If TRUE, shows default
 #'   column headers.
 #'   If character vector, uses custom column names.
@@ -51,7 +51,7 @@ handsontable <- function(
   data,
   width = NULL,
   height = NULL,
-  adaptiveHeight = TRUE,
+  adaptiveHeight = FALSE,
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,

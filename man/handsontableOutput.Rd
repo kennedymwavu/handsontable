@@ -4,7 +4,7 @@
 \alias{handsontableOutput}
 \title{Widget output function for use in Shiny}
 \usage{
-handsontableOutput(outputId, width = "100\%", height = "100\%")
+handsontableOutput(outputId, width = "100\%", height = "400px")
 }
 \arguments{
 \item{outputId}{Output variable name}

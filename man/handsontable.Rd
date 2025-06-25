@@ -8,7 +8,7 @@ handsontable(
   data,
   width = NULL,
   height = NULL,
-  adaptiveHeight = TRUE,
+  adaptiveHeight = FALSE,
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
@@ -32,9 +32,9 @@ handsontable(
 (e.g., "400px") or percentage (e.g., "100%"). If NULL, dimensions are
 automatically determined.}
 
-\item{adaptiveHeight}{Logical. If TRUE (default), the table's height
-will automatically adjust based on the number of rows displayed. If FALSE,
-the specified height will be used.}
+\item{adaptiveHeight}{Logical. If TRUE, the table's height
+will automatically adjust based on the number of rows displayed.
+If FALSE (default), the specified height will be used.}
 
 \item{colHeaders}{Logical or character vector. If TRUE, shows default
 column headers.
