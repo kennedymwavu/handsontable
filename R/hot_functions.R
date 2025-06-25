@@ -1,3 +1,76 @@
+#' Oxford Paste
+#'
+#' @param x Character vector.
+#' @param border String. Padded at the start and end of each
+#' item in `x`.
+#' @param sep String. Padded after each item in `x`, unless
+#' it's the last.
+#' @return String.
+#' @keywords internal
+#' @noRd
+oxford_paste <- function(x, border = "`", sep = ", ") {
+  if (identical(length(x), 0L)) {
+    return(x)
+  }
+
+  x <- paste0(border, x, border)
+
+  if (identical(length(x), 1L)) {
+    return(x)
+  }
+
+  if (identical(length(x), 2L)) {
+    return(
+      paste(x, collapse = " and ")
+    )
+  }
+
+  res <- ""
+  for (idx in seq_along(x)) {
+    if (identical(idx, length(x))) {
+      sep <- paste0(sep, "and ")
+    }
+
+    res <- paste0(res, sep, x[idx])
+    if (identical(idx, 1L)) {
+      res <- x[1L]
+    }
+  }
+
+  res
+}
+
+#' Get Column Indices
+#'
+#' @param hot A handsontable widget object.
+#' @param col Character vector of column names or numeric vector
+#' of column indices.
+#' @keywords internal
+#' @noRd
+get_col_idx <- function(hot, col) {
+  if (is.character(col) && is.null(hot$x$colHeaders)) {
+    stop("Column names can only be used when `colHeaders` are defined.")
+  }
+
+  col_idx <- col
+  if (is.character(col)) {
+    col_idx <- match(col, hot$x$colHeaders)
+    missing_idx <- which(x = is.na(col_idx))
+    missing_cols <- col[missing_idx]
+    if (length(missing_cols)) {
+      msg <- paste(
+        "Column",
+        oxford_paste(missing_cols),
+        "not found in `colHeaders`."
+      )
+
+      stop(msg, call. = FALSE)
+    }
+  }
+
+  col_idx
+}
+
 #' Configure Data Validation
 #'
 #' @param hot A handsontable widget object
@@ -50,56 +123,26 @@
 #' @export
 hot_validate <- function(
   hot,
-  cols,
-  type = c("numeric", "list", "regexp"),
-  source = NULL,
-  pattern = NULL,
-  min = NULL,
-  max = NULL,
+  col,
+  type = NULL,
   allowInvalid = FALSE,
   ...
 ) {
-  type <- match.arg(arg = type)
-
   validator <- list(
     type = type,
     allowInvalid = allowInvalid,
     ...
   )
 
-  # Add type-specific options
-  switch(
-    EXPR = type,
-    numeric = {
-      if (!is.null(min)) {
-        validator$min <- min
-      }
-
-      if (!is.null(max)) {
-        validator$max <- max
-      }
-    },
-    list = {
-      if (!is.null(source)) {
-        validator$source <- source
-      }
-    },
-    regexp = {
-      if (!is.null(pattern)) {
-        validator$pattern <- pattern
-      }
-    }
-  )
-
   # Create columns configuration if it doesn't exist
   if (is.null(hot$x$columns)) {
     # Determine number of columns from data
-    ncols <- if (!is.null(hot$x$data) && length(hot$x$data) > 0) {
+    ncols <- if (!is.null(hot$x$data) && length(hot$x$data)) {
       length(hot$x$data[[1]])
     } else {
-      max(cols)
+      max(col)
     }
-    hot$x$columns <- vector("list", ncols)
+    hot$x$columns <- vector(mode = "list", length = ncols)
   }
 
   # Apply validation to specified columns
@@ -291,27 +334,8 @@ hot_to_r <- function(data) {
 #'
 #' @param hot A handsontable widget object
 #' @param col Column name or index to configure
-#' @param type Column type: "text", "numeric", "checkbox", "date", "time",
-#'   "dropdown", "autocomplete", "password", "select", "handsontable"
-#' @param source For dropdown/autocomplete type, vector of allowed values
-#' @param strict Logical, strict validation for dropdowns/autocomplete
 #' @param readOnly Logical, make column read-only
 #' @param width Column width in pixels
-#' @param format For numeric columns, number format
-#' @param dateFormat For date columns, date format
-#' @param checkedTemplate For checkbox columns, value when checked
-#' @param uncheckedTemplate For checkbox columns, value when unchecked
-#' @param visibleRows For dropdown type, number of visible rows in dropdown
-#' @param allowInvalid Logical, allow invalid values
-#' @param trimDropdown For autocomplete, trim dropdown width to fit content
-#' @param filter For autocomplete, enable filtering of dropdown options
-#' @param allowEmpty For autocomplete, allow empty values
-#' @param copyable For password type, allow copying values (default FALSE)
-#' @param numericFormat For numeric type, advanced formatting options (list)
-#' @param correctFormat For numeric type, auto-correct number format
-#' @param defaultDate For date type, default date value
-#' @param datePickerConfig For date type, date picker configuration (list)
-#' @param className CSS class name for cells
 #' @param ... Additional column configuration options
 #'
 #' @return Modified handsontable widget
@@ -353,46 +377,11 @@ hot_to_r <- function(data) {
 hot_col <- function(
   hot,
   col,
-  type = c(
-    "text",
-    "numeric",
-    "checkbox",
-    "date",
-    "time",
-    "dropdown",
-    "autocomplete",
-    "password",
-    "select",
-    "handsontable"
-  ),
-  source = NULL,
-  strict = NULL,
   readOnly = NULL,
-  width = NULL,
-  format = NULL,
-  dateFormat = NULL,
-  checkedTemplate = NULL,
-  uncheckedTemplate = NULL,
-  visibleRows = NULL,
-  allowInvalid = NULL,
-  # New cell type options
-  trimDropdown = NULL,
-  filter = NULL,
-  allowEmpty = NULL,
-  copyable = NULL,
-  numericFormat = NULL,
-  correctFormat = NULL,
-  defaultDate = NULL,
-  datePickerConfig = NULL,
-  className = NULL,
   hidden = FALSE,
+  width = NULL,
   ...
 ) {
-  # Validate type parameter
-  if (!is.null(type)) {
-    type <- match.arg(type)
-  }
-
   # Convert column name to index if needed
   if (is.character(col) && !is.null(hot$x$colHeaders)) {
     col_idx <- match(col, hot$x$colHeaders)
@@ -430,68 +419,11 @@ hot_col <- function(
 
   # Set column properties
   col_config <- list(
-    type = type,
-    source = source,
-    strict = strict,
     readOnly = readOnly,
     width = if (hidden) 0.1 else width,
-    format = format,
-    dateFormat = dateFormat,
-    checkedTemplate = checkedTemplate,
-    uncheckedTemplate = uncheckedTemplate,
-    allowInvalid = allowInvalid,
-    trimDropdown = trimDropdown,
-    filter = filter,
-    allowEmpty = allowEmpty,
-    copyable = copyable,
-    numericFormat = numericFormat,
-    correctFormat = correctFormat,
-    defaultDate = defaultDate,
-    datePickerConfig = datePickerConfig,
-    className = className,
     ...
   ) |>
     Filter(f = Negate(is.null))
-
-  # Handle cell type-specific configuration
-  if (!is.null(type)) {
-    switch(
-      type,
-      "dropdown" = {
-        if (!is.null(visibleRows)) {
-          col_config$visibleRows <- visibleRows
-        }
-        # Set default strict mode for dropdowns if not specified
-        if (is.null(strict)) {
-          col_config$strict <- TRUE
-        }
-      },
-      "autocomplete" = {
-        # Set autocomplete defaults
-        if (is.null(strict)) {
-          col_config$strict <- FALSE
-        }
-        if (is.null(filter)) {
-          col_config$filter <- TRUE
-        }
-        if (is.null(trimDropdown)) {
-          col_config$trimDropdown <- TRUE
-        }
-      },
-      "password" = {
-        # Set password defaults
-        if (is.null(copyable)) {
-          col_config$copyable <- FALSE
-        }
-      },
-      "numeric" = {
-        # Numeric formatting handled by numericFormat parameter
-      },
-      "date" = {
-        # Date configuration handled by dateFormat and datePickerConfig
-      }
-    )
-  }
 
   # Merge with existing column configuration
   hot$x$columns[[col_idx]] <- utils::modifyList(
