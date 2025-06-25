@@ -6,7 +6,6 @@ HTMLWidgets.widget({
   factory: function (el, width, height) {
     let hot = null;
 
-    // Function to calculate adaptive height based on row count and row heights
     function calculateAdaptiveHeight(config, availableHeight) {
       const doNotAdaptHeight =
         !config.data ||
@@ -49,8 +48,10 @@ HTMLWidgets.widget({
         totalRowHeight += rowCount * defaultRowHeight;
       }
 
-      // Calculate required height: header + total row height
-      const requiredHeight = hasHeaders * headerHeight + totalRowHeight;
+      // Calculate required height:
+      // header + total row height + defaultRowHeight (for horizontal scrollbar)
+      const requiredHeight =
+        hasHeaders * headerHeight + totalRowHeight + defaultRowHeight;
 
       return requiredHeight;
     }
@@ -70,7 +71,7 @@ HTMLWidgets.widget({
             colHeaders: true,
             rowHeaders: true,
             // ignore the width & height for now
-            // width: width,
+            width: el.offsetWidth,
             // height: height,
             autoWrapRow: true,
             autoWrapCol: true,
@@ -86,7 +87,10 @@ HTMLWidgets.widget({
 
         // Calculate adaptive height if enabled
         if (config.adaptiveHeight === true) {
-          config.height = calculateAdaptiveHeight(config, height);
+          const adaptiveHeight = calculateAdaptiveHeight(config, height);
+          // Set height on container instead of handsontable instance
+          el.style.height = adaptiveHeight + "px";
+          el.style.overflow = "auto";
         }
 
         // Handle data conversion if needed
@@ -536,17 +540,22 @@ HTMLWidgets.widget({
       resize: function (width, height) {
         if (hot) {
           const config = hot.getSettings();
-          let newHeight = height;
 
           // Apply adaptive height if enabled
-          if (config.adaptiveHeight !== false) {
-            newHeight = calculateAdaptiveHeight(config, height);
+          if (config.adaptiveHeight === true) {
+            const adaptiveHeight = calculateAdaptiveHeight(config, height, hot);
+            // Set height on container instead of handsontable instance
+            el.style.height = adaptiveHeight + "px";
+            // Update handsontable without height constraint
+            hot.updateSettings({
+              width: el.offsetWidth,
+            });
+          } else {
+            hot.updateSettings({
+              width: el.offsetWidth,
+              height: height,
+            });
           }
-
-          hot.updateSettings({
-            width: width,
-            height: newHeight,
-          });
         }
       },
 
