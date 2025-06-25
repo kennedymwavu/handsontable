@@ -45,6 +45,7 @@ oxford_paste <- function(x, border = "`", sep = ", ") {
 #' @param hot A handsontable widget object.
 #' @param col Character vector of column names or numeric vector
 #' of column indices.
+#' @return Integer vector.
 #' @keywords internal
 #' @noRd
 get_col_idx <- function(hot, col) {
@@ -128,6 +129,8 @@ hot_validate <- function(
   allowInvalid = FALSE,
   ...
 ) {
+  col_idx <- get_col_idx(hot, col)
+
   validator <- list(
     type = type,
     allowInvalid = allowInvalid,
@@ -140,17 +143,17 @@ hot_validate <- function(
     ncols <- if (!is.null(hot$x$data) && length(hot$x$data)) {
       length(hot$x$data[[1]])
     } else {
-      max(col)
+      max(col_idx)
     }
     hot$x$columns <- vector(mode = "list", length = ncols)
   }
 
   # Apply validation to specified columns
-  for (col in cols) {
-    if (is.null(hot$x$columns[[col]])) {
-      hot$x$columns[[col]] <- list()
+  for (idx in col_idx) {
+    if (is.null(hot$x$columns[[idx]])) {
+      hot$x$columns[[idx]] <- list()
     }
-    hot$x$columns[[col]]$validator <- validator
+    hot$x$columns[[idx]]$validator <- validator
   }
 
   hot
@@ -382,17 +385,7 @@ hot_col <- function(
   width = NULL,
   ...
 ) {
-  # Convert column name to index if needed
-  if (is.character(col) && !is.null(hot$x$colHeaders)) {
-    col_idx <- match(col, hot$x$colHeaders)
-    if (is.na(col_idx)) {
-      stop("Column '", col, "' not found in colHeaders")
-    }
-  } else if (is.character(col)) {
-    stop("Column names can only be used when colHeaders are defined")
-  } else {
-    col_idx <- col
-  }
+  col_idx <- get_col_idx(hot, col)
 
   # Create columns configuration if it doesn't exist
   if (is.null(hot$x$columns)) {
