@@ -75,11 +75,8 @@ get_col_idx <- function(hot, col) {
 #' Configure Data Validation
 #'
 #' @param hot A handsontable widget object
-#' @param cols Column indices to apply validation (numeric vector)
-#' @param type Validation type: "numeric", "list", "regexp"
-#' @param source For "list" type, vector of allowed values
-#' @param pattern For "regexp" type, regular expression pattern
-#' @param min,max For "numeric" type, minimum and maximum values
+#' @param col Column indices to apply validation (numeric vector)
+#' @param type Validation type eg. "numeric", "list", "regexp"
 #' @param allowInvalid Logical, allow invalid values to be entered
 #' @param ... Additional validation options
 #'
@@ -106,13 +103,15 @@ get_col_idx <- function(hot, col) {
 #'
 #'     output$table <- renderHandsontable({
 #'       handsontable(df) |>
-#'         hot_validate(cols = 1, type = "numeric", min = 0, max = 100) |>
+#'         hot_validate(col = 1, type = "numeric", min = 0, max = 100) |>
 #'         hot_validate(
-#'           cols = 2, type = "list",
+#'           col = 2,
+#'           type = "list",
 #'           source = c("A", "B", "C", "D", "F")
 #'         ) |>
 #'         hot_validate(
-#'           cols = 3, type = "regexp",
+#'           col = 3,
+#'           type = "regexp",
 #'           pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
 #'         )
 #'     })

@@ -10,7 +10,7 @@ test_that("handsontable creates widget with basic data", {
 
 test_that("hot_validate adds validation to columns", {
   ht <- handsontable(mtcars) |>
-    hot_validate(cols = 1:3, type = "numeric", min = 0)
+    hot_validate(col = 1:3, type = "numeric", min = 0)
 
   expect_true(!is.null(ht$x$columns))
   expect_equal(ht$x$columns[[1]]$validator$type, "numeric")
@@ -24,7 +24,7 @@ test_that("hot_validate adds validation to columns", {
 test_that("hot_validate handles list validation", {
   ht <- handsontable(iris) |>
     hot_validate(
-      cols = 5,
+      col = 5,
       type = "list",
       source = c("setosa", "versicolor", "virginica")
     )
@@ -41,7 +41,7 @@ test_that("hot_validate handles regexp validation", {
   test_data <- data.frame(email = c("test@example.com", "user@domain.org"))
   ht <- handsontable(test_data) |>
     hot_validate(
-      cols = 1,
+      col = 1,
       type = "regexp",
       pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
     )
@@ -172,7 +172,7 @@ test_that("hot_col throws error for invalid column name", {
 
   expect_error(
     hot_col(ht, col = "NonExistent", type = "text"),
-    "Column 'NonExistent' not found in colHeaders"
+    "Column `NonExistent` not found in `colHeaders`"
   )
 })
 

@@ -9,19 +9,13 @@ hot_validate(hot, col, type = NULL, allowInvalid = FALSE, ...)
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{type}{Validation type: "numeric", "list", "regexp"}
+\item{col}{Column indices to apply validation (numeric vector)}
+
+\item{type}{Validation type eg. "numeric", "list", "regexp"}
 
 \item{allowInvalid}{Logical, allow invalid values to be entered}
 
 \item{...}{Additional validation options}
-
-\item{cols}{Column indices to apply validation (numeric vector)}
-
-\item{source}{For "list" type, vector of allowed values}
-
-\item{pattern}{For "regexp" type, regular expression pattern}
-
-\item{min, max}{For "numeric" type, minimum and maximum values}
 }
 \value{
 Modified handsontable widget
@@ -50,13 +44,15 @@ if (interactive()) {
 
     output$table <- renderHandsontable({
       handsontable(df) |>
-        hot_validate(cols = 1, type = "numeric", min = 0, max = 100) |>
+        hot_validate(col = 1, type = "numeric", min = 0, max = 100) |>
         hot_validate(
-          cols = 2, type = "list",
+          col = 2,
+          type = "list",
           source = c("A", "B", "C", "D", "F")
         ) |>
         hot_validate(
-          cols = 3, type = "regexp",
+          col = 3,
+          type = "regexp",
           pattern = "^[\\\\w\\\\._\%+-]+@[\\\\w\\\\.-]+\\\\.[A-Za-z]{2,}$"
         )
     })
