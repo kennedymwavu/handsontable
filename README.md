@@ -8,41 +8,57 @@
 
 <!-- badges: end -->
 
-R interface to the [Handsontable](https://handsontable.com/) JavaScript library [v6.2.2](https://github.com/handsontable/handsontable/tree/6.2.2).
+R interface to the [Handsontable](https://handsontable.com/) JavaScript library
+[v6.2.2 (MIT license)](https://github.com/handsontable/handsontable/tree/6.2.2).
 
-Create interactive spreadsheet-like data grids with data validation, sorting, filtering, and seamless Shiny integration.
+create interactive spreadsheet-like data grids with data validation, sorting, and filtering.
 
-## Installation
+## installation
 
 ```r
-# Install from GitHub
+# install from CRAN
+install.packages("handsontable")
+```
+
+```r
+# or install from GitHub
 devtools::install_github("kennedymwavu/handsontable")
 ```
 
-## Quick Example
-
-```r
+```{r}
+# load the package:
 library(handsontable)
+```
 
-# Basic table
-handsontable(mtcars[1:5, 1:4])
+## quick example
 
-# With validation and formatting
-handsontable(iris[1:8, ], search = TRUE) |>
+```{r}
+# basic table:
+handsontable(mtcars[1:5, ], adaptiveHeight = TRUE)
+
+# col specific config + validation + context menu:
+handsontable(
+  iris[1:8, ],
+  adaptiveHeight = TRUE
+) |>
   hot_col(
-    col = 5,
+    col = "Species",
     type = "dropdown",
     source = c("setosa", "versicolor", "virginica")
   ) |>
   hot_validate(
-    cols = 1:4,
+    col = 1:4,
     type = "numeric",
     min = 0
   ) |>
   hot_context_menu()
 ```
 
-## Shiny Integration
+- right-click to see the context menu
+- try entering an invalid value (like a letter) in
+  the first 4 columns.
+
+## shiny integration
 
 ```r
 library(shiny)
@@ -55,32 +71,25 @@ server <- function(input, output) {
       hot_context_menu()
   })
 
+  # detect changes:
   observeEvent(input$table, {
-    # Detect changes
-    if (!is.null(input$table)) {
-      updated_data <- hot_to_r(data = input$table)
-      cat("Updated data:\n")
-      print(updated_data)
-      # Use updated_data...
-    }
+    updated_data <- hot_to_r(data = input$table)
+    cat("Updated data:\n")
+    print(updated_data)
+    # use updated data...
   })
 }
 
 shinyApp(ui, server)
 ```
 
-## Similar Packages
+## similar packages
 
-### rhandsontable
+### {rhandsontable}
 
-The [rhandsontable](https://github.com/jrowen/rhandsontable) package provides an R interface to Handsontable and has been a valuable tool for the R community. However, it hasn't been actively maintained in recent years.
+the [rhandsontable](https://github.com/jrowen/rhandsontable) package
+provides an R interface to handsontable and has been a valuable tool for the
+R community. however, it hasn't been actively maintained in recent years.
 
-This `handsontable` package was developed to **ensure active maintenance** with regular updates, bug fixes, and feature enhancements that the community needs.
-
-## Documentation
-
-- [**Getting Started**](https://kennedymwavu.github.io/handsontable/articles/getting-started.html)
-- [**Configuration Options**](https://kennedymwavu.github.io/handsontable/articles/configuration-options.html)
-- [**Data Validation & Customization**](https://kennedymwavu.github.io/handsontable/articles/validation-and-customization.html)
-- [**Shiny Integration**](https://kennedymwavu.github.io/handsontable/articles/shiny-integration.html)
-- [**Function Reference**](https://kennedymwavu.github.io/handsontable/reference/)
+`{handsontable}` was developed to **ensure active maintenance**
+with regular updates, bug fixes, and feature enhancements that the community needs.
