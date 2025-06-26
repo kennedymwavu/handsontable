@@ -1,0 +1,177 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "home",
+    "section": "",
+    "text": "R interface to the Handsontable JavaScript library v6.2.2 (MIT license).\ncreate interactive spreadsheet-like data grids with data validation, sorting, and filtering."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "about",
+    "section": "",
+    "text": "this is an R interface to the handsontable.js library v6.2.2."
+  },
+  {
+    "objectID": "index.html#barebones",
+    "href": "index.html#barebones",
+    "title": "getting started",
+    "section": "",
+    "text": "basic handsontable"
+  },
+  {
+    "objectID": "index.html#dimensions",
+    "href": "index.html#dimensions",
+    "title": "getting started",
+    "section": "dimensions",
+    "text": "dimensions\n\nwidth & height\nadaptive height"
+  },
+  {
+    "objectID": "index.html#headers",
+    "href": "index.html#headers",
+    "title": "getting started",
+    "section": "headers",
+    "text": "headers\n\ncolHeaders\nrowHeaders"
+  },
+  {
+    "objectID": "index.html#read-only",
+    "href": "index.html#read-only",
+    "title": "getting started",
+    "section": "read-only",
+    "text": "read-only\n\nreadOnly"
+  },
+  {
+    "objectID": "index.html#column-widths",
+    "href": "index.html#column-widths",
+    "title": "getting started",
+    "section": "column widths",
+    "text": "column widths\n\ncolumnWidths"
+  },
+  {
+    "objectID": "index.html#fixed-columns-rows",
+    "href": "index.html#fixed-columns-rows",
+    "title": "getting started",
+    "section": "fixed columns & rows",
+    "text": "fixed columns & rows\n\nfixedColumnsLeft\nfixedRowsTop\nfixedRowsBottom"
+  },
+  {
+    "objectID": "index.html#manual-column-row-resize",
+    "href": "index.html#manual-column-row-resize",
+    "title": "getting started",
+    "section": "manual column & row resize",
+    "text": "manual column & row resize\n\nmanualColumnResize\nmanualRowResize"
+  },
+  {
+    "objectID": "index.html#manual-column-row-move",
+    "href": "index.html#manual-column-row-move",
+    "title": "getting started",
+    "section": "manual column & row move",
+    "text": "manual column & row move\n\nmanualColumnMove\nmanualRowMove"
+  },
+  {
+    "objectID": "index.html#column-stretching",
+    "href": "index.html#column-stretching",
+    "title": "getting started",
+    "section": "column stretching",
+    "text": "column stretching\n\nstretchH"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "home",
+    "section": "installation",
+    "text": "installation\n# install from CRAN\ninstall.packages(\"handsontable\")\n# or install from GitHub\ndevtools::install_github(\"kennedymwavu/handsontable\")\n\n# load the package:\nlibrary(handsontable)"
+  },
+  {
+    "objectID": "index.html#quick-example",
+    "href": "index.html#quick-example",
+    "title": "home",
+    "section": "quick example",
+    "text": "quick example\n\n# basic table:\nhandsontable(mtcars[1:5, ], adaptiveHeight = TRUE)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
+  },
+  {
+    "objectID": "index.html#shiny-integration",
+    "href": "index.html#shiny-integration",
+    "title": "home",
+    "section": "shiny integration",
+    "text": "shiny integration\nlibrary(shiny)\n\nui &lt;- fluidPage(handsontableOutput(\"table\"))\n\nserver &lt;- function(input, output) {\n  output$table &lt;- renderHandsontable({\n    handsontable(iris[1:10, ]) |&gt;\n      hot_context_menu()\n  })\n\n  # detect changes:\n  observeEvent(input$table, {\n    updated_data &lt;- hot_to_r(data = input$table)\n    cat(\"Updated data:\\n\")\n    print(updated_data)\n    # use updated data...\n  })\n}\n\nshinyApp(ui, server)"
+  },
+  {
+    "objectID": "index.html#similar-packages",
+    "href": "index.html#similar-packages",
+    "title": "home",
+    "section": "similar packages",
+    "text": "similar packages\n\n{rhandsontable}\nthe rhandsontable package provides an R interface to handsontable and has been a valuable tool for the R community. however, it hasn’t been actively maintained in recent years.\n{handsontable} was developed to ensure active maintenance with regular updates, bug fixes, and feature enhancements that the community needs."
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "getting started",
+    "section": "",
+    "text": "basic handsontable"
+  },
+  {
+    "objectID": "getting-started.html#barebones",
+    "href": "getting-started.html#barebones",
+    "title": "getting started",
+    "section": "",
+    "text": "basic handsontable"
+  },
+  {
+    "objectID": "getting-started.html#dimensions",
+    "href": "getting-started.html#dimensions",
+    "title": "getting started",
+    "section": "dimensions",
+    "text": "dimensions\n\nwidth & height\nadaptive height"
+  },
+  {
+    "objectID": "getting-started.html#headers",
+    "href": "getting-started.html#headers",
+    "title": "getting started",
+    "section": "headers",
+    "text": "headers\n\ncolHeaders\nrowHeaders"
+  },
+  {
+    "objectID": "getting-started.html#read-only",
+    "href": "getting-started.html#read-only",
+    "title": "getting started",
+    "section": "read-only",
+    "text": "read-only\n\nreadOnly"
+  },
+  {
+    "objectID": "getting-started.html#column-widths",
+    "href": "getting-started.html#column-widths",
+    "title": "getting started",
+    "section": "column widths",
+    "text": "column widths\n\ncolumnWidths"
+  },
+  {
+    "objectID": "getting-started.html#column-stretching",
+    "href": "getting-started.html#column-stretching",
+    "title": "getting started",
+    "section": "column stretching",
+    "text": "column stretching\n\nstretchH"
+  },
+  {
+    "objectID": "getting-started.html#fixed-columns-rows",
+    "href": "getting-started.html#fixed-columns-rows",
+    "title": "getting started",
+    "section": "fixed columns & rows",
+    "text": "fixed columns & rows\n\nfixedColumnsLeft\nfixedRowsTop\nfixedRowsBottom"
+  },
+  {
+    "objectID": "getting-started.html#manual-column-row-resize",
+    "href": "getting-started.html#manual-column-row-resize",
+    "title": "getting started",
+    "section": "manual column & row resize",
+    "text": "manual column & row resize\n\nmanualColumnResize\nmanualRowResize"
+  },
+  {
+    "objectID": "getting-started.html#manual-column-row-move",
+    "href": "getting-started.html#manual-column-row-move",
+    "title": "getting started",
+    "section": "manual column & row move",
+    "text": "manual column & row move\n\nmanualColumnMove\nmanualRowMove"
+  }
+]

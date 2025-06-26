@@ -1,0 +1,16 @@
+project:
+  type: website
+
+website:
+  title: "handsontable"
+  navbar:
+    left:
+      - index.qmd
+      - getting-started.qmd
+      - about.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true

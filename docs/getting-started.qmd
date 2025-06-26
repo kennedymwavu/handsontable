@@ -1,0 +1,45 @@
+---
+title: "getting started"
+---
+
+## barebones
+
+- basic handsontable
+
+## dimensions
+
+- width & height
+- adaptive height
+
+## headers
+
+- colHeaders
+- rowHeaders
+
+## read-only
+
+- readOnly
+
+## column widths
+
+- columnWidths
+
+## column stretching
+
+- stretchH
+
+## fixed columns & rows
+
+- fixedColumnsLeft
+- fixedRowsTop
+- fixedRowsBottom
+
+## manual column & row resize
+
+- manualColumnResize
+- manualRowResize
+
+## manual column & row move
+
+- manualColumnMove
+- manualRowMove

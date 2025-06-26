@@ -1,0 +1,6 @@
+---
+title: "about"
+---
+
+this is an R interface to the handsontable.js library 
+[v6.2.2](https://github.com/handsontable/handsontable/tree/6.2.2).
