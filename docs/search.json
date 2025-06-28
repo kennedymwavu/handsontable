@@ -7,76 +7,6 @@
     "text": "R interface to the Handsontable JavaScript library v6.2.2 (MIT license).\ncreate interactive spreadsheet-like data grids with data validation, sorting, and filtering."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "about",
-    "section": "",
-    "text": "this is an R interface to the handsontable.js library v6.2.2."
-  },
-  {
-    "objectID": "index.html#barebones",
-    "href": "index.html#barebones",
-    "title": "getting started",
-    "section": "",
-    "text": "basic handsontable"
-  },
-  {
-    "objectID": "index.html#dimensions",
-    "href": "index.html#dimensions",
-    "title": "getting started",
-    "section": "dimensions",
-    "text": "dimensions\n\nwidth & height\nadaptive height"
-  },
-  {
-    "objectID": "index.html#headers",
-    "href": "index.html#headers",
-    "title": "getting started",
-    "section": "headers",
-    "text": "headers\n\ncolHeaders\nrowHeaders"
-  },
-  {
-    "objectID": "index.html#read-only",
-    "href": "index.html#read-only",
-    "title": "getting started",
-    "section": "read-only",
-    "text": "read-only\n\nreadOnly"
-  },
-  {
-    "objectID": "index.html#column-widths",
-    "href": "index.html#column-widths",
-    "title": "getting started",
-    "section": "column widths",
-    "text": "column widths\n\ncolumnWidths"
-  },
-  {
-    "objectID": "index.html#fixed-columns-rows",
-    "href": "index.html#fixed-columns-rows",
-    "title": "getting started",
-    "section": "fixed columns & rows",
-    "text": "fixed columns & rows\n\nfixedColumnsLeft\nfixedRowsTop\nfixedRowsBottom"
-  },
-  {
-    "objectID": "index.html#manual-column-row-resize",
-    "href": "index.html#manual-column-row-resize",
-    "title": "getting started",
-    "section": "manual column & row resize",
-    "text": "manual column & row resize\n\nmanualColumnResize\nmanualRowResize"
-  },
-  {
-    "objectID": "index.html#manual-column-row-move",
-    "href": "index.html#manual-column-row-move",
-    "title": "getting started",
-    "section": "manual column & row move",
-    "text": "manual column & row move\n\nmanualColumnMove\nmanualRowMove"
-  },
-  {
-    "objectID": "index.html#column-stretching",
-    "href": "index.html#column-stretching",
-    "title": "getting started",
-    "section": "column stretching",
-    "text": "column stretching\n\nstretchH"
-  },
-  {
     "objectID": "index.html#installation",
     "href": "index.html#installation",
     "title": "home",
@@ -173,5 +103,12 @@
     "title": "getting started",
     "section": "manual column & row move",
     "text": "manual column & row move\n\nmanualColumnMove\nmanualRowMove"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "about",
+    "section": "",
+    "text": "this is an R interface to the handsontable.js library v6.2.2."
   }
 ]
