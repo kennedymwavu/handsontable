@@ -28,7 +28,7 @@ handsontable(
 \item{data}{A data.frame, matrix, or other rectangular data structure}
 
 \item{width, height}{Widget dimensions. Can be specified as pixels
-(e.g., "400px") or percentage (e.g., "100%"). If NULL, dimensions are
+(e.g., "400px") or percentage (e.g., "100\%"). If NULL, dimensions are
 automatically determined.}
 
 \item{adaptiveHeight}{Logical. If TRUE, the table's height
@@ -59,7 +59,7 @@ If character vector, uses custom column names.}
 
 \item{manualRowMove}{Logical, enable manual row reordering}
 
-\item{stretchH}{`stretchH` option.}
+\item{stretchH}{\code{stretchH} option.}
 
 \item{...}{Additional configuration options passed to Handsontable}
 }

@@ -9,21 +9,37 @@ hot_context_menu(hot, opts = NULL, customOpts = NULL)
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{opts}{Character vector of built-in context menu options. If NULL, uses default options.
-Available built-in options:
+\item{opts}{Character vector of built-in context menu options.
+If NULL, uses default options:
 \itemize{
-  \item Standard options: "row_above", "row_below", "col_left", "col_right",
-        "remove_row", "remove_col", "clear_column", "undo", "redo", "cut", "copy",
-        "make_read_only", "alignment", "export_csv"
-  \item Plugin-specific options: "freeze_column", "unfreeze_column", "borders",
-        "commentsAddEdit", "commentsRemove", "commentsReadOnly", "mergeCells",
-        "add_child", "detach_from_parent"
-  \item Separator: "---------" (adds a visual separator line)
+\item "row_above",
+\item "row_below",
+\item "col_left",
+\item "col_right",
+\item "---------",
+\item "remove_row",
+\item "remove_col",
+\item "clear_column",
+\item "make_read_only",
+\item "undo",
+\item "redo",
+\item "cut",
+\item "copy",
+\item "---------",
+\item "export_csv"
 }}
 
-\item{customOpts}{List of custom context menu options. Each custom option should be a list
-with elements like \code{name}, \code{callback}, \code{disabled}, etc.
-Example: \code{list(list(name = "Custom Action", callback = htmlwidgets::JS("function() {...}")))}}
+\item{customOpts}{List of custom context menu options.
+Each custom option should be a list with elements like
+\code{name}, \code{callback}, \code{disabled}, etc. Example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{list(
+  list(
+    name = "Custom Action",
+    callback = htmlwidgets::JS("function() \{...\}")
+  )
+)
+}\if{html}{\out{</div>}}}
 }
 \value{
 Modified handsontable widget

@@ -161,20 +161,35 @@ hot_validate <- function(
 #' Configure Context Menu
 #'
 #' @param hot A handsontable widget object
-#' @param opts Character vector of built-in context menu options. If NULL, uses default options.
-#'   Available built-in options:
-#'   \itemize{
-#'     \item Standard options: "row_above", "row_below", "col_left", "col_right",
-#'           "remove_row", "remove_col", "clear_column", "undo", "redo", "cut", "copy",
-#'           "make_read_only", "alignment", "export_csv"
-#'     \item Plugin-specific options: "freeze_column", "unfreeze_column", "borders",
-#'           "commentsAddEdit", "commentsRemove", "commentsReadOnly", "mergeCells",
-#'           "add_child", "detach_from_parent"
-#'     \item Separator: "---------" (adds a visual separator line)
-#'   }
-#' @param customOpts List of custom context menu options. Each custom option should be a list
-#'   with elements like \code{name}, \code{callback}, \code{disabled}, etc.
-#'   Example: \code{list(list(name = "Custom Action", callback = htmlwidgets::JS("function() {...}")))}
+#' @param opts Character vector of built-in context menu options.
+#' If NULL, uses default options:
+#' - "row_above",
+#' - "row_below",
+#' - "col_left",
+#' - "col_right",
+#' - "---------",
+#' - "remove_row",
+#' - "remove_col",
+#' - "clear_column",
+#' - "make_read_only",
+#' - "undo",
+#' - "redo",
+#' - "cut",
+#' - "copy",
+#' - "---------",
+#' - "export_csv"
+#'
+#' @param customOpts List of custom context menu options.
+#' Each custom option should be a list with elements like
+#' `name`, `callback`, `disabled`, etc. Example:
+#'   ```r
+#'   list(
+#'     list(
+#'       name = "Custom Action",
+#'       callback = htmlwidgets::JS("function() {...}")
+#'     )
+#'   )
+#'   ```
 #'
 #' @return Modified handsontable widget
 #'
@@ -236,6 +251,7 @@ hot_context_menu <- function(hot, opts = NULL, customOpts = NULL) {
       "remove_row",
       "remove_col",
       "clear_column",
+      "make_read_only",
       "undo",
       "redo",
       "cut",

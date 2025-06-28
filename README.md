@@ -25,14 +25,14 @@ install.packages("handsontable")
 devtools::install_github("kennedymwavu/handsontable")
 ```
 
-```{r}
+```r
 # load the package:
 library(handsontable)
 ```
 
 ## quick example
 
-```{r}
+```r
 # basic table:
 handsontable(mtcars[1:5, ], adaptiveHeight = TRUE)
 
