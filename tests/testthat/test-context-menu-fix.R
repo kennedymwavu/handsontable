@@ -37,6 +37,7 @@ test_that("context menu uses defaults when opts is NULL", {
     "remove_row",
     "remove_col",
     "clear_column",
+    "make_read_only",
     "undo",
     "redo",
     "cut",
