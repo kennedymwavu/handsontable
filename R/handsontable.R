@@ -18,10 +18,10 @@
 #' @param readOnly Logical. If TRUE, makes the entire table read-only.
 #' @param colWidths Numeric vector or single value for column widths
 #' @param fixedColumnsLeft Number of columns to freeze on the left
-#' @param manualColumnResize Logical, enable manual column resizing
-#' @param manualColumnMove Logical, enable manual column reordering
 #' @param fixedRowsTop Number of rows to freeze at the top
 #' @param fixedRowsBottom Number of rows to freeze at the bottom
+#' @param manualColumnResize Logical, enable manual column resizing
+#' @param manualColumnMove Logical, enable manual column reordering
 #' @param manualRowResize Logical, enable manual row resizing
 #' @param manualRowMove Logical, enable manual row reordering
 #' @param stretchH `stretchH` option.
@@ -56,10 +56,10 @@ handsontable <- function(
   readOnly = FALSE,
   colWidths = NULL,
   fixedColumnsLeft = 0,
-  manualColumnResize = TRUE,
-  manualColumnMove = FALSE,
   fixedRowsTop = 0,
   fixedRowsBottom = 0,
+  manualColumnResize = TRUE,
+  manualColumnMove = FALSE,
   manualRowResize = TRUE,
   manualRowMove = FALSE,
   stretchH = "all",
@@ -101,10 +101,10 @@ handsontable <- function(
     adaptiveHeight = adaptiveHeight,
     colWidths = colWidths,
     fixedColumnsLeft = fixedColumnsLeft,
-    manualColumnResize = manualColumnResize,
-    manualColumnMove = manualColumnMove,
     fixedRowsTop = fixedRowsTop,
     fixedRowsBottom = fixedRowsBottom,
+    manualColumnResize = manualColumnResize,
+    manualColumnMove = manualColumnMove,
     manualRowResize = manualRowResize,
     manualRowMove = manualRowMove,
     stretchH = stretchH,

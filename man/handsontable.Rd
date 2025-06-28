@@ -14,10 +14,10 @@ handsontable(
   readOnly = FALSE,
   colWidths = NULL,
   fixedColumnsLeft = 0,
-  manualColumnResize = TRUE,
-  manualColumnMove = FALSE,
   fixedRowsTop = 0,
   fixedRowsBottom = 0,
+  manualColumnResize = TRUE,
+  manualColumnMove = FALSE,
   manualRowResize = TRUE,
   manualRowMove = FALSE,
   stretchH = "all",
@@ -47,13 +47,13 @@ If character vector, uses custom column names.}
 
 \item{fixedColumnsLeft}{Number of columns to freeze on the left}
 
-\item{manualColumnResize}{Logical, enable manual column resizing}
-
-\item{manualColumnMove}{Logical, enable manual column reordering}
-
 \item{fixedRowsTop}{Number of rows to freeze at the top}
 
 \item{fixedRowsBottom}{Number of rows to freeze at the bottom}
+
+\item{manualColumnResize}{Logical, enable manual column resizing}
+
+\item{manualColumnMove}{Logical, enable manual column reordering}
 
 \item{manualRowResize}{Logical, enable manual row resizing}
 
