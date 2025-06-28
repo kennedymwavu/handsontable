@@ -65,32 +65,40 @@ handsontable <- function(
   stretchH = "all",
   ...
 ) {
-  # Validate inputs
   if (!is.data.frame(data) && !is.matrix(data)) {
     stop("data must be a data.frame or matrix")
   }
 
-  # Convert data to appropriate format
   if (is.matrix(data)) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
 
-  # Handle column headers
-  if (is.logical(colHeaders) && colHeaders) {
+  # ----colHeaders----
+  if (isTRUE(colHeaders)) {
     colHeaders <- names(data)
-  } else if (is.logical(colHeaders) && !colHeaders) {
+  }
+
+  if (isFALSE(colHeaders)) {
     colHeaders <- NULL
   }
 
   # Convert data to list format for JavaScript
-  data_list <- lapply(seq_len(nrow(data)), function(i) {
-    row <- as.list(data[i, , drop = FALSE])
-    # Convert factors to character for JS compatibility
-    row <- lapply(row, function(x) {
-      if (is.factor(x)) as.character(x) else x
-    })
-    unname(row)
-  })
+  data_list <- lapply(
+    X = seq_len(nrow(data)),
+    FUN = function(row_idx) {
+      row <- as.list(data[row_idx, , drop = FALSE])
+
+      # Convert factors to character for JS compatibility
+      for (idx in seq_along(row)) {
+        value <- row[[idx]]
+        if (is.factor(value)) {
+          row[[idx]] <- as.character(value)
+        }
+      }
+
+      unname(row)
+    }
+  )
 
   # Create configuration object
   config <- list(
