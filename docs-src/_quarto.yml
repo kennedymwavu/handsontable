@@ -2,6 +2,9 @@ project:
   type: website
   output-dir: ../docs
 
+filters:
+  - auto-dark
+
 website:
   title: "handsontable"
   navbar:
