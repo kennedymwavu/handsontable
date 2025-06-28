@@ -2,44 +2,158 @@
 title: "getting started"
 ---
 
-## barebones
+```{r}
+library(handsontable)
+```
 
-- basic handsontable
 
-## dimensions
+## basic
 
-- width & height
-- adaptive height
+```{r}
+handsontable(data = mtcars)
+```
+
+## read-only
+
+to make the table read-only, set `readOnly = TRUE`. this will prevent any editing of the table.
+
+```{r}
+handsontable(data = mtcars, readOnly = TRUE)
+```
 
 ## headers
 
 - colHeaders
+
+  by default, `colHeaders = TRUE` and uses the column names of the data frame.
+
+  ```{r}
+  handsontable(data = mtcars, colHeaders = TRUE)
+  ```
+
+  setting `colHeaders = FALSE` will remove the column headers.
+
+  ```{r}
+  handsontable(data = mtcars, colHeaders = FALSE)
+  ```
+
+  to set custom column headers, pass a character vector to `colHeaders`.
+
+  ```{r}
+  handsontable(
+    data = mtcars,
+    colHeaders = c(
+      "Miles per Gallon",
+      "Cylinders",
+      "Displacement",
+      "Horsepower",
+      "Rear Axle Ratio",
+      "Weight (1000 lbs)",
+      "1/4 Mile Time",
+      "Engine",
+      "Transmission",
+      "Number of forward gears",
+      "Number of carburetors"
+    )
+  )
+  ```
+
 - rowHeaders
 
-## read-only
+  by default, `rowHeaders = TRUE` and uses the row names of the data frame.
 
-- readOnly
+  ```{r}
+  handsontable(data = mtcars, rowHeaders = TRUE)
+  ```
+
+  setting `rowHeaders = FALSE` will remove the row headers.
+
+  ```{r}
+  handsontable(data = mtcars, rowHeaders = FALSE)
+  ```
+
+  to set custom row headers, pass a character vector to `rowHeaders`.
+
+  ```{r}
+  handsontable(
+    data = mtcars,
+    rowHeaders = c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5")
+  )
+  ```
+
+
+## dimensions
+
+- width & height
+
+  ```{r}
+  handsontable(data = mtcars, width = 300, height = 300)
+  ```
+
+- setting `adaptiveHeight = TRUE` will make the table height adapt to the 
+content of the cells, so that no vertical scrollbar is shown.
+  ```{r}
+  handsontable(data = mtcars, adaptiveHeight = TRUE)
+  ```
 
 ## column widths
 
-- columnWidths
+to set the width of individual columns, pass a numeric vector to `colWidths`.
+
+```{r}
+handsontable(data = mtcars, colWidths = c(100, 150, 200, 250, 300, 350, 400, 450))
+```
 
 ## column stretching
 
-- stretchH
+- `stretchH = "all"` will stretch all columns to fit the width of the table.
+  ````{r}
+  handsontable(data = mtcars[, 1:3], stretchH = "all")
+  ````
+- `stretchH = "last"` will stretch the last column to fit the width of the table.
+  ```{r}
+  handsontable(data = mtcars[, 1:3], stretchH = "last")
+  ```
+- `stretchH = "none"` will not stretch any columns.
+  ```{r}
+  handsontable(data = mtcars[, 1:3], stretchH = "none")
+  ```
+
 
 ## fixed columns & rows
 
-- fixedColumnsLeft
-- fixedRowsTop
-- fixedRowsBottom
+- set `fixedColumnsLeft` to fix a number of columns on the left side of the table.
+  ```{r}
+  handsontable(data = mtcars, fixedColumnsLeft = 2, width = 300)
+  ```
+- set `fixedRowsTop` to fix a number of rows on the top of the table.
+  ```{r}
+  handsontable(data = mtcars, fixedRowsTop = 2)
+  ```
+- set `fixedRowsBottom` to fix a number of rows on the bottom of the table.
+  ```{r}
+  handsontable(data = mtcars, fixedRowsBottom = 2)
+  ```
 
 ## manual column & row resize
 
-- manualColumnResize
-- manualRowResize
+- setting `manualColumnResize = TRUE` will allow users to resize columns by dragging the column borders.
+  ```{r}
+  handsontable(data = mtcars, manualColumnResize = TRUE)
+  ```
+
+- setting `manualRowResize = TRUE` will allow users to resize rows by dragging the row borders.
+  ```{r}
+  handsontable(data = mtcars, manualRowResize = TRUE)
+  ```
 
 ## manual column & row move
 
-- manualColumnMove
-- manualRowMove
+- setting `manualColumnMove = TRUE` will allow users to move columns by dragging the column headers.
+  ```{r}
+  handsontable(data = mtcars, manualColumnMove = TRUE)
+  ```
+- setting `manualRowMove = TRUE` will allow users to move rows by dragging the row headers.
+  ```{r}
+  handsontable(data = mtcars, manualRowMove = TRUE)
+  ```

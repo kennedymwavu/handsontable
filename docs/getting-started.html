@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -66,6 +100,11 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/handsontable-6.2.2/handsontable.full.min.css" rel="stylesheet">
+<script src="site_libs/handsontable-6.2.2/handsontable.full.min.js"></script>
+<script src="site_libs/handsontable-binding-0.1.0/handsontable.js"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -116,10 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#barebones" id="toc-barebones" class="nav-link active" data-scroll-target="#barebones">barebones</a></li>
-  <li><a href="#dimensions" id="toc-dimensions" class="nav-link" data-scroll-target="#dimensions">dimensions</a></li>
-  <li><a href="#headers" id="toc-headers" class="nav-link" data-scroll-target="#headers">headers</a></li>
+  <li><a href="#basic" id="toc-basic" class="nav-link active" data-scroll-target="#basic">basic</a></li>
   <li><a href="#read-only" id="toc-read-only" class="nav-link" data-scroll-target="#read-only">read-only</a></li>
+  <li><a href="#headers" id="toc-headers" class="nav-link" data-scroll-target="#headers">headers</a></li>
+  <li><a href="#dimensions" id="toc-dimensions" class="nav-link" data-scroll-target="#dimensions">dimensions</a></li>
   <li><a href="#column-widths" id="toc-column-widths" class="nav-link" data-scroll-target="#column-widths">column widths</a></li>
   <li><a href="#column-stretching" id="toc-column-stretching" class="nav-link" data-scroll-target="#column-stretching">column stretching</a></li>
   <li><a href="#fixed-columns-rows" id="toc-fixed-columns-rows" class="nav-link" data-scroll-target="#fixed-columns-rows">fixed columns &amp; rows</a></li>
@@ -150,64 +189,233 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="barebones" class="level2">
-<h2 class="anchored" data-anchor-id="barebones">barebones</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(handsontable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="basic" class="level2">
+<h2 class="anchored" data-anchor-id="basic">basic</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-15b03ae1469174936289" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-15b03ae1469174936289">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="read-only" class="level2">
+<h2 class="anchored" data-anchor-id="read-only">read-only</h2>
+<p>to make the table read-only, set <code>readOnly = TRUE</code>. this will prevent any editing of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">readOnly =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-62f4b44b77367d6a1b13" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-62f4b44b77367d6a1b13">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":true,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="headers" class="level2">
+<h2 class="anchored" data-anchor-id="headers">headers</h2>
 <ul>
-<li>basic handsontable</li>
+<li><p>colHeaders</p>
+<p>by default, <code>colHeaders = TRUE</code> and uses the column names of the data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">colHeaders =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-85c14c34c93f14ac7357" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-85c14c34c93f14ac7357">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>setting <code>colHeaders = FALSE</code> will remove the column headers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">colHeaders =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-a1acf66170dba1663f67" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-a1acf66170dba1663f67">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>to set custom column headers, pass a character vector to <code>colHeaders</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mtcars,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">colHeaders =</span> <span class="fu">c</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Miles per Gallon"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Cylinders"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Displacement"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Horsepower"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Rear Axle Ratio"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Weight (1000 lbs)"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1/4 Mile Time"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Engine"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Transmission"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of forward gears"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Number of carburetors"</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-d6a6e24a063d5663cc6c" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-d6a6e24a063d5663cc6c">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["Miles per Gallon","Cylinders","Displacement","Horsepower","Rear Axle Ratio","Weight (1000 lbs)","1/4 Mile Time","Engine","Transmission","Number of forward gears","Number of carburetors"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>rowHeaders</p>
+<p>by default, <code>rowHeaders = TRUE</code> and uses the row names of the data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">rowHeaders =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-8d7cd941386e5302d5c0" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-8d7cd941386e5302d5c0">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>setting <code>rowHeaders = FALSE</code> will remove the row headers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">rowHeaders =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-dcb8238ed3f36c420c5d" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-dcb8238ed3f36c420c5d">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":false,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>to set custom row headers, pass a character vector to <code>rowHeaders</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mtcars,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rowHeaders =</span> <span class="fu">c</span>(<span class="st">"Row 1"</span>, <span class="st">"Row 2"</span>, <span class="st">"Row 3"</span>, <span class="st">"Row 4"</span>, <span class="st">"Row 5"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-35e2122616551722e673" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-35e2122616551722e673">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":["Row 1","Row 2","Row 3","Row 4","Row 5"],"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 </section>
 <section id="dimensions" class="level2">
 <h2 class="anchored" data-anchor-id="dimensions">dimensions</h2>
 <ul>
-<li>width &amp; height</li>
-<li>adaptive height</li>
-</ul>
-</section>
-<section id="headers" class="level2">
-<h2 class="anchored" data-anchor-id="headers">headers</h2>
-<ul>
-<li>colHeaders</li>
-<li>rowHeaders</li>
-</ul>
-</section>
-<section id="read-only" class="level2">
-<h2 class="anchored" data-anchor-id="read-only">read-only</h2>
-<ul>
-<li>readOnly</li>
+<li><p>width &amp; height</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">width =</span> <span class="dv">300</span>, <span class="at">height =</span> <span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="htmlwidget-2dc8cd1632756066f8c2" style="width:300px;height:300px;" class="handsontable html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2dc8cd1632756066f8c2">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>setting <code>adaptiveHeight = TRUE</code> will make the table height adapt to the content of the cells, so that no vertical scrollbar is shown.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">adaptiveHeight =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-5114cc4e1954bd467e45" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-5114cc4e1954bd467e45">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 </section>
 <section id="column-widths" class="level2">
 <h2 class="anchored" data-anchor-id="column-widths">column widths</h2>
-<ul>
-<li>columnWidths</li>
-</ul>
+<p>to set the width of individual columns, pass a numeric vector to <code>colWidths</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">colWidths =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>, <span class="dv">400</span>, <span class="dv">450</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-419cf49feb9ac5123677" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-419cf49feb9ac5123677">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"colWidths":[100,150,200,250,300,350,400,450],"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 </section>
 <section id="column-stretching" class="level2">
 <h2 class="anchored" data-anchor-id="column-stretching">column stretching</h2>
 <ul>
-<li>stretchH</li>
+<li><p><code>stretchH = "all"</code> will stretch all columns to fit the width of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">stretchH =</span> <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-90f7fe1102bfeb1ab600" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-90f7fe1102bfeb1ab600">{"x":{"data":[[21,6,160],[21,6,160],[22.8,4,108],[21.4,6,258],[18.7,8,360],[18.1,6,225],[14.3,8,360],[24.4,4,146.7],[22.8,4,140.8],[19.2,6,167.6],[17.8,6,167.6],[16.4,8,275.8],[17.3,8,275.8],[15.2,8,275.8],[10.4,8,472],[10.4,8,460],[14.7,8,440],[32.4,4,78.7],[30.4,4,75.7],[33.9,4,71.09999999999999],[21.5,4,120.1],[15.5,8,318],[15.2,8,304],[13.3,8,350],[19.2,8,400],[27.3,4,79],[26,4,120.3],[30.4,4,95.09999999999999],[15.8,8,351],[19.7,6,145],[15,8,301],[21.4,4,121]],"colHeaders":["mpg","cyl","disp"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p><code>stretchH = "last"</code> will stretch the last column to fit the width of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">stretchH =</span> <span class="st">"last"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-a733bf2560a47ea2c95d" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-a733bf2560a47ea2c95d">{"x":{"data":[[21,6,160],[21,6,160],[22.8,4,108],[21.4,6,258],[18.7,8,360],[18.1,6,225],[14.3,8,360],[24.4,4,146.7],[22.8,4,140.8],[19.2,6,167.6],[17.8,6,167.6],[16.4,8,275.8],[17.3,8,275.8],[15.2,8,275.8],[10.4,8,472],[10.4,8,460],[14.7,8,440],[32.4,4,78.7],[30.4,4,75.7],[33.9,4,71.09999999999999],[21.5,4,120.1],[15.5,8,318],[15.2,8,304],[13.3,8,350],[19.2,8,400],[27.3,4,79],[26,4,120.3],[30.4,4,95.09999999999999],[15.8,8,351],[19.7,6,145],[15,8,301],[21.4,4,121]],"colHeaders":["mpg","cyl","disp"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"last","originalColnames":["mpg","cyl","disp"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p><code>stretchH = "none"</code> will not stretch any columns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">stretchH =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-3b7aab79ec2ab4679b8d" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-3b7aab79ec2ab4679b8d">{"x":{"data":[[21,6,160],[21,6,160],[22.8,4,108],[21.4,6,258],[18.7,8,360],[18.1,6,225],[14.3,8,360],[24.4,4,146.7],[22.8,4,140.8],[19.2,6,167.6],[17.8,6,167.6],[16.4,8,275.8],[17.3,8,275.8],[15.2,8,275.8],[10.4,8,472],[10.4,8,460],[14.7,8,440],[32.4,4,78.7],[30.4,4,75.7],[33.9,4,71.09999999999999],[21.5,4,120.1],[15.5,8,318],[15.2,8,304],[13.3,8,350],[19.2,8,400],[27.3,4,79],[26,4,120.3],[30.4,4,95.09999999999999],[15.8,8,351],[19.7,6,145],[15,8,301],[21.4,4,121]],"colHeaders":["mpg","cyl","disp"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"none","originalColnames":["mpg","cyl","disp"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 </section>
 <section id="fixed-columns-rows" class="level2">
 <h2 class="anchored" data-anchor-id="fixed-columns-rows">fixed columns &amp; rows</h2>
 <ul>
-<li>fixedColumnsLeft</li>
-<li>fixedRowsTop</li>
-<li>fixedRowsBottom</li>
+<li><p>set <code>fixedColumnsLeft</code> to fix a number of columns on the left side of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">fixedColumnsLeft =</span> <span class="dv">2</span>, <span class="at">width =</span> <span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="htmlwidget-4a5dec5ea60f0da8b492" style="width:300px;height:400px;" class="handsontable html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4a5dec5ea60f0da8b492">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":2,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>set <code>fixedRowsTop</code> to fix a number of rows on the top of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">fixedRowsTop =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-96aac1a036f9081387e9" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-96aac1a036f9081387e9">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":2,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>set <code>fixedRowsBottom</code> to fix a number of rows on the bottom of the table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">fixedRowsBottom =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-a3419943e01deb00cce9" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-a3419943e01deb00cce9">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":2,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 </section>
 <section id="manual-column-row-resize" class="level2">
 <h2 class="anchored" data-anchor-id="manual-column-row-resize">manual column &amp; row resize</h2>
 <ul>
-<li>manualColumnResize</li>
-<li>manualRowResize</li>
+<li><p>setting <code>manualColumnResize = TRUE</code> will allow users to resize columns by dragging the column borders.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">manualColumnResize =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-65d271013e00ccef69b5" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-65d271013e00ccef69b5">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>setting <code>manualRowResize = TRUE</code> will allow users to resize rows by dragging the row borders.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">manualRowResize =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-6de0f43964fa52ea6c45" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-6de0f43964fa52ea6c45">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 </section>
 <section id="manual-column-row-move" class="level2">
 <h2 class="anchored" data-anchor-id="manual-column-row-move">manual column &amp; row move</h2>
 <ul>
-<li>manualColumnMove</li>
-<li>manualRowMove</li>
+<li><p>setting <code>manualColumnMove = TRUE</code> will allow users to move columns by dragging the column headers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">manualColumnMove =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-d662351e617d6d08fe7d" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-d662351e617d6d08fe7d">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":true,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
+<li><p>setting <code>manualRowMove = TRUE</code> will allow users to move rows by dragging the row headers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handsontable</span>(<span class="at">data =</span> mtcars, <span class="at">manualRowMove =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-5897ef98da3fd6a05c1f" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-5897ef98da3fd6a05c1f">{"x":{"data":[[21,6,160,110,3.9,2.62,16.46,0,1,4,4],[21,6,160,110,3.9,2.875,17.02,0,1,4,4],[22.8,4,108,93,3.85,2.32,18.61,1,1,4,1],[21.4,6,258,110,3.08,3.215,19.44,1,0,3,1],[18.7,8,360,175,3.15,3.44,17.02,0,0,3,2],[18.1,6,225,105,2.76,3.46,20.22,1,0,3,1],[14.3,8,360,245,3.21,3.57,15.84,0,0,3,4],[24.4,4,146.7,62,3.69,3.19,20,1,0,4,2],[22.8,4,140.8,95,3.92,3.15,22.9,1,0,4,2],[19.2,6,167.6,123,3.92,3.44,18.3,1,0,4,4],[17.8,6,167.6,123,3.92,3.44,18.9,1,0,4,4],[16.4,8,275.8,180,3.07,4.07,17.4,0,0,3,3],[17.3,8,275.8,180,3.07,3.73,17.6,0,0,3,3],[15.2,8,275.8,180,3.07,3.78,18,0,0,3,3],[10.4,8,472,205,2.93,5.25,17.98,0,0,3,4],[10.4,8,460,215,3,5.424,17.82,0,0,3,4],[14.7,8,440,230,3.23,5.345,17.42,0,0,3,4],[32.4,4,78.7,66,4.08,2.2,19.47,1,1,4,1],[30.4,4,75.7,52,4.93,1.615,18.52,1,1,4,2],[33.9,4,71.09999999999999,65,4.22,1.835,19.9,1,1,4,1],[21.5,4,120.1,97,3.7,2.465,20.01,1,0,3,1],[15.5,8,318,150,2.76,3.52,16.87,0,0,3,2],[15.2,8,304,150,3.15,3.435,17.3,0,0,3,2],[13.3,8,350,245,3.73,3.84,15.41,0,0,3,4],[19.2,8,400,175,3.08,3.845,17.05,0,0,3,2],[27.3,4,79,66,4.08,1.935,18.9,1,1,4,1],[26,4,120.3,91,4.43,2.14,16.7,0,1,5,2],[30.4,4,95.09999999999999,113,3.77,1.513,16.9,1,1,5,2],[15.8,8,351,264,4.22,3.17,14.5,0,1,5,4],[19.7,6,145,175,3.62,2.77,15.5,0,1,5,6],[15,8,301,335,3.54,3.57,14.6,0,1,5,8],[21.4,4,121,109,4.11,2.78,18.6,1,1,4,2]],"colHeaders":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"],"rowHeaders":true,"readOnly":false,"adaptiveHeight":false,"fixedColumnsLeft":0,"manualColumnResize":true,"manualColumnMove":false,"fixedRowsTop":0,"fixedRowsBottom":0,"manualRowResize":true,"manualRowMove":true,"stretchH":"all","originalColnames":["mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div></li>
 </ul>
 
 
