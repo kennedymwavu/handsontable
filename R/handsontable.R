@@ -16,7 +16,6 @@
 #'   If character vector, uses custom column names.
 #' @param rowHeaders Logical. If TRUE, shows row numbers as headers.
 #' @param readOnly Logical. If TRUE, makes the entire table read-only.
-#' @param elementId Optional HTML element ID for the widget container
 #' @param colWidths Numeric vector or single value for column widths
 #' @param fixedColumnsLeft Number of columns to freeze on the left
 #' @param manualColumnResize Logical, enable manual column resizing
@@ -55,7 +54,6 @@ handsontable <- function(
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
-  elementId = NULL,
   colWidths = NULL,
   fixedColumnsLeft = 0,
   manualColumnResize = TRUE,
@@ -123,7 +121,6 @@ handsontable <- function(
     width = width,
     height = height,
     package = "handsontable",
-    elementId = elementId,
     sizingPolicy = htmlwidgets::sizingPolicy(
       defaultWidth = "100%",
       defaultHeight = 400,

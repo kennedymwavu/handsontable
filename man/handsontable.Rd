@@ -12,7 +12,6 @@ handsontable(
   colHeaders = TRUE,
   rowHeaders = TRUE,
   readOnly = FALSE,
-  elementId = NULL,
   colWidths = NULL,
   fixedColumnsLeft = 0,
   manualColumnResize = TRUE,
@@ -43,8 +42,6 @@ If character vector, uses custom column names.}
 \item{rowHeaders}{Logical. If TRUE, shows row numbers as headers.}
 
 \item{readOnly}{Logical. If TRUE, makes the entire table read-only.}
-
-\item{elementId}{Optional HTML element ID for the widget container}
 
 \item{colWidths}{Numeric vector or single value for column widths}
 
