@@ -1,0 +1,16 @@
+---
+title: "in shiny"
+---
+
+shiny provides the most interesting use of handsontable.
+
+## normal stuff
+
+- config (`handsontableOutput()` + `renderHandsontable()`)
+- observers + built-in hooks
+- set data for specific cells
+
+## fun stuff
+
+- custom hooks in js + observers eg. click-cell-show-modal-dialog for
+  short tables with dropdown menu cols.

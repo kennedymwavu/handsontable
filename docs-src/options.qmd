@@ -1,0 +1,19 @@
+---
+title: "options"
+---
+
+## handsontable
+
+- config options for the whole table
+
+## hot_context_menu
+
+- config options for the table's context menu
+
+## hot_col
+
+- config options for columns
+
+## hot_row
+
+- config options for rows

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>handsontable - about</title>
+<title>handsontable - in shiny</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -102,11 +102,11 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">options</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./in-shiny.html"> 
+    <a class="nav-link active" href="./in-shiny.html" aria-current="page"> 
 <span class="menu-text">in shiny</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" aria-current="page"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">about</span></a>
   </li>  
 </ul>
@@ -121,14 +121,21 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#normal-stuff" id="toc-normal-stuff" class="nav-link active" data-scroll-target="#normal-stuff">normal stuff</a></li>
+  <li><a href="#fun-stuff" id="toc-fun-stuff" class="nav-link" data-scroll-target="#fun-stuff">fun stuff</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">about</h1>
+<h1 class="title">in shiny</h1>
 </div>
 
 
@@ -145,9 +152,23 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>this is an R interface to the handsontable.js library <a href="https://github.com/handsontable/handsontable/tree/6.2.2">v6.2.2</a>.</p>
+<p>shiny provides the most interesting use of handsontable.</p>
+<section id="normal-stuff" class="level2">
+<h2 class="anchored" data-anchor-id="normal-stuff">normal stuff</h2>
+<ul>
+<li>config (<code>handsontableOutput()</code> + <code>renderHandsontable()</code>)</li>
+<li>observers + built-in hooks</li>
+<li>set data for specific cells</li>
+</ul>
+</section>
+<section id="fun-stuff" class="level2">
+<h2 class="anchored" data-anchor-id="fun-stuff">fun stuff</h2>
+<ul>
+<li>custom hooks in js + observers eg. click-cell-show-modal-dialog for short tables with dropdown menu cols.</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

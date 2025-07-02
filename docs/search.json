@@ -1,38 +1,59 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "home",
+    "objectID": "options.html",
+    "href": "options.html",
+    "title": "options",
     "section": "",
-    "text": "R interface to the Handsontable JavaScript library v6.2.2 (MIT license).\ncreate interactive spreadsheet-like data grids with data validation, sorting, and filtering."
+    "text": "config options for the whole table"
   },
   {
-    "objectID": "index.html#installation",
-    "href": "index.html#installation",
-    "title": "home",
-    "section": "installation",
-    "text": "installation\n# install from CRAN\ninstall.packages(\"handsontable\")\n# or install from GitHub\ndevtools::install_github(\"kennedymwavu/handsontable\")\n\n# load the package:\nlibrary(handsontable)"
+    "objectID": "options.html#handsontable",
+    "href": "options.html#handsontable",
+    "title": "options",
+    "section": "",
+    "text": "config options for the whole table"
   },
   {
-    "objectID": "index.html#quick-example",
-    "href": "index.html#quick-example",
-    "title": "home",
-    "section": "quick example",
-    "text": "quick example\n\n# basic table:\nhandsontable(mtcars, rowHeaderWidth = 200)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
+    "objectID": "options.html#hot_context_menu",
+    "href": "options.html#hot_context_menu",
+    "title": "options",
+    "section": "hot_context_menu",
+    "text": "hot_context_menu\n\nconfig options for the table’s context menu"
   },
   {
-    "objectID": "index.html#shiny-integration",
-    "href": "index.html#shiny-integration",
-    "title": "home",
-    "section": "shiny integration",
-    "text": "shiny integration\nlibrary(shiny)\n\nui &lt;- fluidPage(handsontableOutput(\"table\"))\n\nserver &lt;- function(input, output) {\n  output$table &lt;- renderHandsontable({\n    handsontable(iris[1:10, ]) |&gt;\n      hot_context_menu()\n  })\n\n  # detect changes:\n  observeEvent(input$table, {\n    updated_data &lt;- hot_to_r(data = input$table)\n    cat(\"Updated data:\\n\")\n    print(updated_data)\n    # use updated data...\n  })\n}\n\nshinyApp(ui, server)"
+    "objectID": "options.html#hot_col",
+    "href": "options.html#hot_col",
+    "title": "options",
+    "section": "hot_col",
+    "text": "hot_col\n\nconfig options for columns"
   },
   {
-    "objectID": "index.html#similar-packages",
-    "href": "index.html#similar-packages",
-    "title": "home",
-    "section": "similar packages",
-    "text": "similar packages\n\n{rhandsontable}\nthe rhandsontable package provides an R interface to handsontable and has been a valuable tool for the R community. however, it hasn’t been actively maintained in recent years.\n{handsontable} was developed to ensure active maintenance with regular updates, bug fixes, and feature enhancements that the community needs."
+    "objectID": "options.html#hot_row",
+    "href": "options.html#hot_row",
+    "title": "options",
+    "section": "hot_row",
+    "text": "hot_row\n\nconfig options for rows"
+  },
+  {
+    "objectID": "in-shiny.html",
+    "href": "in-shiny.html",
+    "title": "in shiny",
+    "section": "",
+    "text": "shiny provides the most interesting use of handsontable."
+  },
+  {
+    "objectID": "in-shiny.html#normal-stuff",
+    "href": "in-shiny.html#normal-stuff",
+    "title": "in shiny",
+    "section": "normal stuff",
+    "text": "normal stuff\n\nconfig (handsontableOutput() + renderHandsontable())\nobservers + built-in hooks\nset data for specific cells"
+  },
+  {
+    "objectID": "in-shiny.html#fun-stuff",
+    "href": "in-shiny.html#fun-stuff",
+    "title": "in shiny",
+    "section": "fun stuff",
+    "text": "fun stuff\n\ncustom hooks in js + observers eg. click-cell-show-modal-dialog for short tables with dropdown menu cols."
   },
   {
     "objectID": "getting-started.html",
@@ -103,5 +124,40 @@
     "title": "about",
     "section": "",
     "text": "this is an R interface to the handsontable.js library v6.2.2."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "home",
+    "section": "",
+    "text": "R interface to the Handsontable JavaScript library v6.2.2 (MIT license).\ncreate interactive spreadsheet-like data grids with data validation, sorting, and filtering."
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "home",
+    "section": "installation",
+    "text": "installation\n# install from CRAN\ninstall.packages(\"handsontable\")\n# or install from GitHub\ndevtools::install_github(\"kennedymwavu/handsontable\")\n\n# load the package:\nlibrary(handsontable)"
+  },
+  {
+    "objectID": "index.html#quick-example",
+    "href": "index.html#quick-example",
+    "title": "home",
+    "section": "quick example",
+    "text": "quick example\n\n# basic table:\nhandsontable(mtcars, rowHeaderWidth = 200)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
+  },
+  {
+    "objectID": "index.html#shiny-integration",
+    "href": "index.html#shiny-integration",
+    "title": "home",
+    "section": "shiny integration",
+    "text": "shiny integration\nlibrary(shiny)\n\nui &lt;- fluidPage(handsontableOutput(\"table\"))\n\nserver &lt;- function(input, output) {\n  output$table &lt;- renderHandsontable({\n    handsontable(iris[1:10, ]) |&gt;\n      hot_context_menu()\n  })\n\n  # detect changes:\n  observeEvent(input$table, {\n    updated_data &lt;- hot_to_r(data = input$table)\n    cat(\"Updated data:\\n\")\n    print(updated_data)\n    # use updated data...\n  })\n}\n\nshinyApp(ui, server)"
+  },
+  {
+    "objectID": "index.html#similar-packages",
+    "href": "index.html#similar-packages",
+    "title": "home",
+    "section": "similar packages",
+    "text": "similar packages\n\n{rhandsontable}\nthe rhandsontable package provides an R interface to handsontable and has been a valuable tool for the R community. however, it hasn’t been actively maintained in recent years.\n{handsontable} was developed to ensure active maintenance with regular updates, bug fixes, and feature enhancements that the community needs."
   }
 ]

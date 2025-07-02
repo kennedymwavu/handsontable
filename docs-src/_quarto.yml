@@ -11,7 +11,13 @@ website:
     left:
       - index.qmd
       - getting-started.qmd
+      - options.qmd
+      - in-shiny.qmd
       - about.qmd
+  page-footer: |
+    ----
+    developed by [Kennedy Mwavu](https://github.com/kennedymwavu)
+    ----
 
 format:
   html:
