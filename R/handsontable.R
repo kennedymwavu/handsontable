@@ -75,11 +75,16 @@ handsontable <- function(
 
   # ----colHeaders----
   if (isTRUE(colHeaders)) {
-    colHeaders <- names(data)
+    colHeaders <- colnames(data)
   }
 
   if (isFALSE(colHeaders)) {
     colHeaders <- NULL
+  }
+
+  # ----rowHeaders----
+  if (isTRUE(rowHeaders)) {
+    rowHeaders <- rownames(data)
   }
 
   # Convert data to list format for JavaScript
