@@ -18,7 +18,7 @@
     "href": "index.html#quick-example",
     "title": "home",
     "section": "quick example",
-    "text": "quick example\n\n# basic table:\nhandsontable(mtcars[1:5, ], adaptiveHeight = TRUE)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
+    "text": "quick example\n\n# basic table:\nhandsontable(mtcars, rowHeaderWidth = 200)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
   },
   {
     "objectID": "index.html#shiny-integration",
@@ -46,63 +46,56 @@
     "href": "getting-started.html#basic",
     "title": "getting started",
     "section": "basic",
-    "text": "basic\n\nhandsontable(data = mtcars)"
+    "text": "basic\n\nhandsontable(data = iris[1:10, ], adaptiveHeight = TRUE)"
   },
   {
     "objectID": "getting-started.html#read-only",
     "href": "getting-started.html#read-only",
     "title": "getting started",
     "section": "read-only",
-    "text": "read-only\nto make the table read-only, set readOnly = TRUE. this will prevent any editing of the table.\n\nhandsontable(data = mtcars, readOnly = TRUE)"
+    "text": "read-only\nto make the table read-only, set readOnly = TRUE. this will prevent any editing of the table.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE,\n  readOnly = TRUE\n)"
   },
   {
     "objectID": "getting-started.html#headers",
     "href": "getting-started.html#headers",
     "title": "getting started",
     "section": "headers",
-    "text": "headers\n\ncolHeaders\nby default, colHeaders = TRUE and uses the column names of the data frame.\n\nhandsontable(data = mtcars, colHeaders = TRUE)\n\n\n\n\n\nsetting colHeaders = FALSE will remove the column headers.\n\nhandsontable(data = mtcars, colHeaders = FALSE)\n\n\n\n\n\nto set custom column headers, pass a character vector to colHeaders.\n\nhandsontable(\n  data = mtcars,\n  colHeaders = c(\n    \"Miles per Gallon\",\n    \"Cylinders\",\n    \"Displacement\",\n    \"Horsepower\",\n    \"Rear Axle Ratio\",\n    \"Weight (1000 lbs)\",\n    \"1/4 Mile Time\",\n    \"Engine\",\n    \"Transmission\",\n    \"Number of forward gears\",\n    \"Number of carburetors\"\n  )\n)\n\n\n\n\n\nrowHeaders\nby default, rowHeaders = TRUE and uses the row names of the data frame.\n\nhandsontable(data = mtcars, rowHeaders = TRUE)\n\n\n\n\n\nsetting rowHeaders = FALSE will remove the row headers.\n\nhandsontable(data = mtcars, rowHeaders = FALSE)\n\n\n\n\n\nto set custom row headers, pass a character vector to rowHeaders.\n\nhandsontable(\n  data = mtcars,\n  rowHeaders = c(\"Row 1\", \"Row 2\", \"Row 3\", \"Row 4\", \"Row 5\")\n)"
+    "text": "headers\n\ncolHeaders\nby default, colHeaders = TRUE and uses the column names of the data frame.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE,\n  colHeaders = TRUE\n)\n\n\n\n\n\nsetting colHeaders = FALSE will remove the column headers.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE,\n  colHeaders = FALSE\n)\n\n\n\n\n\nto set custom column headers, pass a character vector to colHeaders.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE,\n  colHeaders = c(\n    \"Sepal Length\",\n    \"Sepal Width\",\n    \"Petal Length\",\n    \"Petal Width\",\n    \"Species\"\n  )\n)\n\n\n\n\n\nrowHeaders\nby default, rowHeaders = TRUE and uses the row names of the data frame.\n\nhandsontable(\n  data = mtcars[1:5, ],\n  adaptiveHeight = TRUE,\n  rowHeaders = TRUE,\n  rowHeaderWidth = 200\n)\n\n\n\n\n\nsetting rowHeaders = FALSE will remove the row headers.\n\nhandsontable(\n  data = mtcars[1:5, ],\n  adaptiveHeight = TRUE,\n  rowHeaders = FALSE\n)\n\n\n\n\n\nto set custom row headers, pass a character vector to rowHeaders.\n\nhandsontable(\n  data = mtcars[1:5, ],\n  adaptiveHeight = TRUE,\n  rowHeaders = c(\"Row 1\", \"Row 2\", \"Row 3\", \"Row 4\", \"Row 5\")\n)"
   },
   {
     "objectID": "getting-started.html#dimensions",
     "href": "getting-started.html#dimensions",
     "title": "getting started",
     "section": "dimensions",
-    "text": "dimensions\n\nwidth & height\n\nhandsontable(data = mtcars, width = 300, height = 300)\n\n\n\n\n\nsetting adaptiveHeight = TRUE will make the table height adapt to the content of the cells, so that no vertical scrollbar is shown.\n\nhandsontable(data = mtcars, adaptiveHeight = TRUE)"
+    "text": "dimensions\n\nwidth & height\n\nhandsontable(\n  data = mtcars,\n  width = 500,\n  height = 300,\n  rowHeaderWidth = 200\n)\n\n\n\n\n\nsetting adaptiveHeight = TRUE will make the table height adapt to the content of the cells, so that no vertical scrollbar is shown.\n\nhandsontable(\n  data = mtcars,\n  adaptiveHeight = TRUE,\n  rowHeaderWidth = 200\n)"
   },
   {
     "objectID": "getting-started.html#column-widths",
     "href": "getting-started.html#column-widths",
     "title": "getting started",
     "section": "column widths",
-    "text": "column widths\nto set the width of individual columns, pass a numeric vector to colWidths.\n\nhandsontable(data = mtcars, colWidths = c(100, 150, 200, 250, 300, 350, 400, 450))"
+    "text": "column widths\nto set the width of individual columns, pass a numeric vector to colWidths.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE,\n  colWidths = c(100, 150, 200, 250, 300)\n)"
   },
   {
     "objectID": "getting-started.html#column-stretching",
     "href": "getting-started.html#column-stretching",
     "title": "getting started",
     "section": "column stretching",
-    "text": "column stretching\n\nstretchH = \"all\" will stretch all columns to fit the width of the table.\n\nhandsontable(data = mtcars[, 1:3], stretchH = \"all\")\n\n\n\n\n\nstretchH = \"last\" will stretch the last column to fit the width of the table.\n\nhandsontable(data = mtcars[, 1:3], stretchH = \"last\")\n\n\n\n\n\nstretchH = \"none\" will not stretch any columns.\n\nhandsontable(data = mtcars[, 1:3], stretchH = \"none\")"
+    "text": "column stretching\n\nstretchH = \"all\" will stretch all columns to fit the width of the table.\n\nhandsontable(\n  data = iris[1:5, 1:3],\n  adaptiveHeight = TRUE,\n  stretchH = \"all\"\n)\n\n\n\n\n\nstretchH = \"last\" will stretch the last column to fit the width of the table.\n\nhandsontable(\n  data = iris[1:5, 1:3],\n  adaptiveHeight = TRUE,\n  stretchH = \"last\"\n)\n\n\n\n\n\nstretchH = \"none\" will not stretch any columns.\n\nhandsontable(\n  data = iris[1:5, 1:3],\n  adaptiveHeight = TRUE,\n  stretchH = \"none\"\n)"
   },
   {
     "objectID": "getting-started.html#fixed-columns-rows",
     "href": "getting-started.html#fixed-columns-rows",
     "title": "getting started",
     "section": "fixed columns & rows",
-    "text": "fixed columns & rows\n\nset fixedColumnsLeft to fix a number of columns on the left side of the table.\n\nhandsontable(data = mtcars, fixedColumnsLeft = 2, width = 300)\n\n\n\n\n\nset fixedRowsTop to fix a number of rows on the top of the table.\n\nhandsontable(data = mtcars, fixedRowsTop = 2)\n\n\n\n\n\nset fixedRowsBottom to fix a number of rows on the bottom of the table.\n\nhandsontable(data = mtcars, fixedRowsBottom = 2)"
-  },
-  {
-    "objectID": "getting-started.html#manual-column-row-resize",
-    "href": "getting-started.html#manual-column-row-resize",
-    "title": "getting started",
-    "section": "manual column & row resize",
-    "text": "manual column & row resize\n\nsetting manualColumnResize = TRUE will allow users to resize columns by dragging the column borders.\n\nhandsontable(data = mtcars, manualColumnResize = TRUE)\n\n\n\n\n\nsetting manualRowResize = TRUE will allow users to resize rows by dragging the row borders.\n\nhandsontable(data = mtcars, manualRowResize = TRUE)"
+    "text": "fixed columns & rows\n\nset fixedColumnsLeft to fix a number of columns on the left side of the table.\n\nhandsontable(\n  data = mtcars[1:10, ],\n  adaptiveHeight = TRUE,\n  fixedColumnsLeft = 2,\n  rowHeaderWidth = 200,\n  width = 500\n)\n\n\n\n\n\nset fixedRowsTop to fix a number of rows on the top of the table.\n\nhandsontable(\n  data = mtcars,\n  fixedRowsTop = 2,\n  rowHeaderWidth = 200\n)\n\n\n\n\n\nset fixedRowsBottom to fix a number of rows on the bottom of the table.\n\nhandsontable(\n  data = mtcars,\n  fixedRowsBottom = 2,\n  rowHeaderWidth = 200\n)"
   },
   {
     "objectID": "getting-started.html#manual-column-row-move",
     "href": "getting-started.html#manual-column-row-move",
     "title": "getting started",
     "section": "manual column & row move",
-    "text": "manual column & row move\n\nsetting manualColumnMove = TRUE will allow users to move columns by dragging the column headers.\n\nhandsontable(data = mtcars, manualColumnMove = TRUE)\n\n\n\n\n\nsetting manualRowMove = TRUE will allow users to move rows by dragging the row headers.\n\nhandsontable(data = mtcars, manualRowMove = TRUE)"
+    "text": "manual column & row move\n\nsetting manualColumnMove = TRUE will allow users to move columns by dragging the column headers.\n\nhandsontable(\n  data = iris[1:10, ],\n  adaptiveHeight = TRUE,\n  manualColumnMove = TRUE\n)\n\n\n\n\n\nsetting manualRowMove = TRUE will allow users to move rows by dragging the row headers.\n\nhandsontable(\n  data = mtcars,\n  adaptiveHeight = TRUE,\n  manualRowMove = TRUE,\n  rowHeaderWidth = 200\n)"
   },
   {
     "objectID": "about.html",
