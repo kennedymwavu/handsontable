@@ -5,3 +5,5 @@
 ^\.claude$
 ^LICENSE\.md$
 ^\.github$
+^www$
+^dev\.R$
