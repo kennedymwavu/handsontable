@@ -2,18 +2,137 @@
 title: "options"
 ---
 
+```{r load-pkg, include=FALSE}
+library(handsontable)
+```
+
+`{handsontable}` has 3 main functions to help you configure
+options for the table:
+
+- [`handsontable()`](#handsontable)
+- [`hot_context_menu()`](#hot_context_menu)
+- [`hot_col()`](#hot_col)
+- [`hot_row()`](#hot_row)
+
 ## handsontable
 
-- config options for the whole table
+`handsontable()` allows you to configure table-wide options.
+
+### data
+
+- your table data. must be a `data.frame` or a `matrix` object.
+
+```{r table-data}
+handsontable(data = iris)
+```
+
+### width
+
+- sets the width of the table
+
+```{r table-width}
+handsontable(
+  data = iris[1:3, ],
+  width = 400,
+  adaptiveHeight = TRUE
+)
+```
+
+### height
+
+- sets the height of the table
+
+```{r table-height}
+handsontable(
+  data = iris[1:50, ],
+  height = 200
+)
+```
+
+### adaptiveHeight
+
+- if `TRUE` the table's height adapts to fit it's contents. useful
+  when you want to show the full table regardless of the number
+  of rows in your data.
+- if `TRUE`, overrides the [`height`](#height) parameter.
+
+- `adaptiveHeight = FALSE`:
+
+```{r adaptiveHeight-FALSE}
+handsontable(
+  data = mtcars,
+  rowHeaders = FALSE,
+  adaptiveHeight = FALSE
+)
+```
+
+- `adaptiveHeight = TRUE`:
+
+```{r adaptiveHeight-TRUE}
+handsontable(
+  data = mtcars,
+  rowHeaders = FALSE,
+  adaptiveHeight = TRUE
+)
+```
+
+### colHeaders
+
+- column names to use.
+- can be a logical (`TRUE` or `FALSE`) or a character vector of
+  column names to use.
+- `colHeaders = TRUE` uses the column names of the data:
+
+```{r colHeaders-TRUE}
+handsontable(
+  data = iris[1:3, ],
+  colHeaders = TRUE,
+  adaptiveHeight = TRUE
+)
+```
+
+- `colHeaders = FALSE` omits the column names of the data and uses
+  excel-like naming for the columns ie. "A", "B", "C", etc.
+
+```{r colHeaders-FALSE}
+handsontable(
+  data = iris[1:3, ],
+  colHeaders = FALSE,
+  adaptiveHeight = TRUE
+)
+```
+
+- you can as well use a character vector to rename the rendered
+  columns. this doesn't change the column names of the underlying
+  data.
+
+```{r colHeaders-char-vector}
+handsontable(
+  data = iris[1:3, ],
+  colHeaders = c(
+    "Sepal Length",
+    "Sepal Width",
+    "Petal Length",
+    "Petal Width",
+    "Species"
+  ),
+  adaptiveHeight = TRUE
+)
+```
 
 ## hot_context_menu
 
-- config options for the table's context menu
+with `hot_context_menu()`, you can configure options for the
+table's context menu ie. the menu you see when you right-click
+on a handsontable.
 
 ## hot_col
 
-- config options for columns
+use `hot_col()` to configure options for columns. this can be
+a single column or multiple of them.
 
 ## hot_row
 
 - config options for rows
+
+use `hot_row()` to configure options for rows.
