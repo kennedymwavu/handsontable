@@ -32,11 +32,13 @@ library(handsontable)
 
 ## quick example
 
-```{r quick-examples}
+```r
 # basic table:
 handsontable(mtcars, rowHeaderWidth = 200)
+```
 
-# col specific config + validation + context menu:
+```r
+# col & row specific config + validation + context menu:
 handsontable(
   iris[1:8, ],
   adaptiveHeight = TRUE
@@ -51,6 +53,7 @@ handsontable(
     type = "numeric",
     min = 0
   ) |>
+  hot_row(row = 6:7, readOnly = TRUE) |>
   hot_context_menu()
 ```
 

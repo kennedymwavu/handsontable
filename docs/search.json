@@ -144,7 +144,7 @@
     "href": "index.html#quick-example",
     "title": "home",
     "section": "quick example",
-    "text": "quick example\n\n# basic table:\nhandsontable(mtcars, rowHeaderWidth = 200)\n\n\n\n\n# col specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
+    "text": "quick example\n\n# basic table:\nhandsontable(mtcars, rowHeaderWidth = 200)\n\n\n\n\n# col & row specific config + validation + context menu:\nhandsontable(\n  iris[1:8, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = c(\"setosa\", \"versicolor\", \"virginica\")\n  ) |&gt;\n  hot_validate(\n    col = 1:4,\n    type = \"numeric\",\n    min = 0\n  ) |&gt;\n  hot_row(row = 6:7, readOnly = TRUE) |&gt;\n  hot_context_menu()\n\n\n\n\n\n\nright-click to see the context menu\ntry entering an invalid value (like a letter) in the first 4 columns."
   },
   {
     "objectID": "index.html#shiny-integration",
