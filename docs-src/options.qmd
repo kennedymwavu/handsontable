@@ -217,6 +217,43 @@ handsontable(
   - 3 &times; 10 + 30 = 60
   - 4 &times; 10 + 30 = 70
 
+### fixedColumnsLeft
+
+- number of columns to freeze on the left.
+
+  ```{r fixedColumnsLeft}
+  handsontable(
+    data = iris[1:3, ],
+    fixedColumnsLeft = 2,
+    colWidths = c(100, 100, 500, 700, 900), # force creation of a wide table
+    adaptiveHeight = TRUE
+  )
+  ```
+
+### fixedRowsTop
+
+- number of rows to freeze at the top.
+
+  ```{r fixedRowsTop}
+  handsontable(
+    data = iris[1:50, ],
+    height = 300, # force short table
+    fixedRowsTop = 3
+  )
+  ```
+
+### fixedRowsBottom
+
+- number of rows to freeze at the bottom.
+
+  ```{r fixedRowsBottom}
+  handsontable(
+    data = iris[1:100, ],
+    fixedRowsTop = 3,
+    fixedRowsBottom = 2
+  )
+  ```
+
 ## hot_context_menu
 
 with `hot_context_menu()`, you can configure options for the
