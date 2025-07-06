@@ -254,6 +254,39 @@ handsontable(
   )
   ```
 
+### manualColumnResize
+
+- should manual column resizing be enabled?
+- can be:
+  - a logical. either `TRUE` (default) or `FALSE`
+
+    ```{r manualColumnResize-TRUE}
+    handsontable(
+      data = iris[1:3, ],
+      manualColumnResize = TRUE,
+      adaptiveHeight = TRUE
+    )
+    ```
+
+    ```{r manualColumnResize-FALSE}
+    handsontable(
+      data = iris[1:3, ],
+      manualColumnResize = FALSE,
+      adaptiveHeight = TRUE
+    )
+    ```
+  - a numeric vector with initial widths
+
+    ```{r manualColumnResize-numeric-vector}
+    handsontable(
+      data = iris[1:3, ],
+      # set initial width for 1st & 2nd cols while enabling
+      # manual column resize:
+      manualColumnResize = c(40, 50),
+      adaptiveHeight = TRUE
+    )
+    ```
+
 ## hot_context_menu
 
 with `hot_context_menu()`, you can configure options for the
