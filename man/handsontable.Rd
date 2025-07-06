@@ -20,7 +20,7 @@ handsontable(
   manualColumnMove = FALSE,
   manualRowResize = TRUE,
   manualRowMove = FALSE,
-  stretchH = "all",
+  stretchH = c("all", "last", "none"),
   ...
 )
 }
