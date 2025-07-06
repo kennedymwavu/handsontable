@@ -62,7 +62,7 @@ handsontable <- function(
   manualColumnMove = FALSE,
   manualRowResize = TRUE,
   manualRowMove = FALSE,
-  stretchH = "all",
+  stretchH = c("all", "last", "none"),
   ...
 ) {
   if (!is.data.frame(data) && !is.matrix(data)) {
@@ -86,6 +86,9 @@ handsontable <- function(
   if (isTRUE(rowHeaders)) {
     rowHeaders <- rownames(data)
   }
+
+  # ----stretchH----
+  stretchH <- match.arg(arg = stretchH)
 
   # Convert data to list format for JavaScript
   data_list <- lapply(
