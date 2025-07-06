@@ -418,9 +418,7 @@ hot_col <- function(
   }
 
   # Ensure we have enough columns
-  if (col_idx > length(hot$x$columns)) {
-    length(hot$x$columns) <- col_idx
-  }
+  length(hot$x$columns) <- max(length(hot$x$columns), col_idx)
 
   # Set column properties
   col_config <- list(
