@@ -516,7 +516,8 @@ you can use `contextMenu` directly on `handsontable()`:
   ```
 
 - let's take it further and define an option to add the class
-"bg-danger" (bootstrap) to selected cell(s):
+  "bg-danger" (bootstrap 5) to selected cell(s):
+
   ```{r hot_context_menu-customOpts-cell-color-def}
   custom_opts <- list(
     set_bg_red = list(
@@ -524,24 +525,29 @@ you can use `contextMenu` directly on `handsontable()`:
       callback = htmlwidgets::JS(
         "
         function(key, selection, clickEvent) {
-          const selected = this.getSelected();
-          
-          if (selected) {
-            selected.forEach(function(range) {
-              const startRow = range[0];
-              const startCol = range[1];
-              const endRow = range[2];
-              const endCol = range[3];
-              
-              for (let row = startRow; row <= endRow; row++) {
-                for (let col = startCol; col <= endCol; col++) {
-                  this.setCellMeta(row, col, 'className', 'bg-danger');
+          const hotInstance = this;
+
+          selection.forEach(function(range) {
+            for (let row = range.start.row; row <= range.end.row; row++) {
+              for (let col = range.start.col; col <= range.end.col; col++) {
+                const currentClassName = hotInstance.getCellMeta(row, col).className;
+                if (!currentClassName) {
+                  hotInstance.setCellMeta(row, col, 'className', 'bg-danger');
+                  continue;
                 }
+                
+                const classes = currentClassName.split(' ');
+                if (!classes.includes('bg-danger')) {
+                  classes.push('bg-danger');
+                }
+                
+                const updatedClasses = classes.join(' ');
+                hotInstance.setCellMeta(row, col, 'className', updatedClasses);
               }
-            }.bind(this));
-            
-            this.render();
-          }
+            }
+          });
+          
+          hotInstance.render();
         }
         "
       )
@@ -560,33 +566,38 @@ you can use `contextMenu` directly on `handsontable()`:
     )
   ```
 
-- let's take it even further and define an option to clear the
-formatting of selected cell(s):
+- let's take it even further and define an option to remove the
+  class "bg-danger" from selected cell(s):
+
   ```{r hot_context_menu-customOpts-clear-formatting-def}
   # we'll just add to the previous definition of `custom_opts`:
-  custom_opts$clear_formatting <- list(
+  custom_opts$remove_bg_red <- list(
     name = "Clear Red Background",
     callback = htmlwidgets::JS(
       "
       function(key, selection, clickEvent) {
-        const selected = this.getSelected();
-        
-        if (selected) {
-          selected.forEach(function(range) {
-            const startRow = range[0];
-            const startCol = range[1];
-            const endRow = range[2];
-            const endCol = range[3];
-            
-            for (let row = startRow; row <= endRow; row++) {
-              for (let col = startCol; col <= endCol; col++) {
-                this.removeCellMeta(row, col, 'className');
+        const hotInstance = this;
+
+        selection.forEach(function(range) {
+          for (let row = range.start.row; row <= range.end.row; row++) {
+            for (let col = range.start.col; col <= range.end.col; col++) {
+              const currentClassName = hotInstance.getCellMeta(row, col).className;
+              if (!currentClassName) {
+                continue;
               }
+              
+              const updatedClassName = currentClassName
+                .split(' ')
+                .filter(cls => cls !== 'bg-danger')
+                .join(' ')
+                .trim();
+              
+              hotInstance.setCellMeta(row, col, 'className', updatedClassName);
             }
-          }.bind(this));
-          
-          this.render();
-        }
+          }
+        });
+        
+        hotInstance.render();
       }
       "
     )
