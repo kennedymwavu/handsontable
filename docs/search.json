@@ -32,7 +32,7 @@
     "href": "options.html#hot_row",
     "title": "options",
     "section": "hot_row",
-    "text": "hot_row\nuse hot_row() to configure options for rows. this can be a single row or multiple of them."
+    "text": "hot_row\nuse hot_row() to configure options for rows. this can be a single row or multiple of them.\n\nreadOnly\n\ndetermines whether row values are editable.\nlogical. either TRUE or FALSE. if NULL (default) it’s ignored.\n\nhandsontable(\n  data = iris[1:5, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_row(\n    # make row 1 & 5 read-only:\n    row = c(1, 5),\n    readOnly = TRUE\n  )"
   },
   {
     "objectID": "in-shiny.html",

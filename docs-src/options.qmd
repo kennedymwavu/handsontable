@@ -623,7 +623,7 @@ a single column or multiple of them.
 
 - determines whether column values are editable.
 - logical. either `TRUE` or `FALSE`. if `NULL` (default) it's ignored.
-  ```{r hot_col-readOnly-FALSE}
+  ```{r hot_col-readOnly-TRUE}
   handsontable(
     data = iris[1:3, ],
     adaptiveHeight = TRUE
@@ -669,3 +669,19 @@ a single column or multiple of them.
 
 use `hot_row()` to configure options for rows. this can be a
 single row or multiple of them.
+
+### readOnly
+
+- determines whether row values are editable.
+- logical. either `TRUE` or `FALSE`. if `NULL` (default) it's ignored.
+  ```{r hot_row-readOnly-TRUE}
+  handsontable(
+    data = iris[1:5, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_row(
+      # make row 1 & 5 read-only:
+      row = c(1, 5),
+      readOnly = TRUE
+    )
+  ```
