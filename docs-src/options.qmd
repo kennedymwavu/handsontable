@@ -430,6 +430,179 @@ with `hot_context_menu()`, you can configure options for the
 table's context menu ie. the menu you see when you right-click
 on a handsontable.
 
+### contextMenu
+
+- since `hot_context_menu()` sets the `contextMenu` option of handsontable,
+you can use `contextMenu` directly on `handsontable()`:
+  ```{r contextMenu-TRUE}
+  handsontable(
+    data = iris[1:3, ],
+    contextMenu = TRUE, # enable context menu
+    adaptiveHeight = TRUE
+  )
+  ```
+
+  ```{r contextMenu-FALSE}
+  handsontable(
+    data = iris[1:3, ],
+    contextMenu = FALSE, # disable context menu
+    adaptiveHeight = TRUE
+  )
+  ```
+
+### defaults
+
+- `hot_context_menu()` provides some sensible defaults:
+  ```{r hot_context_menu-default}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_context_menu()
+  ```
+
+- if you only want a subset of those, you can provide the
+`opts` parameter of `hot_context_menu()`:
+  ```{r hot_context_menu-subset}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_context_menu(opts = c("row_above", "col_right", "copy"))
+  ```
+  by default, valid values for `opts` are:
+
+    - "row_above",
+    - "row_below",
+    - "col_left",
+    - "col_right",
+    - "---------",
+    - "remove_row",
+    - "remove_col",
+    - "clear_column",
+    - "make_read_only",
+    - "undo",
+    - "redo",
+    - "cut",
+    - "copy",
+    - "---------",
+    - "export_csv"
+
+### custom
+
+- you can define your own customized context menu options by
+  providing a named list of named lists to the `customOpts` parameter.
+
+  ```{r hot_context_menu-customOpts}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_context_menu(
+      opts = "row_above",
+      customOpts = list(
+        custom_alert = list(
+          name = "Show alert",
+          callback = htmlwidgets::JS(
+            "
+            function() {
+              alert('Custom action!');
+            }
+            "
+          )
+        )
+      )
+    )
+  ```
+
+- let's take it further and define an option to add the class
+"bg-danger" (bootstrap) to selected cell(s):
+  ```{r hot_context_menu-customOpts-cell-color-def}
+  custom_opts <- list(
+    set_bg_red = list(
+      name = "Set BG Color to Red",
+      callback = htmlwidgets::JS(
+        "
+        function(key, selection, clickEvent) {
+          const selected = this.getSelected();
+          
+          if (selected) {
+            selected.forEach(function(range) {
+              const startRow = range[0];
+              const startCol = range[1];
+              const endRow = range[2];
+              const endCol = range[3];
+              
+              for (let row = startRow; row <= endRow; row++) {
+                for (let col = startCol; col <= endCol; col++) {
+                  this.setCellMeta(row, col, 'className', 'bg-danger');
+                }
+              }
+            }.bind(this));
+            
+            this.render();
+          }
+        }
+        "
+      )
+    )
+  )
+  ```
+
+  ```{r hot_context_menu-customOpts-cell-color}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_context_menu(
+      opts = "row_above",
+      customOpts = custom_opts
+    )
+  ```
+
+- let's take it even further and define an option to clear the
+formatting of selected cell(s):
+  ```{r hot_context_menu-customOpts-clear-formatting-def}
+  # we'll just add to the previous definition of `custom_opts`:
+  custom_opts$clear_formatting <- list(
+    name = "Clear Red Background",
+    callback = htmlwidgets::JS(
+      "
+      function(key, selection, clickEvent) {
+        const selected = this.getSelected();
+        
+        if (selected) {
+          selected.forEach(function(range) {
+            const startRow = range[0];
+            const startCol = range[1];
+            const endRow = range[2];
+            const endCol = range[3];
+            
+            for (let row = startRow; row <= endRow; row++) {
+              for (let col = startCol; col <= endCol; col++) {
+                this.removeCellMeta(row, col, 'className');
+              }
+            }
+          }.bind(this));
+          
+          this.render();
+        }
+      }
+      "
+    )
+  )
+  ```
+  ```{r hot_context_menu-customOpts-clear-formatting}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_context_menu(
+      opts = "row_above",
+      customOpts = custom_opts
+    )
+  ```
+
 ## hot_col
 
 use `hot_col()` to configure options for columns. this can be
