@@ -326,6 +326,45 @@ handsontable(
     1 and 4 correspond to 2 ("Sepal.Width") and 5 ("Species"), 
     respectively.
 
+### manualRowMove
+
+- should row reordering be enabled? when enabled, users can
+  drag rows by their headers and reorder them.
+- can be:
+  - a logical. either `TRUE` or `FALSE` (default).
+
+    ```{r manualRowMove-TRUE}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowMove = TRUE,
+      adaptiveHeight = TRUE
+    )
+    ```
+
+    ```{r manualRowMove-FALSE}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowMove = FALSE,
+      adaptiveHeight = TRUE
+    )
+    ```
+  - integer vector with initial order.
+
+    ```{r manualRowMove-integer-vector}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowMove = c(2, 0),
+      adaptiveHeight = TRUE
+    )
+    ```
+
+    with `c(2, 0)`, rows at indices 2 and 0 (zero-indexed)
+    come first.
+
+### manualRowResize
+
+### stretchH
+
 
 ## hot_context_menu
 
