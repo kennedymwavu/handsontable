@@ -396,6 +396,33 @@ handsontable(
 
 ### stretchH
 
+- defines how columns behave when the declared table width is 
+different from the calculated sum of all column widths.
+- must be a string and one of:
+  - `"all"`: default. stretches all columns to fit width of the table.
+    ```{r stretchH-all}
+    handsontable(
+      data = iris[1:3, ],
+      stretchH = "all",
+      adaptiveHeight = TRUE
+    )
+    ```
+  - `"last"`: stretches the last column to fit width of the table.
+    ```{r stretchH-last}
+    handsontable(
+      data = iris[1:3, ],
+      stretchH = "last",
+      adaptiveHeight = TRUE
+    )
+    ```
+  - `"none"`: will not stretch any columns.
+    ```{r stretchH-none}
+    handsontable(
+      data = iris[1:3, ],
+      stretchH = "none",
+      adaptiveHeight = TRUE
+    )
+    ```
 
 ## hot_context_menu
 
