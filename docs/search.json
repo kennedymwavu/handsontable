@@ -25,14 +25,14 @@
     "href": "options.html#hot_col",
     "title": "options",
     "section": "hot_col",
-    "text": "hot_col\nuse hot_col() to configure options for columns. this can be a single column or multiple of them."
+    "text": "hot_col\nuse hot_col() to configure options for columns. this can be a single column or multiple of them.\n\nreadOnly\n\ndetermines whether column values are editable.\nlogical. either TRUE or FALSE. if NULL (default) it’s ignored.\n\nhandsontable(\n  data = iris[1:3, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  # make first 2 cols read-only:\n  hot_col(\n    col = c(\"Sepal.Length\", \"Sepal.Width\"),\n    readOnly = TRUE\n  )\n\n\n\n\n\n\n\n\nhidden\n\ndetermines whether a column is displayed.\nlogical, either TRUE (default) or FALSE.\n\nhandsontable(\n  data = iris[1:3, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    # hide Petal.Length & Petal.Width:\n    col = c(\"Petal.Length\", \"Petal.Width\"),\n    hidden = TRUE\n  )\n\n\n\n\n\n\n\n\nwidth\n\nsets the width of a column\n\nhandsontable(\n  data = iris[1:3, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = c(\"Sepal.Length\", \"Petal.Length\"),\n    width = 200\n  )"
   },
   {
     "objectID": "options.html#hot_row",
     "href": "options.html#hot_row",
     "title": "options",
     "section": "hot_row",
-    "text": "hot_row\n\nconfig options for rows\n\nuse hot_row() to configure options for rows."
+    "text": "hot_row\nuse hot_row() to configure options for rows. this can be a single row or multiple of them."
   },
   {
     "objectID": "in-shiny.html",

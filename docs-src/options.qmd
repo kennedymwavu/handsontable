@@ -619,8 +619,53 @@ you can use `contextMenu` directly on `handsontable()`:
 use `hot_col()` to configure options for columns. this can be
 a single column or multiple of them.
 
+### readOnly
+
+- determines whether column values are editable.
+- logical. either `TRUE` or `FALSE`. if `NULL` (default) it's ignored.
+  ```{r hot_col-readOnly-FALSE}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    # make first 2 cols read-only:
+    hot_col(
+      col = c("Sepal.Length", "Sepal.Width"),
+      readOnly = TRUE
+    )
+  ```
+
+### hidden
+
+- determines whether a column is displayed.
+- logical, either `TRUE` (default) or `FALSE`.
+  ```{r hot_col-hidden-TRUE}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_col(
+      # hide Petal.Length & Petal.Width:
+      col = c("Petal.Length", "Petal.Width"),
+      hidden = TRUE
+    )
+  ```
+
+### width
+
+- sets the width of a column
+  ```{r hot_col-width}
+  handsontable(
+    data = iris[1:3, ],
+    adaptiveHeight = TRUE
+  ) |>
+    hot_col(
+      col = c("Sepal.Length", "Petal.Length"),
+      width = 200
+    )
+  ```
+
 ## hot_row
 
-- config options for rows
-
-use `hot_row()` to configure options for rows.
+use `hot_row()` to configure options for rows. this can be a
+single row or multiple of them.
