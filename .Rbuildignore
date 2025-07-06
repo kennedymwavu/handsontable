@@ -7,3 +7,4 @@
 ^\.github$
 ^www$
 ^dev\.R$
+^\.nojekyll$
