@@ -363,6 +363,37 @@ handsontable(
 
 ### manualRowResize
 
+- enables/disables manual row resizing.
+- can be:
+  - a logical. either `TRUE` (default) or `FALSE`.
+
+    ```{r manualRowResize-TRUE}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowResize = TRUE,
+      adaptiveHeight = TRUE
+    )
+    ```
+
+    ```{r manualRowResize-FALSE}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowResize = FALSE,
+      adaptiveHeight = TRUE
+    )
+    ```
+  - numeric vector with initial row heights.
+    ```{r manualRowResize-numeric-vector}
+    handsontable(
+      data = iris[1:3, ],
+      manualRowResize = c(40, 50),
+      adaptiveHeight = TRUE
+    )
+    ```
+
+    this sets the initial height of the first 2 rows and
+    enables manual row resize.
+
 ### stretchH
 
 
