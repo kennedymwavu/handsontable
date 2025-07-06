@@ -310,32 +310,39 @@ HTMLWidgets.widget({
         ) {
           const contextMenuItems = {};
 
-          // Add built-in options from opts
-          if (
-            config.contextMenu.opts &&
-            Array.isArray(config.contextMenu.opts)
-          ) {
-            config.contextMenu.opts.forEach((opt) => {
-              if (typeof opt === "string") {
-                if (opt === "export_csv") {
-                  // Special handling for CSV export
-                  contextMenuItems[opt] = exportToCSV.export_csv;
-                } else {
-                  // Empty object for other built-in options
-                  contextMenuItems[opt] = {};
-                }
-              }
-            });
+          function processContextMenuOption(opt) {
+            if (typeof opt !== "string") {
+              return;
+            }
+            if (opt === "export_csv") {
+              contextMenuItems[opt] = exportToCSV.export_csv;
+              return;
+            }
+            contextMenuItems[opt] = {};
           }
 
-          // Add custom options from customOpts (object from R)
-          if (
-            config.contextMenu.customOpts &&
-            typeof config.contextMenu.customOpts === "object" &&
-            !Array.isArray(config.contextMenu.customOpts)
-          ) {
-            Object.keys(config.contextMenu.customOpts).forEach((key) => {
-              const customOpt = config.contextMenu.customOpts[key];
+          function normalizeToArray(value) {
+            if (Array.isArray(value)) {
+              return value;
+            }
+            if (value) {
+              return [value];
+            }
+            return [];
+          }
+
+          function processCustomOptions(customOpts) {
+            const is_valid =
+              customOpts &&
+              typeof customOpts === "object" &&
+              !Array.isArray(customOpts);
+
+            if (!is_valid) {
+              return;
+            }
+
+            Object.keys(customOpts).forEach((key) => {
+              const customOpt = customOpts[key];
               if (customOpt && typeof customOpt === "object") {
                 const itemKey = customOpt.key || key;
                 contextMenuItems[itemKey] = { ...customOpt };
@@ -343,6 +350,15 @@ HTMLWidgets.widget({
               }
             });
           }
+
+          // Process built-in options
+          const normalizedConfigOpts = normalizeToArray(
+            config.contextMenu.opts,
+          );
+          normalizedConfigOpts.forEach(processContextMenuOption);
+
+          // Process custom options
+          processCustomOptions(config.contextMenu.customOpts);
 
           // Transform to Handsontable format
           config.contextMenu = {
