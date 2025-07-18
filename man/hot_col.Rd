@@ -9,7 +9,8 @@ hot_col(hot, col, readOnly = NULL, hidden = FALSE, width = NULL, ...)
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{col}{Character vector or Integer vector.
+\item{col}{Character vector or Integer vector. Column names/indices
+to configure.
 Column name or index to configure.}
 
 \item{readOnly}{Logical, make column read-only}

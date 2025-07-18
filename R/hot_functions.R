@@ -75,7 +75,8 @@ get_col_idx <- function(hot, col) {
 #' Configure Data Validation
 #'
 #' @param hot A handsontable widget object
-#' @param col Column indices to apply validation (numeric vector)
+#' @param col Character vector or Integer vector. Column names/indices
+#'        to apply validation to.
 #' @param type Validation type eg. "numeric", "list", "regexp"
 #' @param allowInvalid Logical, allow invalid values to be entered
 #' @param ... Additional validation options
@@ -103,14 +104,14 @@ get_col_idx <- function(hot, col) {
 #'
 #'     output$table <- renderHandsontable({
 #'       handsontable(df) |>
-#'         hot_validate(col = 1, type = "numeric", min = 0, max = 100) |>
+#'         hot_validate(col = "score", type = "numeric", min = 0, max = 100) |>
 #'         hot_validate(
 #'           col = 2,
 #'           type = "list",
 #'           source = c("A", "B", "C", "D", "F")
 #'         ) |>
 #'         hot_validate(
-#'           col = 3,
+#'           col = "email",
 #'           type = "regexp",
 #'           pattern = "^[\\w\\._%+-]+@[\\w\\.-]+\\.[A-Za-z]{2,}$"
 #'         )
@@ -351,7 +352,8 @@ hot_to_r <- function(data) {
 #' Configure Individual Column
 #'
 #' @param hot A handsontable widget object
-#' @param col Character vector or Integer vector.
+#' @param col Character vector or Integer vector. Column names/indices
+#'        to configure.
 #' Column name or index to configure.
 #' @param readOnly Logical, make column read-only
 #' @param hidden Logical. Should the column be hidden?

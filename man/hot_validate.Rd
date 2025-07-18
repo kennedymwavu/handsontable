@@ -9,7 +9,8 @@ hot_validate(hot, col, type = NULL, allowInvalid = FALSE, ...)
 \arguments{
 \item{hot}{A handsontable widget object}
 
-\item{col}{Column indices to apply validation (numeric vector)}
+\item{col}{Character vector or Integer vector. Column names/indices
+to apply validation to.}
 
 \item{type}{Validation type eg. "numeric", "list", "regexp"}
 
@@ -44,14 +45,14 @@ if (interactive()) {
 
     output$table <- renderHandsontable({
       handsontable(df) |>
-        hot_validate(col = 1, type = "numeric", min = 0, max = 100) |>
+        hot_validate(col = "score", type = "numeric", min = 0, max = 100) |>
         hot_validate(
           col = 2,
           type = "list",
           source = c("A", "B", "C", "D", "F")
         ) |>
         hot_validate(
-          col = 3,
+          col = "email",
           type = "regexp",
           pattern = "^[\\\\w\\\\._\%+-]+@[\\\\w\\\\.-]+\\\\.[A-Za-z]{2,}$"
         )
