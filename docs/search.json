@@ -53,7 +53,7 @@
     "href": "in-shiny.html#fun-stuff",
     "title": "in shiny",
     "section": "fun stuff",
-    "text": "fun stuff\n\ncustom hooks in js + observers eg. click-cell-show-modal-dialog for short tables with dropdown menu cols."
+    "text": "fun stuff\n\ncustom hooks in js + observers eg. click-cell-show-modal-dialog for short tables with dropdown menu cols.\n\n\ndropdowns in short tables\nproblem statement: when your handsontable is short, length of dropdowns will be limited to the table height. users won’t even know they can scroll downwards.\nhere’s an example:\n\nhandsontable(\n  data = iris[1:2, ],\n  adaptiveHeight = TRUE\n) |&gt;\n  hot_col(\n    col = \"Species\",\n    type = \"dropdown\",\n    source = unique(iris$Species) |&gt; as.character()\n  )\n\n\n\n\n\nwhat i do in such cases is add hooks for all dropdown columns:\n\nwhen clicked, show a modal dialog with radio buttons.\nwhen user picks another option from the radio buttons, dismiss modal.\n\nthis way, we maintain the same number of clicks the user would have made without the modal.\nhere’s how to achieve that:\n\nlibrary(shiny)\nlibrary(hansontable)\n\n\n\nclick btn, set col values"
   },
   {
     "objectID": "getting-started.html",

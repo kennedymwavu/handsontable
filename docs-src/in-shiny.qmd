@@ -2,6 +2,11 @@
 title: "in shiny"
 ---
 
+```{r load-pkg, include=FALSE}
+library(handsontable)
+```
+
+
 shiny provides the most interesting use of handsontable.
 
 ## normal stuff
@@ -14,3 +19,41 @@ shiny provides the most interesting use of handsontable.
 
 - custom hooks in js + observers eg. click-cell-show-modal-dialog for
   short tables with dropdown menu cols.
+
+### dropdowns in short tables
+
+problem statement: when your handsontable is short, length of dropdowns
+will be limited to the table height. users won't even know they can
+scroll downwards.
+
+here's an example:
+
+```{r dropdown-problem}
+handsontable(
+  data = iris[1:2, ],
+  adaptiveHeight = TRUE
+) |>
+  hot_col(
+    col = "Species",
+    type = "dropdown",
+    source = unique(iris$Species) |> as.character()
+  )
+```
+
+what i do in such cases is add hooks for all dropdown columns:
+
+- when clicked, show a modal dialog with radio buttons.
+- when user picks another option from the radio buttons,
+  dismiss modal.
+
+this way, we maintain the same number of clicks the user would
+have made without the modal.
+
+here's how to achieve that:
+
+```{r dropdown-app-dot-r, eval=FALSE}
+library(shiny)
+library(hansontable)
+```
+
+### click btn, set col values
