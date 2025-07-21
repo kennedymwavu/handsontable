@@ -57,3 +57,19 @@ library(hansontable)
 ```
 
 ### click btn, set col values
+
+- click adjacent btn, set all dropdown col values eg.
+  "Approve All"/"Reject All" btns.
+
+### undo/redo with visual feedback
+
+- cell highlighting during undo/redo: briefly flash to indicate
+  changes.
+
+### conditional cell formatting
+
+- heat maps based on cell values
+
+### add margin totals
+
+- row/col totals
