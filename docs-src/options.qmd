@@ -424,6 +424,35 @@ different from the calculated sum of all column widths.
     )
     ```
 
+### hooks
+
+you will mostly use these with shiny.
+
+```{r afterRender-hooks}
+handsontable(
+  data = iris[1:3, ],
+  adaptiveHeight = TRUE,
+  afterRender = htmlwidgets::JS(
+    'function() {
+      console.log("fired after view-rendering engine updates view");
+      console.log("eg. when each row is rendered");
+    }'
+  ),
+  afterInit = htmlwidgets::JS(
+    'function() {
+      console.log("fired immediately after initialization"); 
+    }'
+  ),
+  afterLoadData = htmlwidgets::JS(
+    'function() {
+      console.log("fired from afterLoadData"); 
+    }'
+  )
+)
+```
+
+[see more hooks](https://handsontable.com/docs/javascript-data-grid/api/hooks/).
+
 ## hot_context_menu
 
 with `hot_context_menu()`, you can configure options for the

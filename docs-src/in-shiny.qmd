@@ -247,7 +247,7 @@ key points:
   500ms regardless of whether new tables exist. it's *good enough* for the
   demo though.
 
-  - a more efficient approach would be to setup an `afterRender` hook
+  - a more efficient approach would be to setup an [`afterInit`](./options.qmd#hooks) hook
     on the server.
 
 ### click btn, set col values
