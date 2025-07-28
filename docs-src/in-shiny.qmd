@@ -245,10 +245,11 @@ key points:
 - set up hooks with interval polling to catch dynamically rendered tables.
   tbh this is inefficient because i use `setInterval()` and it runs every
   500ms regardless of whether new tables exist. it's *good enough* for the
-  demo though.
+  demo though. more efficient approaches would be: 
 
-  - a more efficient approach would be to setup an [`afterInit`](./options.qmd#hooks) hook
-    on the server.
+    - setup an [`afterInit`](./options.qmd#hooks) hook on the server.
+    - setup your own custom message & handler eg.
+    `session$sendCustomMessage("setup-handsontable-hooks", tableId)`.
 
 ### click btn, set col values
 

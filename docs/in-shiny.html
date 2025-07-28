@@ -236,8 +236,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="fu">unique</span>(iris<span class="sc">$</span>Species) <span class="sc">|&gt;</span> <span class="fu">as.character</span>()</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="handsontable html-widget html-fill-item" id="htmlwidget-d94d828f7101d110ae2c" style="width:100%;height:400px;"></div>
-<script type="application/json" data-for="htmlwidget-d94d828f7101d110ae2c">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-6b1c3696014dd7487838" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-6b1c3696014dd7487838">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>what i do in such cases is add hooks for all dropdown columns:</p>
@@ -536,9 +536,10 @@ $(document).ready(function () {
 <li><p>check if column is dropdown type and not readonly before showing modal</p></li>
 <li><p>use <code>hot.setDataAtCell()</code> to update cell value</p></li>
 <li><p>auto-dismiss modal</p></li>
-<li><p>set up hooks with interval polling to catch dynamically rendered tables. tbh this is inefficient because i use <code>setInterval()</code> and it runs every 500ms regardless of whether new tables exist. it’s <em>good enough</em> for the demo though.</p>
+<li><p>set up hooks with interval polling to catch dynamically rendered tables. tbh this is inefficient because i use <code>setInterval()</code> and it runs every 500ms regardless of whether new tables exist. it’s <em>good enough</em> for the demo though. more efficient approaches would be:</p>
 <ul>
-<li>a more efficient approach would be to setup an <a href="./options.html#hooks"><code>afterInit</code></a> hook on the server.</li>
+<li>setup an <a href="./options.html#hooks"><code>afterInit</code></a> hook on the server.</li>
+<li>setup your own custom message &amp; handler eg. <code>session$sendCustomMessage("setup-handsontable-hooks", tableId)</code>.</li>
 </ul></li>
 </ul>
 </section>
