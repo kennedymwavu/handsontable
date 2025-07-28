@@ -234,8 +234,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="fu">unique</span>(iris<span class="sc">$</span>Species) <span class="sc">|&gt;</span> <span class="fu">as.character</span>()</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="handsontable html-widget html-fill-item" id="htmlwidget-fc1035194b0db0f9809a" style="width:100%;height:400px;"></div>
-<script type="application/json" data-for="htmlwidget-fc1035194b0db0f9809a">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-4fddb83ccc0686f7dce0" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-4fddb83ccc0686f7dce0">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>what i do in such cases is add hooks for all dropdown columns:</p>
@@ -247,8 +247,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>here’s how to achieve that:</p>
 <div class="cell">
 <div class="code-with-filename">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-with-filename-file">
 <pre><strong>app.R</strong></pre>
 </div>
@@ -332,14 +330,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </div>
 <p>create <code>./public/dropdown-modal.js</code>:</p>
 <div class="cell">
 <div class="code-with-filename">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-with-filename-file">
 <pre><strong>./public/dropdown-modal.js</strong></pre>
 </div>
@@ -436,7 +431,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setupDropdownModalHooks</span>()<span class="op">;</span></span>
 <span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>  <span class="pp">setInterval</span>(setupDropdownModalHooks<span class="op">,</span> <span class="dv">500</span>)<span class="op">;</span></span>
 <span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <script>
 let bootstrapModal;
@@ -534,11 +528,342 @@ $(document).ready(function () {
 });
 </script>
 </div>
+<p>key points:</p>
+<ul>
+<li><p>use <code>afterSelectionEnd</code> hook to detect dropdown cell clicks</p></li>
+<li><p>check if column is dropdown type and not readonly before showing modal</p></li>
+<li><p>use <code>hot.setDataAtCell()</code> to update cell value</p></li>
+<li><p>auto-dismiss modal</p></li>
+<li><p>set up hooks with interval polling to catch dynamically rendered tables. tbh this is inefficient because i use <code>setInterval()</code> and it runs every 500ms regardless of whether new tables exist. it’s <em>good enough</em> for the demo though.</p>
+<ul>
+<li>a more efficient approach would be to setup an <code>afterRender</code> hook on the server.</li>
+</ul></li>
+</ul>
 </section>
 <section id="click-btn-set-col-values" class="level3">
 <h3 class="anchored" data-anchor-id="click-btn-set-col-values">click btn, set col values</h3>
+<p>sometimes you need to set all values in a column at once. common use case: “approve all”/“reject all” buttons for approval workflows.</p>
+<p>the approach:</p>
 <ul>
-<li>click adjacent btn, set all dropdown col values eg. “Approve All”/“Reject All” btns.</li>
+<li>add buttons above/beside the table</li>
+<li>use javascript to find the target column and update all rows</li>
+</ul>
+<p>here’s an example with approval workflow:</p>
+<div class="cell">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.R</strong></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bslib)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(handsontable)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">addResourcePath</span>(<span class="at">prefix =</span> <span class="st">"static"</span>, <span class="at">directoryPath =</span> <span class="st">"public"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sample data</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sample_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">paste</span>(<span class="st">"Item"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">100</span>), <span class="dv">2</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">approval =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"pending"</span>, <span class="st">"approved"</span>, <span class="st">"denied"</span>), <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">page</span>(</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"bulk actions example"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="fu">bs_theme</span>(<span class="at">version =</span> <span class="dv">5</span>L),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">lang =</span> <span class="st">"en"</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"bulk actions example"</span>),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># we'll use the ".approvals" class to get the table</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"approvals mb-3"</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">button</span>(</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">class =</span> <span class="st">"btn btn-success me-2 approve-all"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"button"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Approve All"</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">button</span>(</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">class =</span> <span class="st">"btn btn-danger reject-all"</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"button"</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Reject All"</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handsontableOutput</span>(<span class="st">"table"</span>)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">script</span>(<span class="at">src =</span> <span class="st">"/static/bulk-actions.js"</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>table <span class="ot">&lt;-</span> <span class="fu">renderHandsontable</span>({</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handsontable</span>(</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> sample_data,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">adaptiveHeight =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">rowHeaders =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">hot_col</span>(</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"approval"</span>,</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"dropdown"</span>,</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"pending"</span>, <span class="st">"approved"</span>, <span class="st">"denied"</span>)</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># detect changes in the table</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>table, {</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    updated_data <span class="ot">&lt;-</span> <span class="fu">hot_to_r</span>(<span class="at">data =</span> input<span class="sc">$</span>table)</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Updated data:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(updated_data)</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>create <code>./public/bulk-actions.js</code>:</p>
+<div class="cell">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>./public/bulk-actions.js</strong></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"> * Bulk Actions for Handsontable</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"> * Main function to handle approve/reject all button clicks</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">{string}</span><span class="co"> action - 'approve' or 'reject'</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">handleBulkAction</span>(action) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> hot <span class="op">=</span> <span class="fu">findHandsontableInstance</span>()<span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>hot) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> approvalColIndex <span class="op">=</span> <span class="fu">findApprovalColumnIndex</span>(hot)<span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (approvalColIndex <span class="op">===</span> <span class="op">-</span><span class="dv">1</span>) {</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">warn</span>(<span class="st">"Approval column not found in handsontable"</span>)<span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> targetValue <span class="op">=</span> action <span class="op">===</span> <span class="st">"approve"</span> <span class="op">?</span> <span class="st">"approved"</span> <span class="op">:</span> <span class="st">"denied"</span><span class="op">;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">updateAllRows</span>(hot<span class="op">,</span> approvalColIndex<span class="op">,</span> targetValue)<span class="op">;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"> * Find handsontable instance in ".approvals" div</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@returns</span><span class="co"> {Object|null} - Handsontable instance or null</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">findHandsontableInstance</span>() {</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> $container <span class="op">=</span> <span class="fu">$</span>(<span class="st">".approvals"</span>)<span class="op">.</span><span class="fu">find</span>(<span class="st">".handsontable"</span>)<span class="op">;</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>$container) {</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">warn</span>(<span class="st">"Handsontable instance not found"</span>)<span class="op">;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> $hot <span class="op">=</span> $container[<span class="dv">0</span>]<span class="op">.</span><span class="at">hot</span><span class="op">;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>$hot) {</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">warn</span>(<span class="st">"Cannot convert to hot"</span>)<span class="op">;</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> $hot<span class="op">;</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="co"> * Find the column index for the approval column</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">{Object}</span><span class="co"> hot - Handsontable instance</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@returns</span><span class="co"> {number} - Column index or -1 if not found</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">findApprovalColumnIndex</span>(hot) {</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> colHeaders <span class="op">=</span> hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">colHeaders</span><span class="op">;</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Check column headers first</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (colHeaders) {</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> colHeaders<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (colHeaders[i]<span class="op">?.</span><span class="fu">toLowerCase</span>()<span class="op">.</span><span class="fu">includes</span>(<span class="st">"approval"</span>)) {</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> i<span class="op">;</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Fallback: check first row data for approval values</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> hot<span class="op">.</span><span class="fu">getData</span>()<span class="op">;</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (data<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> approvalValues <span class="op">=</span> [<span class="st">"pending"</span><span class="op">,</span> <span class="st">"approved"</span><span class="op">,</span> <span class="st">"denied"</span>]<span class="op">;</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> data[<span class="dv">0</span>]<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> cellValue <span class="op">=</span> hot<span class="op">.</span><span class="fu">getDataAtCell</span>(<span class="dv">0</span><span class="op">,</span> i)<span class="op">;</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="kw">typeof</span> cellValue <span class="op">===</span> <span class="st">"string"</span> <span class="op">&amp;&amp;</span> approvalValues<span class="op">.</span><span class="fu">includes</span>(cellValue)) {</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> i<span class="op">;</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="co"> * Update all rows to target status</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">{Object}</span><span class="co"> hot - Handsontable instance</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">{number}</span><span class="co"> colIndex - Column index for approval column</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">{string}</span><span class="co"> targetValue - Target value ('approved' or 'denied')</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">updateAllRows</span>(hot<span class="op">,</span> colIndex<span class="op">,</span> targetValue) {</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rowCount <span class="op">=</span> hot<span class="op">.</span><span class="fu">countRows</span>()<span class="op">;</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> changes <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> row <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> row <span class="op">&lt;</span> rowCount<span class="op">;</span> row<span class="op">++</span>) {</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> currentValue <span class="op">=</span> hot<span class="op">.</span><span class="fu">getDataAtCell</span>(row<span class="op">,</span> colIndex)<span class="op">;</span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (currentValue <span class="op">!==</span> targetValue) {</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>      changes<span class="op">.</span><span class="fu">push</span>([row<span class="op">,</span> colIndex<span class="op">,</span> targetValue])<span class="op">;</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (changes<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>    hot<span class="op">.</span><span class="fu">setDataAtCell</span>(changes)<span class="op">;</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="co"> * Initialize the bulk actions functionality</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span> () {</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">on</span>(<span class="st">"click"</span><span class="op">,</span> <span class="st">".approve-all"</span><span class="op">,</span> <span class="kw">function</span> (e) {</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>    e<span class="op">.</span><span class="fu">preventDefault</span>()<span class="op">;</span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>    e<span class="op">.</span><span class="fu">stopPropagation</span>()<span class="op">;</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handleBulkAction</span>(<span class="st">"approve"</span>)<span class="op">;</span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">on</span>(<span class="st">"click"</span><span class="op">,</span> <span class="st">".reject-all"</span><span class="op">,</span> <span class="kw">function</span> (e) {</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>    e<span class="op">.</span><span class="fu">preventDefault</span>()<span class="op">;</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>    e<span class="op">.</span><span class="fu">stopPropagation</span>()<span class="op">;</span></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handleBulkAction</span>(<span class="st">"reject"</span>)<span class="op">;</span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<script>
+/**
+ * Bulk Actions for Handsontable
+ */
+
+/**
+ * Main function to handle approve/reject all button clicks
+ * @param {string} action - 'approve' or 'reject'
+ */
+function handleBulkAction(action) {
+  const hot = findHandsontableInstance();
+  if (!hot) return;
+
+  const approvalColIndex = findApprovalColumnIndex(hot);
+  if (approvalColIndex === -1) {
+    console.warn("Approval column not found in handsontable");
+    return;
+  }
+
+  const targetValue = action === "approve" ? "approved" : "denied";
+  updateAllRows(hot, approvalColIndex, targetValue);
+}
+
+/**
+ * Find handsontable instance in ".approvals" div
+ * @returns {Object|null} - Handsontable instance or null
+ */
+function findHandsontableInstance() {
+  const $container = $(".approvals").find(".handsontable");
+
+  if (!$container) {
+    console.warn("Handsontable instance not found");
+    return null;
+  }
+
+  const $hot = $container[0].hot;
+  if (!$hot) {
+    console.warn("Cannot convert to hot");
+    return null;
+  }
+
+  return $hot;
+}
+
+/**
+ * Find the column index for the approval column
+ * @param {Object} hot - Handsontable instance
+ * @returns {number} - Column index or -1 if not found
+ */
+function findApprovalColumnIndex(hot) {
+  const colHeaders = hot.getSettings().colHeaders;
+
+  // Check column headers first
+  if (colHeaders) {
+    for (let i = 0; i < colHeaders.length; i++) {
+      if (colHeaders[i]?.toLowerCase().includes("approval")) {
+        return i;
+      }
+    }
+  }
+
+  // Fallback: check first row data for approval values
+  const data = hot.getData();
+  if (data.length > 0) {
+    const approvalValues = ["pending", "approved", "denied"];
+    for (let i = 0; i < data[0].length; i++) {
+      const cellValue = hot.getDataAtCell(0, i);
+      if (typeof cellValue === "string" && approvalValues.includes(cellValue)) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+}
+
+/**
+ * Update all rows to target status
+ * @param {Object} hot - Handsontable instance
+ * @param {number} colIndex - Column index for approval column
+ * @param {string} targetValue - Target value ('approved' or 'denied')
+ */
+function updateAllRows(hot, colIndex, targetValue) {
+  const rowCount = hot.countRows();
+  const changes = [];
+
+  for (let row = 0; row < rowCount; row++) {
+    const currentValue = hot.getDataAtCell(row, colIndex);
+    if (currentValue !== targetValue) {
+      changes.push([row, colIndex, targetValue]);
+    }
+  }
+
+  if (changes.length > 0) {
+    hot.setDataAtCell(changes);
+  }
+}
+
+/**
+ * Initialize the bulk actions functionality
+ */
+$(document).ready(function () {
+  $(document).on("click", ".approve-all", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleBulkAction("approve");
+  });
+
+  $(document).on("click", ".reject-all", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleBulkAction("reject");
+  });
+});
+
+
+</script>
+</div>
+<p>key points:</p>
+<ul>
+<li>find handsontable instance in “.approvals” div</li>
+<li>use <code>hot.setDataAtCell(changes)</code> with an array of changes for efficiency</li>
+<li>find column index dynamically by header name or data values</li>
 </ul>
 </section>
 <section id="undoredo-with-visual-feedback" class="level3">

@@ -52,8 +52,6 @@ have made without the modal.
 here's how to achieve that:
 
 ```{r dropdown-app-dot-r, eval=FALSE, filename="app.R"}
-#| code-fold: true
-
 library(shiny)
 library(bslib)
 library(handsontable)
@@ -139,8 +137,6 @@ shinyApp(ui, server)
 create `./public/dropdown-modal.js`:
 
 ```{js dropdown-modal-js, filename="./public/dropdown-modal.js"}
-#| code-fold: true
-
 let bootstrapModal;
 
 $(document).ready(function () {
@@ -236,10 +232,225 @@ $(document).ready(function () {
 });
 ```
 
+key points:
+
+- use `afterSelectionEnd` hook to detect dropdown cell clicks
+- check if column is dropdown type and not readonly before showing modal
+- use `hot.setDataAtCell()` to update cell value 
+- auto-dismiss modal
+- set up hooks with interval polling to catch dynamically rendered tables.
+  tbh this is inefficient because i use `setInterval()` and it runs every
+  500ms regardless of whether new tables exist. it's *good enough* for the
+  demo though.
+
+  - a more efficient approach would be to setup an `afterRender` hook
+    on the server.
+
 ### click btn, set col values
 
-- click adjacent btn, set all dropdown col values eg.
-  "Approve All"/"Reject All" btns.
+sometimes you need to set all values in a column at once. 
+common use case: "approve all"/"reject all" buttons for approval workflows.
+
+the approach:
+
+- add buttons above/beside the table
+- use javascript to find the target column and update all rows
+
+here's an example with approval workflow:
+
+```{r bulk-actions-app, eval=FALSE, filename="app.R"}
+library(shiny)
+library(bslib)
+library(handsontable)
+
+addResourcePath(prefix = "static", directoryPath = "public")
+
+# sample data
+set.seed(123)
+sample_data <- data.frame(
+  id = 1:10,
+  name = paste("Item", 1:10),
+  category = sample(c("A", "B", "C"), 10, replace = TRUE),
+  value = round(runif(10, 10, 100), 2),
+  approval = sample(c("pending", "approved", "denied"), 10, replace = TRUE)
+)
+
+ui <- page(
+  title = "bulk actions example",
+  theme = bs_theme(version = 5L),
+  lang = "en",
+
+  tags$h3("bulk actions example"),
+
+  tags$div(
+    # we'll use the ".approvals" class to get the table
+    class = "approvals mb-3",
+    tags$button(
+      class = "btn btn-success me-2 approve-all",
+      type = "button",
+      "Approve All"
+    ),
+    tags$button(
+      class = "btn btn-danger reject-all",
+      type = "button",
+      "Reject All"
+    ),
+    handsontableOutput("table")
+  ),
+
+  tags$script(src = "/static/bulk-actions.js")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderHandsontable({
+    handsontable(
+      data = sample_data,
+      adaptiveHeight = TRUE,
+      rowHeaders = TRUE
+    ) |>
+      hot_col(
+        col = "approval",
+        type = "dropdown",
+        source = c("pending", "approved", "denied")
+      )
+  })
+
+  # detect changes in the table
+  observeEvent(input$table, {
+    updated_data <- hot_to_r(data = input$table)
+    cat("Updated data:\n")
+    print(updated_data)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+create `./public/bulk-actions.js`:
+
+```{js bulk-actions-js, filename="./public/bulk-actions.js"}
+/**
+ * Bulk Actions for Handsontable
+ */
+
+/**
+ * Main function to handle approve/reject all button clicks
+ * @param {string} action - 'approve' or 'reject'
+ */
+function handleBulkAction(action) {
+  const hot = findHandsontableInstance();
+  if (!hot) return;
+
+  const approvalColIndex = findApprovalColumnIndex(hot);
+  if (approvalColIndex === -1) {
+    console.warn("Approval column not found in handsontable");
+    return;
+  }
+
+  const targetValue = action === "approve" ? "approved" : "denied";
+  updateAllRows(hot, approvalColIndex, targetValue);
+}
+
+/**
+ * Find handsontable instance in ".approvals" div
+ * @returns {Object|null} - Handsontable instance or null
+ */
+function findHandsontableInstance() {
+  const $container = $(".approvals").find(".handsontable");
+
+  if (!$container) {
+    console.warn("Handsontable instance not found");
+    return null;
+  }
+
+  const $hot = $container[0].hot;
+  if (!$hot) {
+    console.warn("Cannot convert to hot");
+    return null;
+  }
+
+  return $hot;
+}
+
+/**
+ * Find the column index for the approval column
+ * @param {Object} hot - Handsontable instance
+ * @returns {number} - Column index or -1 if not found
+ */
+function findApprovalColumnIndex(hot) {
+  const colHeaders = hot.getSettings().colHeaders;
+
+  // Check column headers first
+  if (colHeaders) {
+    for (let i = 0; i < colHeaders.length; i++) {
+      if (colHeaders[i]?.toLowerCase().includes("approval")) {
+        return i;
+      }
+    }
+  }
+
+  // Fallback: check first row data for approval values
+  const data = hot.getData();
+  if (data.length > 0) {
+    const approvalValues = ["pending", "approved", "denied"];
+    for (let i = 0; i < data[0].length; i++) {
+      const cellValue = hot.getDataAtCell(0, i);
+      if (typeof cellValue === "string" && approvalValues.includes(cellValue)) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+}
+
+/**
+ * Update all rows to target status
+ * @param {Object} hot - Handsontable instance
+ * @param {number} colIndex - Column index for approval column
+ * @param {string} targetValue - Target value ('approved' or 'denied')
+ */
+function updateAllRows(hot, colIndex, targetValue) {
+  const rowCount = hot.countRows();
+  const changes = [];
+
+  for (let row = 0; row < rowCount; row++) {
+    const currentValue = hot.getDataAtCell(row, colIndex);
+    if (currentValue !== targetValue) {
+      changes.push([row, colIndex, targetValue]);
+    }
+  }
+
+  if (changes.length > 0) {
+    hot.setDataAtCell(changes);
+  }
+}
+
+/**
+ * Initialize the bulk actions functionality
+ */
+$(document).ready(function () {
+  $(document).on("click", ".approve-all", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleBulkAction("approve");
+  });
+
+  $(document).on("click", ".reject-all", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleBulkAction("reject");
+  });
+});
+
+
+```
+
+key points:
+
+- find handsontable instance in ".approvals" div
+- use `hot.setDataAtCell(changes)` with an array of changes for efficiency
+- find column index dynamically by header name or data values
 
 ### undo/redo with visual feedback
 
