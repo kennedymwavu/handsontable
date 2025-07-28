@@ -17,8 +17,12 @@ shiny provides the most interesting use of handsontable.
 
 ## fun stuff
 
-- custom hooks in js + observers eg. click-cell-show-modal-dialog for
-  short tables with dropdown menu cols.
+you can do a lot of interesting stuff when you throw a little
+js into the mix.
+
+> *any application that can be written in javascript, will eventually be written in javascript*
+>
+> --- atwood's law
 
 ### dropdowns in short tables
 
