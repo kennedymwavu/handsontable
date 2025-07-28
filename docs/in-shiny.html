@@ -234,8 +234,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="fu">unique</span>(iris<span class="sc">$</span>Species) <span class="sc">|&gt;</span> <span class="fu">as.character</span>()</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="handsontable html-widget html-fill-item" id="htmlwidget-ab3f53d2c01b6772511d" style="width:100%;height:400px;"></div>
-<script type="application/json" data-for="htmlwidget-ab3f53d2c01b6772511d">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
+<div class="handsontable html-widget html-fill-item" id="htmlwidget-fc1035194b0db0f9809a" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-fc1035194b0db0f9809a">{"x":{"data":[[5.1,3.5,1.4,0.2,"setosa"],[4.9,3,1.4,0.2,"setosa"]],"colHeaders":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"rowHeaders":["1","2"],"readOnly":false,"adaptiveHeight":true,"fixedColumnsLeft":0,"fixedRowsTop":0,"fixedRowsBottom":0,"manualColumnResize":true,"manualColumnMove":false,"manualRowResize":true,"manualRowMove":false,"stretchH":"all","originalColnames":["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"],"columns":[null,null,null,null,{"type":"dropdown","source":["setosa","versicolor","virginica"]}]},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>what i do in such cases is add hooks for all dropdown columns:</p>
@@ -246,8 +246,293 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>this way, we maintain the same number of clicks the user would have made without the modal.</p>
 <p>here’s how to achieve that:</p>
 <div class="cell">
+<div class="code-with-filename">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-with-filename-file">
+<pre><strong>app.R</strong></pre>
+</div>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hansontable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bslib)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(handsontable)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">addResourcePath</span>(<span class="at">prefix =</span> <span class="st">"static"</span>, <span class="at">directoryPath =</span> <span class="st">"public"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' The Dropdown Modal</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#' Uses bootstrap 5.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#' @return [htmltools::tags]</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>dropdown_modal <span class="ot">&lt;-</span> \() {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">class =</span> <span class="st">"modal fade"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">"dropdownModal"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">tabindex =</span> <span class="st">"-1"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">aria-labelledby</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"dropdownModalLabel"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">aria-hidden</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"true"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">class =</span> <span class="st">"modal-dialog"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">class =</span> <span class="st">"modal-content"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>          <span class="at">class =</span> <span class="st">"modal-header"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>          tags<span class="sc">$</span><span class="fu">h5</span>(</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">class =</span> <span class="st">"modal-title"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">id =</span> <span class="st">"dropdownModalLabel"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Select Option"</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>          tags<span class="sc">$</span><span class="fu">button</span>(</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">type =</span> <span class="st">"button"</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">class =</span> <span class="st">"btn-close"</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">data-bs-dismiss</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"modal"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">aria-label</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Close"</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>          <span class="at">class =</span> <span class="st">"modal-body"</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>          tags<span class="sc">$</span><span class="fu">div</span>(<span class="at">id =</span> <span class="st">"modalRadioContainer"</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">page</span>(</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"dropdown modal example"</span>,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># i'll use bootstrap 5 for the demo:</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="fu">bs_theme</span>(<span class="at">version =</span> <span class="dv">5</span>L),</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">lang =</span> <span class="st">"en"</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"dropdown modal example"</span>),</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">handsontableOutput</span>(<span class="st">"table"</span>),</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dropdown_modal</span>(),</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">script</span>(<span class="at">src =</span> <span class="st">"/static/dropdown-modal.js"</span>)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>table <span class="ot">&lt;-</span> <span class="fu">renderHandsontable</span>({</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handsontable</span>(</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> iris[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ],</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>      <span class="at">adaptiveHeight =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>      <span class="fu">hot_col</span>(</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"Species"</span>,</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"dropdown"</span>,</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>        <span class="at">source =</span> <span class="fu">unique</span>(iris<span class="sc">$</span>Species) <span class="sc">|&gt;</span> <span class="fu">as.character</span>()</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># detect changes in the table</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>table, {</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    updated_data <span class="ot">&lt;-</span> <span class="fu">hot_to_r</span>(<span class="at">data =</span> input<span class="sc">$</span>table)</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Updated data:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(updated_data)</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<p>create <code>./public/dropdown-modal.js</code>:</p>
+<div class="cell">
+<div class="code-with-filename">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-with-filename-file">
+<pre><strong>./public/dropdown-modal.js</strong></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> bootstrapModal<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span> () {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> modalElement <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"dropdownModal"</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (modalElement) {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    bootstrapModal <span class="op">=</span> <span class="kw">new</span> bootstrap<span class="op">.</span><span class="fu">Modal</span>(modalElement)<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">showBootstrapDropdownModal</span> <span class="op">=</span> <span class="kw">function</span> (hot<span class="op">,</span> row<span class="op">,</span> col) {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> currentValue <span class="op">=</span> hot<span class="op">.</span><span class="fu">getDataAtCell</span>(row<span class="op">,</span> col)<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> choices <span class="op">=</span> hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">columns</span>[col]<span class="op">.</span><span class="at">source</span><span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> radioContainer <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"modalRadioContainer"</span>)<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  radioContainer<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> handleSelection <span class="op">=</span> <span class="kw">function</span> (selectedValue) {</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    hot<span class="op">.</span><span class="fu">setDataAtCell</span>(row<span class="op">,</span> col<span class="op">,</span> selectedValue)<span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (bootstrapModal) {</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      bootstrapModal<span class="op">.</span><span class="fu">hide</span>()<span class="op">;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  choices<span class="op">.</span><span class="fu">forEach</span>((choice<span class="op">,</span> index) <span class="kw">=&gt;</span> {</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> radioDiv <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">"div"</span>)<span class="op">;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    radioDiv<span class="op">.</span><span class="at">className</span> <span class="op">=</span> <span class="st">"form-check"</span><span class="op">;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> radioInput <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">"input"</span>)<span class="op">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="at">className</span> <span class="op">=</span> <span class="st">"form-check-input"</span><span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="at">type</span> <span class="op">=</span> <span class="st">"radio"</span><span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="at">name</span> <span class="op">=</span> <span class="st">"modalRadio"</span><span class="op">;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="at">value</span> <span class="op">=</span> choice<span class="op">;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="at">id</span> <span class="op">=</span> <span class="vs">`radio_</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (choice <span class="op">===</span> currentValue) {</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>      radioInput<span class="op">.</span><span class="at">checked</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> radioLabel <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">"label"</span>)<span class="op">;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    radioLabel<span class="op">.</span><span class="at">className</span> <span class="op">=</span> <span class="st">"form-check-label"</span><span class="op">;</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    radioLabel<span class="op">.</span><span class="at">htmlFor</span> <span class="op">=</span> <span class="vs">`radio_</span><span class="sc">${</span>index<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    radioLabel<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> choice<span class="op">;</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    radioDiv<span class="op">.</span><span class="fu">appendChild</span>(radioInput)<span class="op">;</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    radioDiv<span class="op">.</span><span class="fu">appendChild</span>(radioLabel)<span class="op">;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    radioContainer<span class="op">.</span><span class="fu">appendChild</span>(radioDiv)<span class="op">;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    radioInput<span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">"change"</span><span class="op">,</span> <span class="kw">function</span> () {</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="kw">this</span><span class="op">.</span><span class="at">checked</span>) {</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">handleSelection</span>(<span class="kw">this</span><span class="op">.</span><span class="at">value</span>)<span class="op">;</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (bootstrapModal) {</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    bootstrapModal<span class="op">.</span><span class="fu">show</span>()<span class="op">;</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">setupDropdownModalHooks</span> <span class="op">=</span> <span class="kw">function</span> () {</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(<span class="st">".handsontable"</span>)<span class="op">.</span><span class="fu">each</span>(<span class="kw">function</span> () {</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> container <span class="op">=</span> <span class="kw">this</span><span class="op">;</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> hot <span class="op">=</span> container<span class="op">.</span><span class="at">hot</span><span class="op">;</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>hot <span class="op">||</span> hot<span class="op">.</span><span class="at">_modalHooksSetup</span>) {</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    hot<span class="op">.</span><span class="fu">addHook</span>(<span class="st">"afterSelectionEnd"</span><span class="op">,</span> <span class="kw">function</span> (row<span class="op">,</span> col<span class="op">,</span> row2<span class="op">,</span> col2) {</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> columnConfig <span class="op">=</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>        hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">columns</span> <span class="op">&amp;&amp;</span> hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">columns</span>[col]<span class="op">;</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> isDropdown <span class="op">=</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        columnConfig <span class="op">&amp;&amp;</span> columnConfig<span class="op">.</span><span class="at">type</span> <span class="op">===</span> <span class="st">"dropdown"</span> <span class="op">&amp;&amp;</span> columnConfig<span class="op">.</span><span class="at">source</span><span class="op">;</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> rowConfig <span class="op">=</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">rowConfig</span> <span class="op">&amp;&amp;</span> hot<span class="op">.</span><span class="fu">getSettings</span>()<span class="op">.</span><span class="at">rowConfig</span>[row]<span class="op">;</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> isReadOnly <span class="op">=</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        (rowConfig <span class="op">&amp;&amp;</span> rowConfig<span class="op">.</span><span class="at">readOnly</span>) <span class="op">||</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        (columnConfig <span class="op">&amp;&amp;</span> columnConfig<span class="op">.</span><span class="at">readOnly</span>)<span class="op">;</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> needsDropdownModal <span class="op">=</span> <span class="op">!</span>isReadOnly <span class="op">&amp;&amp;</span> isDropdown<span class="op">;</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (needsDropdownModal) {</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>        <span class="fu">showBootstrapDropdownModal</span>(hot<span class="op">,</span> row<span class="op">,</span> col)<span class="op">;</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>    hot<span class="op">.</span><span class="at">_modalHooksSetup</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span> () {</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setupDropdownModalHooks</span>()<span class="op">;</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>  <span class="pp">setInterval</span>(setupDropdownModalHooks<span class="op">,</span> <span class="dv">500</span>)<span class="op">;</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<script>
+let bootstrapModal;
+
+$(document).ready(function () {
+  const modalElement = document.getElementById("dropdownModal");
+  if (modalElement) {
+    bootstrapModal = new bootstrap.Modal(modalElement);
+  }
+});
+
+window.showBootstrapDropdownModal = function (hot, row, col) {
+  const currentValue = hot.getDataAtCell(row, col);
+  const choices = hot.getSettings().columns[col].source;
+  const radioContainer = document.getElementById("modalRadioContainer");
+
+  radioContainer.innerHTML = "";
+
+  const handleSelection = function (selectedValue) {
+    hot.setDataAtCell(row, col, selectedValue);
+    if (bootstrapModal) {
+      bootstrapModal.hide();
+    }
+  };
+
+  choices.forEach((choice, index) => {
+    const radioDiv = document.createElement("div");
+    radioDiv.className = "form-check";
+
+    const radioInput = document.createElement("input");
+    radioInput.className = "form-check-input";
+    radioInput.type = "radio";
+    radioInput.name = "modalRadio";
+    radioInput.value = choice;
+    radioInput.id = `radio_${index}`;
+    if (choice === currentValue) {
+      radioInput.checked = true;
+    }
+
+    const radioLabel = document.createElement("label");
+    radioLabel.className = "form-check-label";
+    radioLabel.htmlFor = `radio_${index}`;
+    radioLabel.textContent = choice;
+
+    radioDiv.appendChild(radioInput);
+    radioDiv.appendChild(radioLabel);
+    radioContainer.appendChild(radioDiv);
+
+    radioInput.addEventListener("change", function () {
+      if (this.checked) {
+        handleSelection(this.value);
+      }
+    });
+  });
+
+  if (bootstrapModal) {
+    bootstrapModal.show();
+  }
+};
+
+window.setupDropdownModalHooks = function () {
+  $(".handsontable").each(function () {
+    const container = this;
+    const hot = container.hot;
+    if (!hot || hot._modalHooksSetup) {
+      return;
+    }
+
+    hot.addHook("afterSelectionEnd", function (row, col, row2, col2) {
+      const columnConfig =
+        hot.getSettings().columns && hot.getSettings().columns[col];
+      const isDropdown =
+        columnConfig && columnConfig.type === "dropdown" && columnConfig.source;
+
+      const rowConfig =
+        hot.getSettings().rowConfig && hot.getSettings().rowConfig[row];
+      const isReadOnly =
+        (rowConfig && rowConfig.readOnly) ||
+        (columnConfig && columnConfig.readOnly);
+
+      const needsDropdownModal = !isReadOnly && isDropdown;
+
+      if (needsDropdownModal) {
+        showBootstrapDropdownModal(hot, row, col);
+      }
+    });
+
+    hot._modalHooksSetup = true;
+  });
+};
+
+$(document).ready(function () {
+  setupDropdownModalHooks();
+  setInterval(setupDropdownModalHooks, 500);
+});
+</script>
 </div>
 </section>
 <section id="click-btn-set-col-values" class="level3">

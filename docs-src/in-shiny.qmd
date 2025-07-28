@@ -51,9 +51,189 @@ have made without the modal.
 
 here's how to achieve that:
 
-```{r dropdown-app-dot-r, eval=FALSE}
+```{r dropdown-app-dot-r, eval=FALSE, filename="app.R"}
+#| code-fold: true
+
 library(shiny)
-library(hansontable)
+library(bslib)
+library(handsontable)
+
+addResourcePath(prefix = "static", directoryPath = "public")
+
+#' The Dropdown Modal
+#'
+#' Uses bootstrap 5.
+#'
+#' @return [htmltools::tags]
+dropdown_modal <- \() {
+  tags$div(
+    class = "modal fade",
+    id = "dropdownModal",
+    tabindex = "-1",
+    `aria-labelledby` = "dropdownModalLabel",
+    `aria-hidden` = "true",
+    tags$div(
+      class = "modal-dialog",
+      tags$div(
+        class = "modal-content",
+        tags$div(
+          class = "modal-header",
+          tags$h5(
+            class = "modal-title",
+            id = "dropdownModalLabel",
+            "Select Option"
+          ),
+          tags$button(
+            type = "button",
+            class = "btn-close",
+            `data-bs-dismiss` = "modal",
+            `aria-label` = "Close"
+          )
+        ),
+        tags$div(
+          class = "modal-body",
+          tags$div(id = "modalRadioContainer")
+        )
+      )
+    )
+  )
+}
+
+ui <- page(
+  title = "dropdown modal example",
+  # i'll use bootstrap 5 for the demo:
+  theme = bs_theme(version = 5L),
+  lang = "en",
+
+  tags$h3("dropdown modal example"),
+  handsontableOutput("table"),
+
+  dropdown_modal(),
+  tags$script(src = "/static/dropdown-modal.js")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderHandsontable({
+    handsontable(
+      data = iris[1:3, ],
+      adaptiveHeight = TRUE
+    ) |>
+      hot_col(
+        col = "Species",
+        type = "dropdown",
+        source = unique(iris$Species) |> as.character()
+      )
+  })
+
+  # detect changes in the table
+  observeEvent(input$table, {
+    updated_data <- hot_to_r(data = input$table)
+    cat("Updated data:\n")
+    print(updated_data)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+create `./public/dropdown-modal.js`:
+
+```{js dropdown-modal-js, filename="./public/dropdown-modal.js"}
+#| code-fold: true
+
+let bootstrapModal;
+
+$(document).ready(function () {
+  const modalElement = document.getElementById("dropdownModal");
+  if (modalElement) {
+    bootstrapModal = new bootstrap.Modal(modalElement);
+  }
+});
+
+window.showBootstrapDropdownModal = function (hot, row, col) {
+  const currentValue = hot.getDataAtCell(row, col);
+  const choices = hot.getSettings().columns[col].source;
+  const radioContainer = document.getElementById("modalRadioContainer");
+
+  radioContainer.innerHTML = "";
+
+  const handleSelection = function (selectedValue) {
+    hot.setDataAtCell(row, col, selectedValue);
+    if (bootstrapModal) {
+      bootstrapModal.hide();
+    }
+  };
+
+  choices.forEach((choice, index) => {
+    const radioDiv = document.createElement("div");
+    radioDiv.className = "form-check";
+
+    const radioInput = document.createElement("input");
+    radioInput.className = "form-check-input";
+    radioInput.type = "radio";
+    radioInput.name = "modalRadio";
+    radioInput.value = choice;
+    radioInput.id = `radio_${index}`;
+    if (choice === currentValue) {
+      radioInput.checked = true;
+    }
+
+    const radioLabel = document.createElement("label");
+    radioLabel.className = "form-check-label";
+    radioLabel.htmlFor = `radio_${index}`;
+    radioLabel.textContent = choice;
+
+    radioDiv.appendChild(radioInput);
+    radioDiv.appendChild(radioLabel);
+    radioContainer.appendChild(radioDiv);
+
+    radioInput.addEventListener("change", function () {
+      if (this.checked) {
+        handleSelection(this.value);
+      }
+    });
+  });
+
+  if (bootstrapModal) {
+    bootstrapModal.show();
+  }
+};
+
+window.setupDropdownModalHooks = function () {
+  $(".handsontable").each(function () {
+    const container = this;
+    const hot = container.hot;
+    if (!hot || hot._modalHooksSetup) {
+      return;
+    }
+
+    hot.addHook("afterSelectionEnd", function (row, col, row2, col2) {
+      const columnConfig =
+        hot.getSettings().columns && hot.getSettings().columns[col];
+      const isDropdown =
+        columnConfig && columnConfig.type === "dropdown" && columnConfig.source;
+
+      const rowConfig =
+        hot.getSettings().rowConfig && hot.getSettings().rowConfig[row];
+      const isReadOnly =
+        (rowConfig && rowConfig.readOnly) ||
+        (columnConfig && columnConfig.readOnly);
+
+      const needsDropdownModal = !isReadOnly && isDropdown;
+
+      if (needsDropdownModal) {
+        showBootstrapDropdownModal(hot, row, col);
+      }
+    });
+
+    hot._modalHooksSetup = true;
+  });
+};
+
+$(document).ready(function () {
+  setupDropdownModalHooks();
+  setInterval(setupDropdownModalHooks, 500);
+});
 ```
 
 ### click btn, set col values
