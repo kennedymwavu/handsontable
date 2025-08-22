@@ -442,6 +442,16 @@ HTMLWidgets.widget({
             hot.addHook("afterCreateRow", function (index, amount, source) {
               if (source !== "loadData") {
                 const data = hot.getData();
+
+                const currentConfig = hot.getSettings();
+                if (currentConfig.adaptiveHeight === true) {
+                  const newHeight = calculateAdaptiveHeight(
+                    currentConfig,
+                    height,
+                  );
+                  hot.updateSettings({ height: newHeight });
+                }
+
                 Shiny.setInputValue(
                   el.id,
                   {
@@ -466,6 +476,16 @@ HTMLWidgets.widget({
               function (index, amount, physicalRows, source) {
                 if (source !== "loadData") {
                   const data = hot.getData();
+
+                  const currentConfig = hot.getSettings();
+                  if (currentConfig.adaptiveHeight === true) {
+                    const newHeight = calculateAdaptiveHeight(
+                      currentConfig,
+                      height,
+                    );
+                    hot.updateSettings({ height: newHeight });
+                  }
+
                   Shiny.setInputValue(
                     el.id,
                     {
